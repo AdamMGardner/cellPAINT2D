@@ -1,0 +1,220 @@
+fileFormatVersion: 2
+guid: 43c6ddbc34d1abd4f8006707271ab9d9
+timeCreated: 1503933459
+licenseType: Pro
+ModelImporter:
+  serializedVersion: 21
+  fileIDToRecycleName:
+    100000: CoarseMS_2rcjAmsSuper
+    100002: CoarseMS_2rcjAmsSuper.2
+    100004: CoarseMS_2rcjAmsSuper.3
+    100006: CoarseMS_2rcjAmsSuper.4
+    100008: CoarseMS_2rcjAmsSuper.5
+    100010: CoarseMS_2rcjBmsSuper
+    100012: CoarseMS_2rcjBmsSuper.2
+    100014: CoarseMS_2rcjBmsSuper.3
+    100016: CoarseMS_2rcjBmsSuper.4
+    100018: CoarseMS_2rcjBmsSuper.5
+    100020: CoarseMS_2rcjCmsSuperPlus2ALA
+    100022: CoarseMS_2rcjCmsSuperPlus2ALA.2
+    100024: CoarseMS_2rcjCmsSuperPlus2ALA.3
+    100026: CoarseMS_2rcjCmsSuperPlus2ALA.4
+    100028: CoarseMS_2rcjCmsSuperPlus2ALA.5
+    100030: CoarseMS_2rcjDmsSuper
+    100032: CoarseMS_2rcjDmsSuper.2
+    100034: CoarseMS_2rcjDmsSuper.3
+    100036: CoarseMS_2rcjDmsSuper.4
+    100038: CoarseMS_2rcjDmsSuper.5
+    100040: //RootNode
+    100042: Metaball
+    100044: Metaball.2
+    100046: Metaball.3
+    100048: Metaball.4
+    100050: Metaball.5
+    100052: Null
+    100054: Null.2
+    100056: Null.3
+    100058: Null.4
+    100060: Null.5
+    400000: CoarseMS_2rcjAmsSuper
+    400002: CoarseMS_2rcjAmsSuper.2
+    400004: CoarseMS_2rcjAmsSuper.3
+    400006: CoarseMS_2rcjAmsSuper.4
+    400008: CoarseMS_2rcjAmsSuper.5
+    400010: CoarseMS_2rcjBmsSuper
+    400012: CoarseMS_2rcjBmsSuper.2
+    400014: CoarseMS_2rcjBmsSuper.3
+    400016: CoarseMS_2rcjBmsSuper.4
+    400018: CoarseMS_2rcjBmsSuper.5
+    400020: CoarseMS_2rcjCmsSuperPlus2ALA
+    400022: CoarseMS_2rcjCmsSuperPlus2ALA.2
+    400024: CoarseMS_2rcjCmsSuperPlus2ALA.3
+    400026: CoarseMS_2rcjCmsSuperPlus2ALA.4
+    400028: CoarseMS_2rcjCmsSuperPlus2ALA.5
+    400030: CoarseMS_2rcjDmsSuper
+    400032: CoarseMS_2rcjDmsSuper.2
+    400034: CoarseMS_2rcjDmsSuper.3
+    400036: CoarseMS_2rcjDmsSuper.4
+    400038: CoarseMS_2rcjDmsSuper.5
+    400040: //RootNode
+    400042: Metaball
+    400044: Metaball.2
+    400046: Metaball.3
+    400048: Metaball.4
+    400050: Metaball.5
+    400052: Null
+    400054: Null.2
+    400056: Null.3
+    400058: Null.4
+    400060: Null.5
+    2300000: CoarseMS_2rcjAmsSuper
+    2300002: CoarseMS_2rcjAmsSuper.2
+    2300004: CoarseMS_2rcjAmsSuper.3
+    2300006: CoarseMS_2rcjAmsSuper.4
+    2300008: CoarseMS_2rcjAmsSuper.5
+    2300010: CoarseMS_2rcjBmsSuper
+    2300012: CoarseMS_2rcjBmsSuper.2
+    2300014: CoarseMS_2rcjBmsSuper.3
+    2300016: CoarseMS_2rcjBmsSuper.4
+    2300018: CoarseMS_2rcjBmsSuper.5
+    2300020: CoarseMS_2rcjCmsSuperPlus2ALA
+    2300022: CoarseMS_2rcjCmsSuperPlus2ALA.2
+    2300024: CoarseMS_2rcjCmsSuperPlus2ALA.3
+    2300026: CoarseMS_2rcjCmsSuperPlus2ALA.4
+    2300028: CoarseMS_2rcjCmsSuperPlus2ALA.5
+    2300030: CoarseMS_2rcjDmsSuper
+    2300032: CoarseMS_2rcjDmsSuper.2
+    2300034: CoarseMS_2rcjDmsSuper.3
+    2300036: CoarseMS_2rcjDmsSuper.4
+    2300038: CoarseMS_2rcjDmsSuper.5
+    2300040: Metaball
+    2300042: Metaball.2
+    2300044: Metaball.3
+    2300046: Metaball.4
+    2300048: Metaball.5
+    3300000: CoarseMS_2rcjAmsSuper
+    3300002: CoarseMS_2rcjAmsSuper.2
+    3300004: CoarseMS_2rcjAmsSuper.3
+    3300006: CoarseMS_2rcjAmsSuper.4
+    3300008: CoarseMS_2rcjAmsSuper.5
+    3300010: CoarseMS_2rcjBmsSuper
+    3300012: CoarseMS_2rcjBmsSuper.2
+    3300014: CoarseMS_2rcjBmsSuper.3
+    3300016: CoarseMS_2rcjBmsSuper.4
+    3300018: CoarseMS_2rcjBmsSuper.5
+    3300020: CoarseMS_2rcjCmsSuperPlus2ALA
+    3300022: CoarseMS_2rcjCmsSuperPlus2ALA.2
+    3300024: CoarseMS_2rcjCmsSuperPlus2ALA.3
+    3300026: CoarseMS_2rcjCmsSuperPlus2ALA.4
+    3300028: CoarseMS_2rcjCmsSuperPlus2ALA.5
+    3300030: CoarseMS_2rcjDmsSuper
+    3300032: CoarseMS_2rcjDmsSuper.2
+    3300034: CoarseMS_2rcjDmsSuper.3
+    3300036: CoarseMS_2rcjDmsSuper.4
+    3300038: CoarseMS_2rcjDmsSuper.5
+    3300040: Metaball
+    3300042: Metaball.2
+    3300044: Metaball.3
+    3300046: Metaball.4
+    3300048: Metaball.5
+    4300000: Metaball
+    4300002: CoarseMS_2rcjCmsSuperPlus2ALA
+    4300004: CoarseMS_2rcjDmsSuper
+    4300006: CoarseMS_2rcjBmsSuper
+    4300008: CoarseMS_2rcjAmsSuper
+    4300010: Metaball.2
+    4300012: CoarseMS_2rcjCmsSuperPlus2ALA.2
+    4300014: CoarseMS_2rcjDmsSuper.2
+    4300016: CoarseMS_2rcjBmsSuper.2
+    4300018: CoarseMS_2rcjAmsSuper.2
+    4300020: Metaball.3
+    4300022: CoarseMS_2rcjCmsSuperPlus2ALA.3
+    4300024: CoarseMS_2rcjDmsSuper.3
+    4300026: CoarseMS_2rcjBmsSuper.3
+    4300028: CoarseMS_2rcjAmsSuper.3
+    4300030: Metaball.4
+    4300032: CoarseMS_2rcjCmsSuperPlus2ALA.4
+    4300034: CoarseMS_2rcjDmsSuper.4
+    4300036: CoarseMS_2rcjBmsSuper.4
+    4300038: CoarseMS_2rcjAmsSuper.4
+    4300040: Metaball.5
+    4300042: CoarseMS_2rcjCmsSuperPlus2ALA.5
+    4300044: CoarseMS_2rcjDmsSuper.5
+    4300046: CoarseMS_2rcjBmsSuper.5
+    4300048: CoarseMS_2rcjAmsSuper.5
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

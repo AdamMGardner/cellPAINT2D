@@ -1,0 +1,49 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+uniform int _GridSize;			//texture size
+uniform int _NumAtoms;			//number of atom/beads
+uniform float3 _bbox_min;		//coordinate of box left-bottom
+uniform float3 _bbox_max;		//coordinate of box right-top
+uniform float _Volumesize;		//size of the cubic bounding box
+
+RWTexture3D<float> _VolumeTexture;
+StructuredBuffer<float4> _SpherePositions;
+
+[numthreads(10,10,10)]
+void CSMain (uint3 id : SV_DispatchThreadID, uint3 groupThreadId : SV_GroupThreadID)
+{
+    float S = 0;
+	//uint idx = id.x + id.y * _GridSize + id.z * _GridSize * _GridSize;
+	
+	float3 idd = float3(id.x,id.y,id.z)+0.5f;
+	//float3 idd = id - (_GridSize * 0.5f);
+
+	float3 spacepos = _bbox_min * 1.5 + (idd/_GridSize) * _Volumesize * 1.5;
+
+	float MinS = 10000000.0f;
+	float diag = length(_bbox_max.xyz* 1.5 - _bbox_min.xyz* 1.5);
+
+	for(int i = 0; i < _NumAtoms; i++)
+	{
+        float4 sphere = _SpherePositions[i];
+		/*
+		float Distance = length(sphere.xyz - spacepos.xyz) - sphere.w;//dot(sphere.xyz, spacepos.xyz)-sphere.w ;
+		if (Distance/diag < MinS) 
+		{
+			MinS = Distance/diag;
+		}*/
+		
+        float3 idd = spacepos;// id - (_GridSize * 0.5f);
+        float3 apt = sphere.xyz * 1.5;
+        float radius = sphere.w * 1.5;
+        float3 YD = idd - apt;	
+        float r = dot(YD, YD);
+        float b = 0.7;
+        float a = -log(0.5f / b) / (radius * radius);
+        float gauss_f = b * exp(-(r * a)) * 0.2f;
+        S += gauss_f;
+    }
+
+	_VolumeTexture[id] = S;//1.0f-MinS;
+}

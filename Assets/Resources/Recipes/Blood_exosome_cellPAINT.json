@@ -1,0 +1,539 @@
+{
+  "recipe": {
+    "paths": [
+      [
+        "autoPACKserver",
+        "https://raw.githubusercontent.com/mesoscope/cellPACK_data/master/cellPACK_database_1.1.0"
+      ]
+    ],
+    "name": "BloodHIV_cellPAINT",
+    "version": "1.0",
+    "setupfile": "/home/ludo/.autoPACK/cache_recipes/BloodHIV1.0_mixed_pdb.json"
+  },
+  "cytoplasme": {
+    "ingredients": {
+      "albumin_w": {
+        "source": {
+          "pdb": "1e7i",
+          "transform": {
+            "center": true
+          }
+        },
+        "name": "albumin_w",
+        "Function Group": "Transport"
+      },
+      "HDL_w": {
+        "source": {
+          "pdb": "2msc",
+          "transform": {
+            "center": true
+          }
+        },
+        "name": "HDL_w",
+        "Function Group": "Transport"
+      },
+      "LDL_w": {
+        "source": {
+          "emdb": "5421",
+          "transform": {
+            "center": true
+          }
+        },
+        "name": "LDL_w",
+        "Function Group": "Transport"
+      },
+      "IgG_w": {
+        "source": {
+          "pdb": "igg.pdb",
+          "transform": {
+            "translate": [
+              0,
+              17.047,
+              0
+            ],
+            "rotate": [
+              3.7493995e-33,
+              1,
+              -6.123234e-17,
+              6.123234e-17
+            ],
+            "center": false
+          }
+        },
+        "name": "IgG_w",
+        "Function Group": "Immune System and Complement"
+      },
+      "IgA_w": {
+        "source": {
+          "pdb": "2rcj",
+          "transform": {
+            "center": false
+          }
+        },
+        "name": "IgA_w",
+        "Function Group": "Immune System and Complement"
+      },
+      "IgM_w": {
+        "source": {
+          "pdb": "2rcj",
+          "transform": {
+            "center": false
+          }
+        },
+        "name": "IgM_w",
+        "Function Group": "Immune System and Complement"
+      },
+      "antitrypsin_w": {
+        "source": {
+          "pdb": "1psi",
+          "transform": {
+            "center": true
+          }
+        },
+        "name": "antitrypsin_w",
+        "Function Group": "Intrinsic Defenses"
+      },
+      "aptoglobin_w": {
+        "source": {
+          "pdb": "4x01",
+          "transform": {
+            "center": true
+          }
+        },
+        "name": "aptoglobin_w",
+        "Function Group": "Intrinsic Defenses"
+      },
+      "hemopexin_w": {
+        "source": {
+          "pdb": "1qjs",
+          "transform": {
+            "center": true
+          }
+        },
+        "name": "hemopexin_w",
+        "Function Group": "Intrinsic Defenses"
+      },
+      "fibrinogen_w": {
+        "source": {
+          "pdb": "3ghg_ABCDEFMNOP.pdb",
+          "transform": {
+            "translate": [
+              -81.917,
+              -5.326,
+              31.969
+            ],
+            "rotate": [
+              0.98901586,
+              0,
+              -0.14780941,
+              0
+            ],
+            "center": false
+          }
+        },
+        "name": "fibrinogen_w",
+        "Function Group": "Blood Clotting"
+      },
+      "transferin_w": {
+        "source": {
+          "pdb": "3ghg_ABCDEFMNOP.pdb",
+          "transform": {
+            "translate": [
+              -81.917,
+              -5.326,
+              31.969
+            ],
+            "rotate": [
+              0.98901586,
+              0,
+              -0.14780941,
+              0
+            ],
+            "center": false
+          }
+        },
+        "name": "transferin_w",
+        "Function Group": "Blood Clotting"
+      },
+      "argonaute_w": {
+        "source": {
+          "pdb": "3ghg_ABCDEFMNOP.pdb",
+          "transform": {
+            "translate": [
+              -81.917,
+              -5.326,
+              31.969
+            ],
+            "rotate": [
+              0.98901586,
+              0,
+              -0.14780941,
+              0
+            ],
+            "center": false
+          }
+        },
+        "name": "argonaute_w",
+        "Function Group": "Blood Clotting"
+      }
+    }
+  },
+  "compartments": {
+    "Exosome": {
+      "interior": {
+        "ingredients": {
+          "Cell_Membrane": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "Cell_Membrane",
+            "Function Group": "Cell Membrane"
+          },
+          "Aldolase_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "Aldolase_w",
+            "Function Group": "Enzymes"
+          },
+          "Alix1_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "Alix1_w",
+            "Function Group": "Enzymes"
+          },
+          "Alix2_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "Alix2_w",
+            "Function Group": "Enzymes"
+          },
+          "HSP90_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "HSP90_w",
+            "Function Group": "Enzymes"
+          },
+          "EF2_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "EF2_w",
+            "Function Group": "Enzymes"
+          },
+          "EFTU_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "EFTU_w",
+            "Function Group": "Enzymes"
+          },
+          "EFTURna_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "EFTURna_w",
+            "Function Group": "Enzymes"
+          },
+          "enolase_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "enolase_w",
+            "Function Group": "Enzymes"
+          },
+          "GADPH_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "GADPH_w",
+            "Function Group": "Enzymes"
+          },
+          "FASN_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "FASN_w",
+            "Function Group": "Enzymes"
+          },
+          "Gprotein_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "Gprotein_w",
+            "Function Group": "Enzymes"
+          },
+          "lactate_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "lactate_w",
+            "Function Group": "Enzymes"
+          },
+          "RAS_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "RAS_w",
+            "Function Group": "Enzymes"
+          },
+          "miRNA_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "miRNA_w",
+            "Function Group": "Enzymes"
+          },
+          "RNA": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "RNA",
+            "Function Group": "Enzymes"
+          },
+          "mRNA_segment": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "mRNA_segment",
+            "Function Group": "Enzymes"
+          },
+          "ADN_segment": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "ADN_segment",
+            "Function Group": "Enzymes"
+          },
+          "PGK_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "PGK_w",
+            "Function Group": "Enzymes"
+          },
+          "PPIA_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "PPIA_w",
+            "Function Group": "Enzymes"
+          },
+          "pyruvate_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "pyruvate_w",
+            "Function Group": "Enzymes"
+          },
+          "syntenin_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "syntenin_w",
+            "Function Group": "Enzymes"
+          },
+          "YWZA_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "YWZA_w",
+            "Function Group": "Enzymes"
+          },
+          "DNA": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "DNA",
+            "Function Group": "Enzymes"
+          },
+          "HSP70_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "HSP70_w",
+            "Function Group": "Enzymes"
+          },
+          "FLOT1_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "FLOT1_w",
+            "Function Group": "Enzymes"
+          },
+          "argo2_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "argo2_w",
+            "Function Group": "Enzymes"
+          },
+          "CD9_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "CD9_w",
+            "Function Group": "Enzymes"
+          },
+          "CD63_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "CD63_w",
+            "Function Group": "Enzymes"
+          },
+          "CD81_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "CD81_w",
+            "Function Group": "Enzymes"
+          },
+          "mb1": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "mb1",
+            "Function Group": "Enzymes"
+          },
+          "mb2": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "mb2",
+            "Function Group": "Enzymes"
+          },
+          "mb3": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "mb3",
+            "Function Group": "Enzymes"
+          },
+          "mb4": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "mb4",
+            "Function Group": "Enzymes"
+          },
+          "TSG_w": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "TSG_w",
+            "Function Group": "Enzymes"
+          }
+        }
+      }
+    }
+  }
+}

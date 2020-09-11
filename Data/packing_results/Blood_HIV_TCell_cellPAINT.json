@@ -1,0 +1,627 @@
+{
+  "recipe": {
+    "setupfile": "/home/ludo/.autoPACK/cache_recipes/BloodHIV1.0_mixed_pdb.json",
+    "paths": [
+      [
+        "autoPACKserver",
+        "https://raw.githubusercontent.com/mesoscope/cellPACK_data/master/cellPACK_database_1.1.0"
+      ]
+    ],
+    "version": "1.0",
+    "name": "BloodHIV_cellPAINT"
+  },
+  "cytoplasme": {
+    "ingredients": {
+      "Albumin": {
+        "source": {
+          "pdb": "1e7i",
+          "transform": {
+            "center": true
+          }
+        },
+        "name": "Albumin",
+        "Function Group": "Transport"
+      },
+      "Serotransferrin": {
+        "source": {
+          "pdb": "3v83",
+          "transform": {
+            "center": true
+          }
+        },
+        "name": "Serotransferrin",
+        "Function Group": "Transport"
+      },
+      "HDL": {
+        "source": {
+          "pdb": "2msc",
+          "transform": {
+            "center": true
+          }
+        },
+        "name": "HDL",
+        "Function Group": "Transport"
+      },
+      "LDL": {
+        "source": {
+          "emdb": "5421",
+          "transform": {
+            "center": true
+          }
+        },
+        "name": "LDL",
+        "Function Group": "Transport"
+      },
+      "Ceruloplasmin": {
+        "source": {
+          "pdb": "1kcw",
+          "transform": {
+            "center": true
+          }
+        },
+        "name": "Ceruloplasmin",
+        "Function Group": "Transport"
+      },
+      "IgG": {
+        "source": {
+          "pdb": "igg.pdb",
+          "transform": {
+            "translate": [
+              0,
+              17.047,
+              0
+            ],
+            "rotate": [
+              3.7493995e-33,
+              1,
+              -6.123234e-17,
+              6.123234e-17
+            ],
+            "center": false
+          }
+        },
+        "name": "IgG",
+        "Function Group": "Immune System and Complement"
+      },
+      "IgA": {
+        "source": {
+          "pdb": "2rcj",
+          "transform": {
+            "center": false
+          }
+        },
+        "name": "IgA",
+        "Function Group": "Immune System and Complement"
+      },
+      "IgM": {
+        "source": {
+          "pdb": "2rcj",
+          "transform": {
+            "center": false
+          }
+        },
+        "name": "IgM",
+        "Function Group": "Immune System and Complement"
+      },
+      "Complement_C3": {
+        "source": {
+          "pdb": "2a73",
+          "transform": {
+            "center": false
+          }
+        },
+        "name": "Complement_C3",
+        "Function Group": "Immune System and Complement"
+      },
+      "Complement_Factor_H": {
+        "source": {
+          "pdb": "1haq",
+          "transform": {
+            "center": false
+          }
+        },
+        "name": "Complement_Factor_H",
+        "Function Group": "Immune System and Complement"
+      },
+      "Complement_Factor_C4_A": {
+        "source": {
+          "pdb": "4fxk",
+          "transform": {
+            "center": false
+          }
+        },
+        "name": "Complement_Factor_C4_A",
+        "Function Group": "Immune System and Complement"
+      },
+      "Complement_Factor_B": {
+        "source": {
+          "pdb": "2ok5",
+          "transform": {
+            "center": false
+          }
+        },
+        "name": "Complement_Factor_B",
+        "Function Group": "Immune System and Complement"
+      },
+      "Alpha_2_MacroGlobulin": {
+        "source": {
+          "pdb": "4acq",
+          "transform": {
+            "center": true
+          }
+        },
+        "name": "Alpha_2_MacroGlobulin",
+        "Function Group": "Intrinsic Defenses"
+      },
+      "Alpha_1_AntiTrypsin": {
+        "source": {
+          "pdb": "1psi",
+          "transform": {
+            "center": true
+          }
+        },
+        "name": "Alpha_1_AntiTrypsin",
+        "Function Group": "Intrinsic Defenses"
+      },
+      "Haptoglobin": {
+        "source": {
+          "pdb": "4x01",
+          "transform": {
+            "center": true
+          }
+        },
+        "name": "Haptoglobin",
+        "Function Group": "Intrinsic Defenses"
+      },
+      "Hemopexin": {
+        "source": {
+          "pdb": "1qjs",
+          "transform": {
+            "center": true
+          }
+        },
+        "name": "Hemopexin",
+        "Function Group": "Intrinsic Defenses"
+      },
+      "Fibrinogen": {
+        "source": {
+          "pdb": "3ghg_ABCDEFMNOP.pdb",
+          "transform": {
+            "translate": [
+              -81.917,
+              -5.326,
+              31.969
+            ],
+            "rotate": [
+              0.98901586,
+              0,
+              -0.14780941,
+              0
+            ],
+            "center": false
+          }
+        },
+        "name": "Fibrinogen",
+        "Function Group": "Blood Clotting"
+      },
+      "Transthyretin": {
+        "source": {
+          "pdb": "1tta",
+          "transform": {
+            "center": true
+          }
+        },
+        "name": "Transthyretin",
+        "Function Group": "Hormones"
+      },
+      "Insulin": {
+        "source": {
+          "pdb": "2hiu",
+          "transform": {
+            "center": true
+          }
+        },
+        "name": "Insulin",
+        "Function Group": "Hormones"
+      }
+    }
+  },
+  "compartments": {
+    "HIV": {
+      "interior": {
+        "ingredients": {
+          "Matrix": {
+            "source": {
+              "pdb": "MA_matrix_G1.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "Matrix",
+            "Function Group": "Molecules in the Envelope"
+          },
+          "HIV_Membrane": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "HIV_Membrane",
+            "Function Group": "Molecules in the Envelope"
+          },
+          "Envelope": {
+            "source": {
+              "pdb": "HIV1_ENV_4ncoABEFIJ.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "Envelope",
+            "Function Group": "Molecules in the Envelope"
+          },
+          "HLA_II_HIV": {
+            "source": {
+              "pdb": "1dlh_HLA_Moved_0_1_0.pdb",
+              "transform": {
+                "translate": [
+                  0,
+                  0,
+                  10.79
+                ],
+                "center": false
+              }
+            },
+            "name": "HLA_II_HIV",
+            "Function Group": "Molecules in the Envelope"
+          },
+          "VPU": {
+            "source": {
+              "pdb": "1PI7_1vpu_biounit.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "VPU"
+          },
+          "NEF": {
+            "source": {
+              "pdb": "nef_1avv.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "NEF",
+            "Function Group": "Viral Enzymes"
+          },
+          "VIF": {
+            "source": {
+              "pdb": "ModBase_VIF.pdb",
+              "transform": {
+                "center": true
+              }
+            },
+            "name": "VIF",
+            "Function Group": "Viral Enzymes"
+          },
+          "P6": {
+            "source": {
+              "pdb": "HIV1_P6_SwissMod_0_1_0.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "P6",
+            "Function Group": "Viral Enzymes"
+          },
+		  "VPR": {
+            "source": {
+              "pdb": "HIV1_P6_SwissMod_0_1_0.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "VPR",
+            "Function Group": "Viral Enzymes"
+          },
+          "SP1": {
+            "source": {
+              "pdb": "HIV1_SP1_hack_0_1_0.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "SP1",
+            "Function Group": "Viral Enzymes"
+          },
+          "SP2": {
+            "source": {
+              "pdb": "HIV1_SP2_hack_0_1_0.pdb",
+              "transform": {
+                "center": true
+              }
+            },
+            "name": "SP2",
+            "Function Group": "Viral Enzymes"
+          },
+          "Integrase": {
+            "source": {
+              "pdb": "1ex4",
+              "transform": {
+                "center": true
+              }
+            },
+            "name": "Integrase",
+            "Function Group": "Viral Enzymes"
+          },
+          "Protease": {
+            "source": {
+              "pdb": "7hvp",
+              "transform": {
+                "center": true
+              }
+            },
+            "name": "Protease",
+            "Function Group": "Viral Enzymes"
+          },
+          "Reverse_Transcriptase": {
+            "source": {
+              "pdb": "3hvt",
+              "transform": {
+                "center": true
+              }
+            },
+            "name": "Reverse_Transcriptase",
+            "Function Group": "Viral Enzymes"
+          },
+          "Capsid": {
+            "source": {
+              "pdb": "3j3q_1vu4_A_biomt.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "Capsid",
+            "Function Group": "Molecules in the Capsid"
+          },
+          "Tat": {
+            "source": {
+              "pdb": "1JFWpm.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "Tat",
+            "Function Group": "Molecules in the Capsid"
+          },
+          "Nucleocapsid": {
+            "source": {
+              "pdb": "1f6u",
+              "transform": {
+                "center": true
+              }
+            },
+            "name": "Nucleocapsid",
+            "Function Group": "Molecules in the Capsid"
+          },
+          "RNA": {
+            "source": {
+              "pdb": "rna",
+              "transform": {
+                "center": true
+              }
+            },
+            "name": "RNA",
+            "Function Group": "Nucleic Acid"
+          },
+          "Cyclophilin_A": {
+            "source": {
+              "pdb": "1AK4A.pdb",
+              "transform": {
+                "center": true
+              }
+            },
+            "name": "Cyclophilin_A",
+            "Function Group": "Cellular Molecules"
+          }
+        }
+      }
+    },
+    "Cytosol": {
+      "interior": {
+        "ingredients": {
+          "Cell_Membrane": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "Cell_Membrane",
+            "Function Group": "Cell Membrane"
+          },
+          "CD4": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "CD4",
+            "Function Group": "Cell Membrane"
+          },
+          "CXCR4": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "CXCR4",
+            "Function Group": "Cell Membrane"
+          },
+          "HLA_II_TCell": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "HLA_II_TCell",
+            "Function Group": "Cell Membrane"
+          },
+          "Ion_Channel": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "Ion_Channel",
+            "Function Group": "Cell Membrane"
+          },
+          "G_Protein": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "G_Protein",
+            "Function Group": "Cell Membrane"
+          },
+          "Ras": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "Ras",
+            "Function Group": "Cell Membrane"
+          },
+          "Ribosome": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "Ribosome",
+            "Function Group": "Protein Synthesis"
+          },
+          "Messenger_RNA": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "Messenger_RNA",
+            "Function Group": "Protein Synthesis"
+          },
+          "Transfer_RNA": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "Transfer_RNA",
+            "Function Group": "Protein Synthesis"
+          },
+          "Elongation_Factor": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "Elongation_Factor",
+            "Function Group": "Protein Synthesis"
+          },
+          "AminoAcyl_tRNA_Synthetase": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "AminoAcytl_tRNA_Synthetase",
+            "Function Group": "Protein Synthesis"
+          },
+          "CCT": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "CCT",
+            "Function Group": "Protein Synthesis"
+          },
+          "Actin": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "Actin",
+            "Function Group": "Cytoskeleton"
+          },
+          "PFK": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "PFK",
+            "Function Group": "Enzymes"
+          },
+          "Pyruvate_Kinase": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "Pyruvate_Kinase",
+            "Function Group": "Enzymes"
+          },
+          "GPD": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "GPD",
+            "Function Group": "Enzymes"
+          },
+          "PGK": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "PGK",
+            "Function Group": "Enzymes"
+          },
+          "Aldolase": {
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "center": false
+              }
+            },
+            "name": "Aldolase",
+            "Function Group": "Enzymes"
+          }
+        }
+      }
+    }
+  }
+}

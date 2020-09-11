@@ -1,0 +1,619 @@
+{
+  "recipe": {
+    "paths": [
+      [
+        "autoPACKserver",
+        "https://cdn.rawgit.com/mesoscope/cellPACK_data/master/cellPACK_database_1.1.0"
+      ]
+    ],
+    "name": "root",
+    "version": "1.0"
+  },
+  "options": {
+    "cancelDialog": false,
+    "_hackFreepts": false,
+    "windowsSize": 50,
+    "use_gradient": false,
+    "placeMethod": "jitter",
+    "saveResult": false,
+    "runTimeDisplay": false,
+    "overwritePlaceMethod": true,
+    "innerGridMethod": "jordan",
+    "boundingBox": [
+      [
+        -350,
+        -350,
+        -350
+      ],
+      [
+        350,
+        350,
+        350
+      ]
+    ],
+    "gradients": [],
+    "smallestProteinSize": 0,
+    "computeGridParams": true,
+    "freePtsUpdateThrehod": 0,
+    "pickWeightedIngr": true,
+    "_timer": false,
+    "ingrLookForNeighbours": false,
+    "pickRandPt": true,
+    "largestProteinSize": 0,
+    "resultfile": "",
+    "use_periodicity": false,
+    "EnviroOnly": false
+  },
+  "cytoplasme": {
+    "ingredients": {
+      "IgG": {
+        "encapsulatingRadius": 25,
+        "name": "IgG",
+        "source": {
+          "pdb": "1IGT",
+          "bu": "",
+          "selection": "",
+          "model": "",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "nbMol": 0,
+        "molarity": 0.000043298,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "file",
+        "principalVector": [
+          1,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "",
+        "Type": "MultiSphere",
+        "positions": [],
+        "radii": [],
+        "packingMode": "random",
+        "comments": "",
+        "color": [
+          0.7333333333333333,
+          0.9058823529411765,
+          0.8941176470588236
+        ],
+        "confidence": 0,
+        "sprite": {
+          "image": "IgG.png",
+          "offsety": 0,
+          "scale2d": 4
+        }
+      }
+    }
+  },
+  "compartments": {
+    "Coronavirus": {
+      "geom_type": "mb",
+      "geom": "mb",
+      "name": "Coronavirus",
+      "thickness": 7.5,
+      "surface": {
+        "ingredients": {
+          "E": {
+            "encapsulatingRadius": 25,
+            "name": "CD63",
+            "source": {
+              "pdb": "CD63_nG.pdb",
+              "bu": "",
+              "selection": "",
+              "model": "",
+              "uniprot": "P08962",
+              "transform": {
+                "offset": [
+                  3,
+                  10,
+                  16
+                ]
+              }
+            },
+            "nbMol": 0,
+            "molarity": 0.00000100662,
+            "molecularweight": 25505.41,
+            "meshFile": "",
+            "meshType": "file",
+            "principalVector": [
+              0,
+              0,
+              1
+            ],
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "uniprot": "",
+            "label": "CD63 antigen",
+            "Type": "MultiSphere",
+            "positions": [],
+            "radii": [],
+            "packingMode": "random",
+            "comments": "Tetraspanin opm",
+            "color": [
+              0.9647058823529412,
+              0.6470588235294118,
+              0.2235294117647059
+            ],
+            "confidence": 0,
+            "sprite": {
+              "image": "CoronaVirus_Sprite_E.png",
+              "offsety": "0",
+              "scale2d": 12
+            }
+          },
+          "M": {
+            "encapsulatingRadius": 25,
+            "name": "CD81",
+            "source": {
+              "pdb": "5TCX",
+              "bu": "",
+              "selection": "",
+              "model": "",
+              "uniprot": "P60033",
+              "transform": {
+                "offset": [
+                  2,
+                  4,
+                  11
+                ]
+              }
+            },
+            "nbMol": 0,
+            "molarity": 3.42387e-7,
+            "molecularweight": 25809.4,
+            "meshFile": "",
+            "meshType": "file",
+            "principalVector": [
+              0,
+              0,
+              1
+            ],
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "uniprot": "P60033",
+            "label": "CD81 antigen",
+            "Type": "MultiSphere",
+            "positions": [],
+            "radii": [],
+            "packingMode": "random",
+            "comments": "Tetraspanin opm",
+            "color": [
+              0.9764705882352941,
+              0.7450980392156863,
+              0.34509803921568627
+            ],
+            "confidence": 0,
+            "sprite": {
+              "image": "CoronaVirus_Sprite_M.png",
+              "offsety": "0",
+              "scale2d": 12
+            }
+          },
+          "Spike": {
+            "encapsulatingRadius": 25,
+            "name": "Spike",
+            "source": {
+              "pdb": "CD9_nG.pdb",
+              "bu": "",
+              "selection": "",
+              "model": "",
+              "uniprot": "P21926",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  20
+                ]
+              }
+            },
+            "nbMol": 0,
+            "molarity": 0.000016777,
+            "molecularweight": 25284.87,
+            "meshFile": "",
+            "meshType": "file",
+            "principalVector": [
+              0,
+              0,
+              1
+            ],
+            "offset": [
+              0,
+              0,
+              20
+            ],
+            "uniprot": "",
+            "label": "Spike",
+            "Type": "MultiSphere",
+            "positions": [],
+            "radii": [],
+            "packingMode": "random",
+            "comments": "Tetraspanin opm",
+            "color": [
+              0.8941176470588236,
+              0.6274509803921569,
+              0.1843137254901961
+            ],
+            "confidence": 0,
+            "sprite": {
+              "image": "CoronaVirus_Sprite_Spike.png",
+              "offsety": "0",
+              "scale2d": 12
+            }
+          }
+        }
+      },
+      "interior": {
+        "ingredients": {
+          "Nucleocapsid_Top": {
+            "packingMode": "random",
+            "orientation": [
+              1,
+              0,
+              0
+            ],
+            "weight": 0.2,
+            "color": [
+              1,
+              0.498,
+              0.314
+            ],
+            "coordsystem": "left",
+            "nbJitter": 10,
+            "proba_not_binding": 0.5,
+            "radii": [
+              {
+                "radii": [
+                  40
+                ]
+              }
+            ],
+            "cutoff_boundary": 55,
+            "encapsulatingRadius": 40,
+            "positions2": [
+              [
+                [
+                  51,
+                  0,
+                  0
+                ]
+              ]
+            ],
+            "rejectionThreshold": 30,
+            "isAttractor": false,
+            "Type": "Grow",
+            "useLength": false,
+            "uLength": 102,
+            "source": {
+              "pdb": "DNA_oneTurn.pdb",
+              "bu": "BU1",
+              "selection": "",
+              "model": "",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  0
+                ]
+              }
+            },
+            "gradient": "",
+            "use_rbsphere": false,
+            "jitterMax": [
+              1,
+              1,
+              1
+            ],
+            "packingPriority": -200,
+            "orientBiasRotRangeMax": -3.1415927,
+            "closed": false,
+            "useHalton": true,
+            "biased": 0.5,
+            "molarity": 0,
+            "useOrientBias": false,
+            "rotRange": 6.2831,
+            "orientBiasRotRangeMin": -3.1415927,
+            "marge": 25,
+            "perturbAxisAmplitude": 0.1,
+            "nbMol": 0,
+            "use_mesh_rb": false,
+            "principalVector": [
+              0,
+              0,
+              1
+            ],
+            "properties": {},
+            "partners_name": [],
+            "name": "Nucleocapsid (Top)",
+            "positions": [
+              {
+                "coords": [
+                  0,
+                  0,
+                  0
+                ]
+              }
+            ],
+            "excluded_partners_name": [],
+            "placeType": "jitter",
+            "cutoff_surface": 55,
+            "length": 4119790,
+            "walkingMode": "sphere",
+            "constraintMarge": false,
+            "proba_binding": 0.5,
+            "useRotAxis": false,
+            "molecularweight": 0,
+            "meshFile": "sphere",
+            "meshType": "sphere",
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "label": "Nucleocapsid",
+            "confidence": 0,
+            "sprite": {
+              "image": "CoronaVirus_Sprite_NC.png",
+              "offsety": 0,
+              "scale2d": 12
+            }
+          },
+          "Nucleocapsid_Middle": {
+            "packingMode": "random",
+            "orientation": [
+              1,
+              0,
+              0
+            ],
+            "weight": 0.2,
+            "color": [
+              1,
+              0.498,
+              0.314
+            ],
+            "coordsystem": "left",
+            "nbJitter": 10,
+            "proba_not_binding": 0.5,
+            "radii": [
+              {
+                "radii": [
+                  40
+                ]
+              }
+            ],
+            "cutoff_boundary": 55,
+            "encapsulatingRadius": 40,
+            "positions2": [
+              [
+                [
+                  51,
+                  0,
+                  0
+                ]
+              ]
+            ],
+            "rejectionThreshold": 30,
+            "isAttractor": false,
+            "Type": "Grow",
+            "useLength": false,
+            "uLength": 102,
+            "source": {
+              "pdb": "DNA_oneTurn.pdb",
+              "bu": "BU1",
+              "selection": "",
+              "model": "",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  0
+                ]
+              }
+            },
+            "gradient": "",
+            "use_rbsphere": false,
+            "jitterMax": [
+              1,
+              1,
+              1
+            ],
+            "packingPriority": -200,
+            "orientBiasRotRangeMax": -3.1415927,
+            "closed": false,
+            "useHalton": true,
+            "biased": 0.5,
+            "molarity": 0,
+            "useOrientBias": false,
+            "rotRange": 6.2831,
+            "orientBiasRotRangeMin": -3.1415927,
+            "marge": 25,
+            "perturbAxisAmplitude": 0.1,
+            "nbMol": 0,
+            "use_mesh_rb": false,
+            "principalVector": [
+              0,
+              0,
+              1
+            ],
+            "properties": {},
+            "partners_name": [],
+            "name": "Nucleocapsid (Middle)",
+            "positions": [
+              {
+                "coords": [
+                  0,
+                  0,
+                  0
+                ]
+              }
+            ],
+            "excluded_partners_name": [],
+            "placeType": "jitter",
+            "cutoff_surface": 55,
+            "length": 4119790,
+            "walkingMode": "sphere",
+            "constraintMarge": false,
+            "proba_binding": 0.5,
+            "useRotAxis": false,
+            "molecularweight": 0,
+            "meshFile": "sphere",
+            "meshType": "sphere",
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "label": "Nucleocapsid",
+            "confidence": 0,
+            "sprite": {
+              "image": "CoronaVirus_Sprite_NC.png",
+              "offsety": 0,
+              "scale2d": 12
+            }
+          },
+          "Nucleocapsid_Bottom": {
+            "packingMode": "random",
+            "orientation": [
+              1,
+              0,
+              0
+            ],
+            "weight": 0.2,
+            "color": [
+              1,
+              0.498,
+              0.314
+            ],
+            "coordsystem": "left",
+            "nbJitter": 10,
+            "proba_not_binding": 0.5,
+            "radii": [
+              {
+                "radii": [
+                  40
+                ]
+              }
+            ],
+            "cutoff_boundary": 55,
+            "encapsulatingRadius": 40,
+            "positions2": [
+              [
+                [
+                  51,
+                  0,
+                  0
+                ]
+              ]
+            ],
+            "rejectionThreshold": 30,
+            "isAttractor": false,
+            "Type": "Grow",
+            "useLength": false,
+            "uLength": 102,
+            "source": {
+              "pdb": "DNA_oneTurn.pdb",
+              "bu": "BU1",
+              "selection": "",
+              "model": "",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  0
+                ]
+              }
+            },
+            "gradient": "",
+            "use_rbsphere": false,
+            "jitterMax": [
+              1,
+              1,
+              1
+            ],
+            "packingPriority": -200,
+            "orientBiasRotRangeMax": -3.1415927,
+            "closed": false,
+            "useHalton": true,
+            "biased": 0.5,
+            "molarity": 0,
+            "useOrientBias": false,
+            "rotRange": 6.2831,
+            "orientBiasRotRangeMin": -3.1415927,
+            "marge": 25,
+            "perturbAxisAmplitude": 0.1,
+            "nbMol": 0,
+            "use_mesh_rb": false,
+            "principalVector": [
+              0,
+              0,
+              1
+            ],
+            "properties": {},
+            "partners_name": [],
+            "name": "Nucleocapsid (Bottom)",
+            "positions": [
+              {
+                "coords": [
+                  0,
+                  0,
+                  0
+                ]
+              }
+            ],
+            "excluded_partners_name": [],
+            "placeType": "jitter",
+            "cutoff_surface": 55,
+            "length": 4119790,
+            "walkingMode": "sphere",
+            "constraintMarge": false,
+            "proba_binding": 0.5,
+            "useRotAxis": false,
+            "molecularweight": 0,
+            "meshFile": "sphere",
+            "meshType": "sphere",
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "label": "Nucleocapsid",
+            "confidence": 0,
+            "sprite": {
+              "image": "CoronaVirus_Sprite_NC.png",
+              "offsety": 0,
+              "scale2d": 12
+            }
+          }
+        }
+      },
+      "mb": {
+        "positions": [
+          0,
+          0,
+          0
+        ],
+        "radii": [
+          500
+        ]
+      }
+    }
+  }
+}
