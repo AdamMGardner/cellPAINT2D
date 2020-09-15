@@ -241,6 +241,7 @@ MonoBehaviour:
   spriteTumble_id: 0
   spriteRotation_id: 0
   bound_lines: {fileID: 0}
+  gLDebug: {fileID: 0}
   fiber_length: 0
   fiber_scale: 1
   maxNumber: 1102
@@ -251,6 +252,7 @@ MonoBehaviour:
   background_mat: {fileID: 0}
   zangle: 0
   initialized: 0
+  attachments: []
 --- !u!114 &114000013593224216
 MonoBehaviour:
   m_ObjectHideFlags: 0

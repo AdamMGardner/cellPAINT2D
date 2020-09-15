@@ -25,6 +25,8 @@ public class QuitGame : MonoBehaviour
     public string lastScreenshot = "";
     public GameObject ui;
     public GameObject manager;
+    public GameObject backgroundImageManagerContainer;
+    private BackgroundImageManager backgroundImageManager;
     public GUISkin skinWithListStyle;
 
     public Slider cs;
@@ -36,6 +38,7 @@ public class QuitGame : MonoBehaviour
     private bool show_browser_load = false;
     private bool load_scene = false;
     private bool show_browser_save_image = false;
+    private bool load_image = false;
     private bool save_image = false;
     private bool screen_grab = false;
     private string m_LabelContent;
@@ -77,8 +80,10 @@ public class QuitGame : MonoBehaviour
         if (save_scene) { SaveScene_cb(path); }
         if (load_scene) { LoadScene_cb(path); }
         if (save_image) { SaveImage_cb(path); }
+        if (load_image) { LoadImage_cb(path); }
         save_scene = false;
         load_scene = false;
+        load_image = false;
         save_image = false;
        // SceneManager.Instance.mask_ui = false;
     }
@@ -86,10 +91,12 @@ public class QuitGame : MonoBehaviour
     void Start() {
         //path = Application.dataPath;
         //if (!mb) mb = Camera.main.GetComponent<MotionBlur>();
+        backgroundImageManager = backgroundImageManagerContainer.GetComponent<BackgroundImageManager>();
     }
 
     public void Exit()
     {
+        //Need a warning popup here
         Application.Quit();
     }
 
@@ -123,6 +130,21 @@ public class QuitGame : MonoBehaviour
         //if (ui != null) { ui.SetActive(true); }
         Application.OpenURL(path);//
         //System.Diagnostics.Process.Start(path);
+    }
+    
+    public void LoadImage_cb(string path) 
+    {
+        if (path == null) return;
+        current_bytes = File.ReadAllBytes(path);
+        Texture2D backgroundImage = new Texture2D (2,2);
+        backgroundImage.LoadImage(current_bytes);
+
+        backgroundImageManager.backgroundImageContainer.GetComponent<Renderer>().material.mainTexture = backgroundImage;
+        backgroundImageManager.backgroundImageOriginalResoution = new Vector2 (backgroundImage.width, backgroundImage.height);
+        backgroundImageManager.backgroundImageContainer.transform.localScale = new Vector3 (backgroundImage.width/100, 1,  backgroundImage.height/100);
+
+        backgroundImageManager.backgroundImageContainer.SetActive(true);
+        backgroundImageManager.showBackgroundImageToggle.isOn = true;
     }
 
     public void OriginalScreenShot() {
@@ -220,6 +242,7 @@ public class QuitGame : MonoBehaviour
     {
         load_scene = false;
         save_image = false;
+        load_image = false;
         save_scene = true;
         if (!use_native_browser) OpenFileBrowser();// GetImage.GetImageFromUserAsync(gameObject.name, "LoadFromString");
         else {
@@ -242,10 +265,38 @@ public class QuitGame : MonoBehaviour
         }
     }
 
+    public void LoadImage()
+    {
+        load_scene = false;
+        load_image = true;
+        save_image = false;
+        save_scene = false;
+        //#if UNITY_WEBGL
+        if (!use_native_browser) OpenFileBrowser();//// GetImage.GetImageFromUserAsync(gameObject.name, "LoadFromString");
+        //getFileFromBrowser(gameObject.name, "LoadFromLines");
+        //#else
+        else {
+            string filePath = FileBrowser.OpenSingleFile("Open single file", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "png");
+            /*FileBrowser.OpenFilePanel("Open file Title", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), new string[] { "txt","json" }, null, (bool canceled, string filePath) => {
+                if (canceled)
+                {
+                    m_LabelContent = "[Open File] Canceled";
+                    Debug.Log("[Open File] Canceled");
+                    return;
+                }
+
+                m_LabelContent = "[Open File] Selected file: " + filePath;
+                Debug.Log("[Open File] Selected file: " + filePath);
+                FileSelectedCallback(filePath);
+            });*/
+            FileSelectedCallback(filePath);
+        }
+    }
 
     public void LoadScene()
     {
         load_scene = true;
+        load_image = false;
         save_image = false;
         save_scene = false;
         //#if UNITY_WEBGL
@@ -276,6 +327,7 @@ public class QuitGame : MonoBehaviour
         load_scene = false;
         
         //SceneManager.Instance.mask_ui = true;
+        load_image = false;
         save_image = true;
         if (!use_native_browser) OpenFileBrowser();// GetImage.GetImageFromUserAsync(gameObject.name, "LoadFromString");
         //getFileFromBrowser(gameObject.name, "LoadFromLines");

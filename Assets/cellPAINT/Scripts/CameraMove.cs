@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class CameraMove : MonoBehaviour {
+    public bool use_Viewport;
     public float dragSpeed = 1;
     public float zoomDragSpeed = 0.15f;
     private Vector3 dragOrigin;
@@ -34,6 +35,7 @@ public class CameraMove : MonoBehaviour {
         horzExtent = (Main_Camera.ScreenToWorldPoint(new Vector3(Main_Camera.pixelRect.width, 0.0f, 0.0f)).x);
         Main_Camera.orthographicSize = cameraCurrentZoom;
         ChildTransSize();
+        if (use_Viewport) Main_Camera.rect = new Rect (0.25f,1,0,1);
     }
 
     void Update()
@@ -74,6 +76,8 @@ public class CameraMove : MonoBehaviour {
             PositionOutOfBounds();
         }
         else { }
+
+        
         pmousePos = Input.mousePosition;
     }
 

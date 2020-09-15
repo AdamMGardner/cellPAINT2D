@@ -31,7 +31,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1000010311618172}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.95047647, y: 11.853033, z: 0.008300005}
+  m_LocalPosition: {x: -23.3833, y: -15.744468, z: 0.016600005}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -238,14 +238,14 @@ MonoBehaviour:
   pin_color: {r: 1, g: 0, b: 0, a: 1}
   entry: {x: 0, y: 0, z: 0}
   exit: {x: 0, y: 0, z: 0}
-  area: 508.62518
+  area: 508.82324
   ispined: 0
   enableCollision: 0
   spriteTumble_id: 0
   spriteRotation_id: 0
   bound_lines: {fileID: 0}
   gLDebug: {fileID: 0}
-  fiber_length: 0.24083178
+  fiber_length: 0.24083167
   fiber_scale: 1
   maxNumber: 1102
   maxLength: 0
