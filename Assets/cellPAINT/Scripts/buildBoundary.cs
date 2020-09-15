@@ -22,7 +22,7 @@ public class buildBoundary : MonoBehaviour
 
     public float colliderWidth;
     public float boundryArea;
-
+    public float offset_left=0.0f;
     private float last_size;
     private float last_size_max=0;
     private float prev_W=0.0f;
@@ -60,7 +60,7 @@ public class buildBoundary : MonoBehaviour
         topc = cam.ScreenToWorldPoint(new Vector2((last_width / 2.0f), last_height + (colliderWidthScreen / 2.0f)));
         bottomc = cam.ScreenToWorldPoint(new Vector2(last_width / 2.0f, (-colliderWidthScreen / 2.0f)));
         rightc = cam.ScreenToWorldPoint(new Vector2(last_width + (colliderWidthScreen / 2.0f), last_height / 2.0f));
-        leftc = cam.ScreenToWorldPoint(new Vector2((-colliderWidthScreen / 2.0f), last_height  / 2.0f));
+        leftc = cam.ScreenToWorldPoint(new Vector2((-colliderWidthScreen / 2.0f)+offset_left, last_height  / 2.0f));
 
         float W = Vector2.Distance(rightc, leftc) + colliderWidth;
         float H = Vector2.Distance(topc, bottomc) + colliderWidth;
@@ -84,12 +84,13 @@ public class buildBoundary : MonoBehaviour
 
     void Update() {
         //check if aspect ratio change or window size changed 
+        //is that what we want ?
         last_width = Screen.width;//cam.pixelRect.width;
         last_height = Screen.height;//cam.pixelRect.height;
         var top1 = cam.ScreenToWorldPoint(new Vector2((last_width / 2.0f), last_height + (colliderWidthScreen / 2.0f)));
         var bottom1 = cam.ScreenToWorldPoint(new Vector2(last_width / 2.0f, (-colliderWidthScreen / 2.0f)));
         var right1 = cam.ScreenToWorldPoint(new Vector2(last_width + (colliderWidthScreen / 2.0f), last_height / 2.0f));
-        var left1 = cam.ScreenToWorldPoint(new Vector2((-colliderWidthScreen / 2.0f), last_height  / 2.0f));
+        var left1 = cam.ScreenToWorldPoint(new Vector2((-colliderWidthScreen / 2.0f)+offset_left, last_height  / 2.0f));
         if (top1 != topc || bottom1!=bottomc || right1!= rightc || left1 != leftc){
             //keep the biggest one
             float W = Vector2.Distance(right1, left1) + colliderWidth;

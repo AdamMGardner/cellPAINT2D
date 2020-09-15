@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -46,6 +47,7 @@ public static class PdbLoader
 
     public static string GetAFile(string filename, string type, string extension) {
         //look for filename in repo and local directory
+        Debug.Log("GetAFile "+filename+" "+extension);
         var filePath = DefaultDataDirectory + "/" + type + "/"  + filename + extension;
         Debug.Log(filePath);
         if (!File.Exists(filePath))
@@ -131,7 +133,7 @@ public static class PdbLoader
         return filePath;
     }
 
-    private static string DownloadFile(string fileName, string url, string directory, string extension = "")
+    public static string DownloadFile(string fileName, string url, string directory, string extension = "")
     {
         if (!Directory.Exists(directory))
         {
@@ -266,6 +268,7 @@ public static class PdbLoader
 
         return matrices;
     }
+
 }
 
 public class Atom

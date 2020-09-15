@@ -489,7 +489,7 @@ public class Manager : MonoBehaviour {
         }
          */
         Shader shader;
-        if (name == "Draw DNA" || name == "RNA")
+        if (name.Contains("Draw DNA") || name.Contains("RNA"))
         {
             shader = nucleicacid_material.shader;
         }
@@ -499,7 +499,7 @@ public class Manager : MonoBehaviour {
         }
         //Shader shader = outline_material.shader;
         Material amat = new Material(shader);
-        if (name == "Draw DNA" || name == "RNA")
+        if (name.Contains("Draw DNA") || name.Contains("RNA"))
             amat.SetFloat("_Nucleic", 1.0f);
         //gets the default color for the ingredient (if there is one) and applies it to the material.
         //Debug.Log("The prefab for material creation is " + myPrefab.name);
@@ -593,6 +593,7 @@ public class Manager : MonoBehaviour {
 
     public Sprite GetSprite(string img_name)
     {
+        Debug.Log("GetSprite "+img_name);
         var sprite = Resources.Load<Sprite>("Recipie/" + Path.GetFileNameWithoutExtension(img_name));
         if (sprite == null)
         {
@@ -604,9 +605,9 @@ public class Manager : MonoBehaviour {
         return sprite;
     }
 
-    public GameObject Build(string aname = null) {
+    public GameObject Build(string aname = null,string img_name = null) {
         string prefab_name = aname;
-        string img_name = aname;
+        if (img_name == null) img_name = aname;
         int inde = ingredients_names.IndexOf(aname);
         if (inde != -1 && inde < sprites_names.Count) img_name = sprites_names[inde];
         else
@@ -681,7 +682,7 @@ public class Manager : MonoBehaviour {
         fiber_persistence = props.persistence_length;
         SpriteRenderer sr = current_prefab.GetComponent<SpriteRenderer>();
         sr.sharedMaterial = manager_prefab_material;
-        if (name == "Draw DNA" || name == "RNA") {
+        if (name.Contains("Draw DNA") || name.Contains("RNA")) {
             props.nucleic_acid_depth = true;
         }
         foreach (CircleCollider2D coll in current_prefab.GetComponents<CircleCollider2D>())
@@ -4252,24 +4253,47 @@ public class Manager : MonoBehaviour {
         //myPrefab.GetComponent<SpriteRenderer>().color = newRGB;
 
         //Sets the the Z-Axis position based on the new position.
-        myPrefab.transform.position= new Vector3 (transform.position.x, transform.position.y, zLevel);
-        
-        //Sets the new order in layer based on the Z-Axis Position.
-        if (zLevel <= 0.0215f)
-        {
-            myPrefab.GetComponent<SpriteRenderer>().sortingOrder = 1;
+        //myPrefab.transform.position= new Vector3 (transform.position.x, transform.position.y, zLevel);
+        if (myPrefab){
+            myPrefab.transform.position= new Vector3 (myPrefab.transform.position.x, myPrefab.transform.position.y, zLevel);
+            //Sets the new order in layer based on the Z-Axis Position.
+            if (zLevel <= 0.0215f)
+            {
+                myPrefab.GetComponent<SpriteRenderer>().sortingOrder = 1;
+            }
+            else if (zLevel > 0.0215f && zLevel <= 0.083f)
+            {
+                myPrefab.GetComponent<SpriteRenderer>().sortingOrder = 0;
+            }
+            else if (zLevel >  0.083f && zLevel <= 0.16f)
+            {
+                myPrefab.GetComponent<SpriteRenderer>().sortingOrder = -1;
+            }
+            else
+            {
+                myPrefab.GetComponent<SpriteRenderer>().sortingOrder = -2;
+            }           
         }
-        else if (zLevel > 0.0215f && zLevel <= 0.083f)
+        if (current_prefab) //use to be myPrefab
         {
-            myPrefab.GetComponent<SpriteRenderer>().sortingOrder = 0;
-        }
-        else if (zLevel >  0.083f && zLevel <= 0.16f)
-        {
-            myPrefab.GetComponent<SpriteRenderer>().sortingOrder = -1;
-        }
-        else
-        {
-            myPrefab.GetComponent<SpriteRenderer>().sortingOrder = -2;
+            current_prefab.transform.position= new Vector3 (transform.position.x, transform.position.y, zLevel);
+            //Sets the new order in layer based on the Z-Axis Position.
+            if (zLevel <= 0.0215f)
+            {
+                current_prefab.GetComponent<SpriteRenderer>().sortingOrder = 1;
+            }
+            else if (zLevel > 0.0215f && zLevel <= 0.083f)
+            {
+                current_prefab.GetComponent<SpriteRenderer>().sortingOrder = 0;
+            }
+            else if (zLevel >  0.083f && zLevel <= 0.16f)
+            {
+                current_prefab.GetComponent<SpriteRenderer>().sortingOrder = -1;
+            }
+            else
+            {
+                current_prefab.GetComponent<SpriteRenderer>().sortingOrder = -2;
+            }
         }
     }
 

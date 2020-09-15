@@ -9,6 +9,7 @@ using System.Linq;
 using SimpleJSON;
 using HexGrid;
 
+
 //[ExecuteInEditMode]
 public class RecipeUI : MonoBehaviour {
     public TextAsset recipe;
@@ -35,14 +36,17 @@ public class RecipeUI : MonoBehaviour {
     public bool use_coroutine=false;
     private int current_compartments = 0;
     private Dictionary<int, Vector2> CompartmentsIngredients;
-
+    private Dictionary<int, List<int>> CompartmentsIngredients_ids;//migrate to keep track of ingredients id to support merge
     private bool isGrouped = true; ////3/17/17
+    public List<int> selection = new List<int>();
+    public bool merge_upon_loading = false;
 
     void OnEnable() {
         Manager.Instance.recipeUI = this;
         Manager.Instance.ingredient_node = new Dictionary<string, JSONNode>();
         Compartments = new List<string>();
         CompartmentsIngredients = new Dictionary<int, Vector2>();
+        CompartmentsIngredients_ids = new Dictionary<int, List<int>>();
         hex_instance = new List<GameObject>();
         hex_grid = new List<Hex>();
 
@@ -99,14 +103,15 @@ public class RecipeUI : MonoBehaviour {
 
     public void updateHexInstance()
     {
-        int start_id = (int)CompartmentsIngredients[current_compartments].x;
-        int total_counts = (int)CompartmentsIngredients[current_compartments].y; //total number of sprite to display
-
+        //int start_id = (int)CompartmentsIngredients[current_compartments].x;
+        //int total_counts = (int)CompartmentsIngredients[current_compartments].y; //total number of sprite to display
+        int total_counts = CompartmentsIngredients_ids[current_compartments].Count;
         for (int count = 0; count < total_counts; count++)
         {
-            if (count + start_id < Manager.Instance.ingredients_names.Count)
+            var ig_id = CompartmentsIngredients_ids[current_compartments][count];
+            if (ig_id < Manager.Instance.ingredients_names.Count)
             {
-                string iname = Manager.Instance.ingredients_names[count + start_id];
+                string iname = Manager.Instance.ingredients_names[ig_id];
 
                 if (count < hex_instance.Count)
                 {
@@ -172,17 +177,22 @@ public class RecipeUI : MonoBehaviour {
     }
 
     public void LoadRessourceRecipe(int id){
+        JSONNode resultData = JSONNode.Parse(recipes[id].text);
+        if (merge_upon_loading){
+            MergeRecipe_cb(resultData);
+            return;
+        }
         Manager.Instance.Clear();
         Manager.Instance.ingredient_node.Clear();
         Compartments.Clear();
         CompartmentsIngredients.Clear();
+        CompartmentsIngredients_ids.Clear();
         //Manager.Instance.ingredients_prefab.Clear();
         Manager.Instance.all_prefab.Clear();
         Manager.Instance.ingredients_names.Clear();
         Manager.Instance.sprites_names.Clear();
         Manager.Instance.prefab_materials = new Dictionary<string, Material>();        
         Debug.Log("try loading ressource "+id.ToString());
-        JSONNode resultData = JSONNode.Parse(recipes[id].text);
         LoadRecipe_cb(resultData);
     }
     //need to add the membrane
@@ -190,9 +200,14 @@ public class RecipeUI : MonoBehaviour {
     public void LoadRecipe(string filename=null) {
         //Debug.Log("*****");
         //Debug.Log("Loading scene: " + recipePath);
+        if (merge_upon_loading){
+            MergeRecipe(filename);
+            return;
+        }
         Manager.Instance.ingredient_node.Clear();
         Compartments.Clear();
         CompartmentsIngredients.Clear();
+        CompartmentsIngredients_ids.Clear();
         //Manager.Instance.ingredients_prefab.Clear();
         //Destroy all prefab ?
         foreach (var KeyVal in Manager.Instance.all_prefab)
@@ -234,7 +249,8 @@ public class RecipeUI : MonoBehaviour {
         {
             Compartments.Add("Blood Plasma");
             nIngredients += resultData["cytoplasme"]["ingredients"].Count;
-            CompartmentsIngredients.Add(nC, new Vector2(0, nIngredients));
+            //CompartmentsIngredients.Add(nC, new Vector2(0, nIngredients));
+            CompartmentsIngredients_ids.Add(nC, new List<int>());
             Debug.Log("found 0 " + nIngredients.ToString());
             nCompartemnts += 1;
             nC++;
@@ -245,7 +261,8 @@ public class RecipeUI : MonoBehaviour {
             Compartments.Add(resultData["compartments"].GetKey(i));
             int total = resultData["compartments"][i]["interior"]["ingredients"].Count +
                 resultData["compartments"][i]["surface"]["ingredients"].Count + 1;
-            CompartmentsIngredients.Add(nC, new Vector2(nIngredients, total));
+            //CompartmentsIngredients.Add(nC, new Vector2(nIngredients, total));
+            CompartmentsIngredients_ids.Add(nC, new List<int>());
             Debug.Log("found " + nIngredients.ToString() + " " + total.ToString()+" "+i.ToString());
             nIngredients += total;
             nCompartemnts += 2;
@@ -254,25 +271,28 @@ public class RecipeUI : MonoBehaviour {
         if (nCompartemnts < 2)
             nCompartemnts = 2;
         DateTime start = DateTime.Now;
+        nC = 0;
         if (resultData["cytoplasme"] != null)
         {
-            AddRecipeIngredients(resultData["cytoplasme"]["ingredients"], "cytoplasme",false);
+            AddRecipeIngredients(nC, resultData["cytoplasme"]["ingredients"], "cytoplasme",false);
+            nC++;
         }
 
         for (int i = 0; i < resultData["compartments"].Count; i++)
         {
             //add the membrane
             //SceneManager.Instance.ingredients_names.Add("DrawMembrane");
-            AddRecipeIngredientMembrane(resultData["compartments"][i]);//"Cell_Membrane"
-            AddRecipeIngredients(resultData["compartments"][i]["surface"]["ingredients"], "surface" + i.ToString(),true);
-            AddRecipeIngredients(resultData["compartments"][i]["interior"]["ingredients"], "interior" + i.ToString(),false);
+            AddRecipeIngredientMembrane(nC, resultData["compartments"][i]);//"Cell_Membrane"
+            AddRecipeIngredients(nC, resultData["compartments"][i]["surface"]["ingredients"], "surface" + i.ToString(),true);
+            AddRecipeIngredients(nC, resultData["compartments"][i]["interior"]["ingredients"], "interior" + i.ToString(),false);
+            nC++;
         }
         //this is comment as I manually change a lot of name of the recipe to a better reading for the NSF competition. 
         //buildHierarchy (resultData);
         current_compartments = 0;
         loadNextCompartments();
         //load first ingredient of first compartments
-        int ingid = (int)CompartmentsIngredients[current_compartments].x;
+        int ingid = CompartmentsIngredients_ids[current_compartments][0];
         string iname = Manager.Instance.ingredients_names[ingid];
         Manager.Instance.SwitchPrefabFromName(iname);
         var prefab = Manager.Instance.all_prefab[iname];
@@ -280,20 +300,104 @@ public class RecipeUI : MonoBehaviour {
         hex_instance[0].GetComponent<Toggle>().isOn = true;
     }
     
-    public static void AddRecipeIngredients(JSONNode recipeDictionary, string prefix,bool surface)
+    public void MergeRecipe(string filename = null) 
+    {
+        JSONNode resultData;
+        if (filename == null)
+        {
+            if (recipe == null)
+            {
+                var fileContents = LoadResourceJsonTextfile("/Recipes/Blood_HIV_TCell_cellPAINT.json");
+                resultData = JSONNode.Parse(fileContents);
+            }
+            else
+            {
+                resultData = JSONNode.Parse(recipe.text);
+            }
+        }
+        else {
+            //add the filename directory as a search directory for data
+            PdbLoader.DataDirectories.Add(Path.GetDirectoryName(filename));
+            resultData = JSONNode.Parse(File.ReadAllText(filename)); //JSONNode.LoadFromFile(filename);
+        }
+        MergeRecipe_cb(resultData);
+    }
+
+    public void MergeRecipe_cb(JSONNode resultData)
+    {
+        int nCompartemnts = Compartments.Count;
+        int nIngredients = Manager.Instance.ingredients_names.Count;
+        int nC = nCompartemnts;
+        //for each compartment should add a Cell_Membrane
+        for (int i = 0; i < resultData["compartments"].Count; i++)
+        {
+            if (Compartments.Contains(resultData["compartments"].GetKey(i))) continue;
+            Compartments.Add(resultData["compartments"].GetKey(i));
+            //CompartmentsIngredients.Add(nC, new Vector2(nIngredients, total));
+            CompartmentsIngredients_ids.Add(nC, new List<int>());
+            nC++;
+        }
+        DateTime start = DateTime.Now;
+        if (resultData["cytoplasme"] != null)
+        {
+            nC =  Compartments.IndexOf("Blood Plasma");
+            AddRecipeIngredients(nC,resultData["cytoplasme"]["ingredients"], "cytoplasme",false);
+        }
+        for (int i = 0; i < resultData["compartments"].Count; i++)
+        {
+            //add the membrane
+            //SceneManager.Instance.ingredients_names.Add("DrawMembrane");
+            nC =  Compartments.IndexOf(resultData["compartments"].GetKey(i));
+            if (!Manager.Instance.ingredients_names.Contains(resultData["compartments"][i]["name"].Value)) 
+            {
+                AddRecipeIngredientMembrane(nC,resultData["compartments"][i]);//"Cell_Membrane"
+            }
+            AddRecipeIngredients(nC,resultData["compartments"][i]["surface"]["ingredients"], "surface" + i.ToString(),true);
+            AddRecipeIngredients(nC,resultData["compartments"][i]["interior"]["ingredients"], "interior" + i.ToString(),false);
+        }
+        //this is comment as I manually change a lot of name of the recipe to a better reading for the NSF competition. 
+        //buildHierarchy (resultData);
+        current_compartments = 0;
+        loadNextCompartments();
+        //load first ingredient of first compartments
+        int ingid = CompartmentsIngredients_ids[current_compartments][0];
+        string iname = Manager.Instance.ingredients_names[ingid];
+        Manager.Instance.SwitchPrefabFromName(iname);
+        var prefab = Manager.Instance.all_prefab[iname];
+        Manager.Instance.changeDescription(prefab, prefab.GetComponent<SpriteRenderer>());
+        hex_instance[0].GetComponent<Toggle>().isOn = true;
+    }
+
+    //need the path in the name so we keep info on compartment
+    public void AddRecipeIngredients(int cid, JSONNode recipeDictionary, string prefix,bool surface)
     {
         for (int j = 0; j < recipeDictionary.Count; j++)
         {
-            AddProteinIngredient(recipeDictionary[j], prefix,surface);
+            string iname = recipeDictionary[j]["name"].Value;
+            if (iname.Contains("DNA")) {
+                iname = "Draw DNA_"+cid.ToString();
+            }
+            if (iname.Contains("hu"))
+            {
+                iname = "HU";
+            }
+            if (Manager.Instance.ingredients_names.Contains( iname )) continue;
+            AddProteinIngredient(cid, recipeDictionary[j], prefix,surface);
+            var ig_id = Manager.Instance.ingredients_names.IndexOf( iname );
+            if (ig_id == -1) {
+                Debug.Log("didnt found "+iname);
+            }
+            CompartmentsIngredients_ids[cid].Add(ig_id);
         }
     }
 
-    public static void AddRecipeIngredientMembrane(JSONNode compDictionary)
+    public void AddRecipeIngredientMembrane(int cid, JSONNode compDictionary)
     {
         
         string iname = compDictionary["name"].Value;
         string prefab_name = "Cell_Membrane";
         Debug.Log("AddRecipeIngredientMembrane "+iname);
+        CompartmentsIngredients_ids[cid].Add(Manager.Instance.ingredients_names.Count);
         Manager.Instance.ingredient_node.Add(iname, compDictionary);
         Manager.Instance.ingredients_names.Add(iname);
         Manager.Instance.sprites_names.Add(prefab_name);
@@ -330,10 +434,19 @@ public class RecipeUI : MonoBehaviour {
     }
 
     //build the gameobject and serialize it 
-    public static void AddProteinIngredient(JSONNode ingredientDictionary, string prefix, bool surface)
+    public static void AddProteinIngredient(int cid, JSONNode ingredientDictionary, string prefix, bool surface)
     {
         string iname = ingredientDictionary["name"].Value;
         string img_name = iname;
+        if (iname.Contains("DNA")) {
+            iname = "Draw DNA_"+cid.ToString();
+            img_name = "Draw DNA";
+        }
+        if (iname.Contains("hu"))
+        {
+            iname = "HU";
+            img_name = "HU";
+        }
         if (ingredientDictionary.HasKey("sprite"))
         {
             if (ingredientDictionary["sprite"]["image"].Value!="") img_name = ingredientDictionary["sprite"]["image"].Value;
@@ -355,13 +468,7 @@ public class RecipeUI : MonoBehaviour {
             }
         */
         //dna and rna are special case....or not ?
-        if (iname.Contains("DNA")) {
-            iname = "Draw DNA";
-        }
-        if (iname.Contains("hu"))
-        {
-            iname = "HU";
-        }
+
         /*if (iname.Contains("Membrane")) {
             iname = "Membrane";
         }*/
@@ -488,7 +595,11 @@ public class RecipeUI : MonoBehaviour {
         instance.transform.rotation = Quaternion.Euler(0, 0, 0);
     }
 
-    private void oneHexInstance(int count, Point p, int start_id) {
+    private void oneHexInstanceStartCount(int count, Point p, int start_id) {
+        oneHexInstance(count, p,start_id+count);
+    }
+
+    private void oneHexInstance(int count, Point p, int ig_id) {
         GameObject instance;
         toggleLabelButtons instance_props;
 
@@ -503,13 +614,14 @@ public class RecipeUI : MonoBehaviour {
             instance = hex_instance[count];
         }
 
-        if ((start_id + count) >= Manager.Instance.ingredients_names.Count)
+        if (ig_id >= Manager.Instance.ingredients_names.Count)
         {
-            Debug.Log(start_id + count);
+            Debug.Log(ig_id.ToString()+" is out of bound ");
             return;
         }
-        string iname = Manager.Instance.ingredients_names[start_id + count];
-        string img_name = Manager.Instance.sprites_names[start_id + count];
+        Debug.Log(ig_id.ToString()+" is out of bound ? "+Manager.Instance.ingredients_names.Count.ToString());
+        string iname = Manager.Instance.ingredients_names[ig_id];
+        string img_name = Manager.Instance.sprites_names[ig_id];
         if (Manager.Instance.bucketMode)
         {
             instance.GetComponent<Toggle>().group = null;
@@ -621,9 +733,9 @@ public class RecipeUI : MonoBehaviour {
         }
         Layout flat = new Layout(Layout.flat, new Point(55, 55), new Point(0, 0));
         int count = 0;
-        int start_id = (int)CompartmentsIngredients[current_compartments].x;
-        int total_counts = (int)CompartmentsIngredients[current_compartments].y;
-
+        //int start_id = (int)CompartmentsIngredients[current_compartments].x;
+        //int total_counts = (int)CompartmentsIngredients[current_compartments].y;
+        int total_counts = CompartmentsIngredients_ids[current_compartments].Count;
         //Debug.Log("populate " + start_id.ToString() + " " + total_counts.ToString());
        
         //this layout start on the left-bottom and go up and on the right.
@@ -637,7 +749,7 @@ public class RecipeUI : MonoBehaviour {
                 Hex h = new Hex(q, r, -q - r);
                 hex_grid.Add(h);
                 Point p = Layout.HexToPixel(flat, h);
-                oneHexInstance(count,  p, start_id);
+                oneHexInstance(count,  p, CompartmentsIngredients_ids[current_compartments][count]);
                 count++;
                 if (count >= total_counts) return;
             }
@@ -662,10 +774,10 @@ public class RecipeUI : MonoBehaviour {
         //layout is the orientation of the hex
         Layout flat = new Layout(Layout.flat, new Point(55, 55), new Point(0, 0));
         
-        int start_id = (int)CompartmentsIngredients[current_compartments].x;
-        int total_counts = (int)CompartmentsIngredients[current_compartments].y; //total number of sprite to display
-
-        Debug.Log("populate " + start_id.ToString() + " " + total_counts.ToString());
+        //int start_id = (int)CompartmentsIngredients[current_compartments].x;
+        //int total_counts = (int)CompartmentsIngredients[current_compartments].y; //total number of sprite to display
+        int total_counts = CompartmentsIngredients_ids[current_compartments].Count;
+        //Debug.Log("populate " + start_id.ToString() + " " + total_counts.ToString());
         //get the Hex in spiral
         Hex center = new Hex(0, 0, 0);
         hex_grid = Hex.Spiral(center, map_radius);
@@ -675,7 +787,7 @@ public class RecipeUI : MonoBehaviour {
         //use cubic coordinates
         for (int i = 0; i < total_counts; i++) {
             Point p = Layout.HexToPixel(flat, hex_grid[i]);
-            oneHexInstance(i, p, start_id);
+            oneHexInstance(i, p, CompartmentsIngredients_ids[current_compartments][i]);
             //wait for animation ?
             //yield return new WaitForSeconds(0.05f);
         }
@@ -700,11 +812,10 @@ public class RecipeUI : MonoBehaviour {
         //layout is the orientation of the hex
         Layout flat = new Layout(Layout.flat, new Point(55, 55), new Point(0, 0));
         
-        int start_id = (int)CompartmentsIngredients[current_compartments].x;
-        int total_counts = (int)CompartmentsIngredients[current_compartments].y; //total number of sprite to display
-
-         Debug.Log("populate " + start_id.ToString() + " " + total_counts.ToString());
-        //get the Hex in spiral
+        //int start_id = (int)CompartmentsIngredients[current_compartments].x;
+        //int total_counts = (int)CompartmentsIngredients[current_compartments].y; //total number of sprite to display
+        int total_counts = CompartmentsIngredients_ids[current_compartments].Count;
+         //get the Hex in spiral
         Hex center = new Hex(0, 0, 0);
         hex_grid = Hex.Spiral(center, map_radius);
         //this layout start on the left-bottom and go up and on the right.
@@ -713,10 +824,158 @@ public class RecipeUI : MonoBehaviour {
         //use cubic coordinates
         for (int i = 0; i < total_counts; i++) {
             Point p = Layout.HexToPixel(flat, hex_grid[i]);
-            oneHexInstance(i, p, start_id);
+            oneHexInstance(i, p, CompartmentsIngredients_ids[current_compartments][i]);
             //wait for animation ?
             yield return new WaitForSeconds(0.05f);
         }
         displayTileCounts();
+    }
+
+
+    //this where we handle the search bar
+    //case insensitive
+    private void PruneItemsLinq(string currText)
+    {
+        currText = currText.ToLower();
+        //dont know how to get the index instead of the value
+        var Selection = Manager.Instance.ingredients_names.Where(x => x.ToLower().Contains(currText)).ToArray();
+    }
+    //Updated to not use Linq
+    private void PruneItemsArray(string currText)
+    {
+        string _currText = currText.ToLower();
+        selection.Clear();
+        //search for compartment then search for ingredient ?
+        for (int i = Manager.Instance.ingredients_names.Count - 1; i >= 0; i--)
+        {
+            string _item = Manager.Instance.ingredients_names[i].ToLower();
+            if (_item.Contains(_currText))
+            {
+                selection.Add(i);
+            }
+        }
+        StartCoroutine(populateHexGridFromCenterSpiralPrune(selection));
+    }
+    
+    IEnumerator populateHexGridFromCenterSpiralPrune(List<int> aselection)
+    {
+        //clean the prefab or just change the image
+        //if (hex_grid == null) return;
+        if (hex_grid !=null) {hex_grid.Clear();}
+        //if (item_add_prefab_instance != null) { item_add_prefab_instance.SetActive(false); }
+        foreach (var item in hex_instance)
+        {
+            item.SetActive(false);
+            if (item.GetComponent<Toggle>())
+            {
+                var colors = item.GetComponent<Toggle>().colors;
+                colors.normalColor = Color.white;
+                item.GetComponent<Toggle>().colors = colors;
+            }
+            if (item.GetComponent<Text>()) item.SetActive(false);
+        }
+        //layout is the orientation of the hex
+        Layout flat = new Layout(Layout.flat, new Point(55, 55), new Point(0, 0));
+
+        int start_id = 0;// (int)CompartmentsIngredients[current_compartments].x;
+        //int total_counts = (int)CompartmentsIngredients[current_compartments].y; //total number of sprite to display
+        int total_counts = aselection.Count;
+        //get the Hex in spiral
+        Hex center = new Hex(0, 0, 0);
+        hex_grid = Hex.Spiral(center, map_radius);
+        //this layout start on the left-bottom and go up and on the right.
+        //try to fin a layout that start from the middle and go around.
+        //map radius is the radius of the grid
+        //use cubic coordinates
+        for (int i = 0; i < total_counts; i++)
+        {
+            Point p = Layout.HexToPixel(flat, hex_grid[i]);
+            start_id = aselection[i];
+            oneHexInstance(i, p, start_id);// i, p, start_id);
+            //wait for animation ?
+            yield return new WaitForSeconds(0.05f);
+        }
+        displayTileCounts();
+    }
+
+    //the callback
+    public void OnSearchValidated(string input_query) {
+        //filter and change the palette showing only the current selection
+        if (input_query!="") PruneItemsArray(input_query);
+        else StartCoroutine(populateHexGridFromCenterSpiral());
+    }
+
+    public void ToggleMergeUponLoading(bool value){
+        merge_upon_loading = value;
+    }
+
+    public string createIngredientStringJson(string img_name, bool is_surface, bool is_fiber, float scale2d,float yoffset){
+        var astring =@"{
+                'Type': 'MultiSphere',
+                'surface' : 'false',
+                'sprite': {
+                    'image': 'TF_Cg.png',
+                    'offsety': 0,
+                    'scale2d': 2.85
+                }
+            }";
+        astring = astring.Replace("false", is_surface.ToString());
+        astring = astring.Replace("0", yoffset.ToString());
+        astring = astring.Replace("2.85", scale2d.ToString());
+        astring = astring.Replace("TF_Cg.png", img_name);
+        if (is_fiber) {
+            astring.Replace("MultiSphere", "Grow");
+        }
+        astring = "{\"Type\":\"" + ((is_fiber)?"Grow":"MultiSphere")+"\",";
+        astring += "\"surface\":\""+ ((is_surface)?"true":"false")+"\",";
+        astring += "\"sprite\":{";
+        astring += "\"image\":\""+img_name+"\",";
+        astring += "\"offsety\":\""+yoffset.ToString()+"\",";
+        astring += "\"scale2d\":\""+scale2d.ToString()+"\"";
+        astring += "}}";
+        return JSONNode.Parse(astring);
+    }
+
+    public void AddOneIngredient(string iname, string img_name, float ascale2d,float yoffset, bool is_surface=false, bool is_fiber = false, int comp= -1) {
+        var name = iname;
+        /*
+        var myPrefab = Manager.Instance.GetaPrefab(name, PDBid);
+        Build the sprites from PDB and Illustrates
+        save the sprites in images with name iname
+        */
+        if (Manager.Instance.all_prefab.ContainsKey(name)) {
+            //change name
+            name = name+"_user";
+        }
+
+        CompartmentsIngredients_ids[current_compartments].Add(Manager.Instance.ingredients_names.Count); 
+        Manager.Instance.ingredients_names.Add(name);
+        Manager.Instance.sprites_names.Add(img_name);
+        /*create a JSON NODE */
+        //JSONNode node = createIngredientStringJson(img_name, is_surface, is_fiber, ascale2d, yoffset);
+        //Manager.Instance.ingredient_node.Add(name, node);
+
+        GameObject myPrefab = Resources.Load("Prefabs/" + name) as GameObject;
+        if (myPrefab==null)
+            myPrefab = Manager.Instance.Build(name,img_name);
+        myPrefab.SetActive(true);
+        Manager.Instance.all_prefab.Add(name, myPrefab);
+        string compname = "root";
+        if (comp == -1) comp = 1;//first
+        compname = Compartments[current_compartments];
+        if (myPrefab)
+        {
+            PrefabProperties p = myPrefab.GetComponent<PrefabProperties>();
+            p.compartment = compname.Split('.')[0];
+            p.SetupFromValues(is_surface, is_fiber, ascale2d, yoffset);
+            if (p.is_fiber)
+            {
+                p.persistence_length = 3;
+            }            
+            //need to setup the collider without the node information
+        }
+        //oneHexInstance(hex_instance.Count + 1, new Point(), Manager.Instance.ingredients_names.Count - 1);
+        //loadNextCompartments();
+        StartCoroutine(populateHexGridFromCenterSpiral());
     }
 }

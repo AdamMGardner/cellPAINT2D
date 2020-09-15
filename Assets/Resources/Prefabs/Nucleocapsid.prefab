@@ -158,7 +158,7 @@ MonoBehaviour:
   pin_color: {r: 1, g: 0, b: 0, a: 1}
   entry: {x: 0, y: 0, z: 0}
   exit: {x: 0, y: 0, z: 0}
-  area: 4095.5698
+  area: 4276.2524
   ispined: 0
   enableCollision: 0
   spriteTumble_id: 0

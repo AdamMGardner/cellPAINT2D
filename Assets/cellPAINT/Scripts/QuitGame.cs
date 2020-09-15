@@ -792,7 +792,7 @@ public class QuitGame : MonoBehaviour
             if (Manager.Instance.myPrefab)
                 current_name = Manager.Instance.myPrefab.name;
             if (filename == null) return;
-            Manager.Instance.Clear();
+            if (!Manager.Instance.recipeUI.merge_upon_loading) Manager.Instance.Clear();
             Debug.Log("should load from " + filename);
             string[] lines = System.IO.File.ReadAllLines(filename);
             Debug.Log("should load from this many lines " + lines.Length.ToString());
@@ -802,7 +802,7 @@ public class QuitGame : MonoBehaviour
         {
             //load json recipe
 
-            Manager.Instance.Clear();
+            if (!Manager.Instance.recipeUI.merge_upon_loading) Manager.Instance.Clear();
             Manager.Instance.recipeUI.LoadRecipe(filename);
         }
         else {

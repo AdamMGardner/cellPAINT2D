@@ -647,6 +647,137 @@ public class PrefabProperties : MonoBehaviour
 
     }
 
+    public void SetupFromValues(bool issurface, bool isfiber, float ascale2d, float offsety, bool isclosing = false ) {
+        //setup color ?
+        if (setuped) return;
+        Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
+        if (rb == null) rb = gameObject.AddComponent<Rigidbody2D>();
+        is_fiber = isfiber;
+        is_surface = issurface;
+        Collider2D[] coll = GetComponents<Collider2D>();
+        foreach (var col in coll) DestroyImmediate(col);
+        PolygonCollider2D box = gameObject.GetComponent<PolygonCollider2D>();
+        if (box == null) box = gameObject.AddComponent<PolygonCollider2D>();
+        Vector2[] pts = box.points;
+        DestroyImmediate(box);
+        pcp = Helper.BuildOBB2D(pts, 0.0f); //TestEigenTest(cluster);
+        Debug.Log("pcp"); Debug.Log(pcp);
+        var pixel_scale = (Manager.Instance.unit_scale * 10.0f) / 100.0f;
+        var unity_scale2d = 1.0f / (Manager.Instance.unit_scale * 10.0f);
+        //1 unit scale is 3.5nm e.g. Manager.Instance.unit_scale. Divide by (uscale*10.0) to get unity unit.
+        //sprite is scale2d 
+        scale2d = ascale2d;
+        surface_offset = offsety;
+        local_scale = 1.0f/(pixel_scale * scale2d);
+        surface_offset=(surface_offset/local_scale);
+        Vector3 center = (pcp[0] + pcp[1]) * 0.5f;
+        Vector3 m_ext = (pcp[0] - pcp[1]);
+        Quaternion mrot = new Quaternion(pcp[2].x, pcp[2].y, pcp[2].z, pcp[2].w);
+        if (!is_fiber && is_surface)
+        {
+            gameObject.layer = 12;
+            float thickness = (84.0f / 2.0f) * unity_scale2d;//42 angstrom
+            float radius = (m_ext.y + m_ext.z) / 4.0f;
+            //C0ircleCollider2D c = gameObject.AddComponent<CircleCollider2D>();
+            //c.radius = thickness;
+            //c.offset = new Vector2(center.y, center.z + surface_offset);
+            float bradius = 2.0f;
+            float bicycle_radius = bradius*1.0f/local_scale;
+            TestPcpalAxis2D();
+            GameObject bicycleUp = new GameObject("up");
+            bicycleUp.layer = 15;
+            bicycleUp.transform.parent = gameObject.transform;
+            bicycleUp.transform.localPosition = new Vector3(center.y, center.z + thickness + bicycle_radius + surface_offset, 0.0f);
+            CircleCollider2D CircleUp = bicycleUp.AddComponent<CircleCollider2D>();
+            CircleUp.radius = bicycle_radius;
+            CircleUp.offset = new Vector2(bicycle_radius,0);
+            CircleCollider2D CircleUp2 = bicycleUp.AddComponent<CircleCollider2D>();
+            CircleUp2.radius = bicycle_radius;
+            CircleUp2.offset = new Vector2(-bicycle_radius,0);
+            Rigidbody2D CircleUpRb = bicycleUp.AddComponent<Rigidbody2D>();
+            //CircleUpRb.bodyType = RigidbodyType2D.Kinematic;
+            //add the joint FixedJoint2D or Hinge
+            FixedJoint2D hjup = bicycleUp.AddComponent<FixedJoint2D>();
+            hjup.autoConfigureConnectedAnchor = false;
+            hjup.connectedBody = rb;
+            hjup.anchor = new Vector2(-bicycle_radius, 0);
+            hjup.connectedAnchor = new Vector2(-bicycle_radius, center.z + thickness + bicycle_radius + surface_offset);
+            //hjup.frequency = 1.0f;
+            hjup = bicycleUp.AddComponent<FixedJoint2D>();
+            hjup.autoConfigureConnectedAnchor = false;
+            hjup.connectedBody = rb;
+            hjup.anchor = new Vector2(bicycle_radius, 0);
+            hjup.connectedAnchor = new Vector2(bicycle_radius, center.z + thickness + bicycle_radius+ surface_offset);
+            //hjup.frequency = 1.0f;
+            GameObject bicycleDown = new GameObject("down");
+            bicycleDown.layer = 15;
+            bicycleDown.transform.parent = gameObject.transform;
+            bicycleDown.transform.localPosition = new Vector3(center.y, center.z - thickness - bicycle_radius + surface_offset, 0.0f);
+            CircleCollider2D CircleDown = bicycleDown.AddComponent<CircleCollider2D>();
+            CircleDown.radius = bicycle_radius;
+            CircleDown.offset = new Vector2(bicycle_radius,0);
+            CircleCollider2D CircleDown2 = bicycleDown.AddComponent<CircleCollider2D>();
+            CircleDown2.radius = bicycle_radius;
+            CircleDown2.offset = new Vector2(-bicycle_radius,0);
+            Rigidbody2D CircleDownRb = bicycleDown.AddComponent<Rigidbody2D>();
+            //CircleDownRb.bodyType = RigidbodyType2D.Kinematic;
+            //add the joint
+            FixedJoint2D hjdown = bicycleDown.AddComponent<FixedJoint2D>();
+            hjdown.autoConfigureConnectedAnchor = false;
+            hjdown.connectedBody = rb;
+            hjdown.anchor = new Vector2(-bicycle_radius, 0);
+            hjdown.connectedAnchor = new Vector2(-bicycle_radius, center.z - thickness -bicycle_radius + surface_offset);
+            //hjdown.frequency = 1.0f;
+            hjdown = bicycleDown.AddComponent<FixedJoint2D>();
+            hjdown.autoConfigureConnectedAnchor = false;
+            hjdown.connectedBody = rb;
+            hjdown.anchor = new Vector2(bicycle_radius, 0);
+            hjdown.connectedAnchor = new Vector2(bicycle_radius, center.z - thickness -bicycle_radius + surface_offset);
+            //hjdown.frequency = 1.0f;
+        }
+        else if (is_fiber) {
+            //persistence length ?
+            persistence_length = 1;//nb of spring
+            persistence_strength = 5.0f;
+            fiber_scale = local_scale;
+            //setup the collider
+            center = mrot * center;
+            float radius = (Mathf.Abs(m_ext.y) / 2.0f)/2.0f;
+            //main collider first
+            if (Mathf.Abs(m_ext.x - m_ext.y) < 0.25f)
+            {
+                CircleCollider2D Circle = gameObject.AddComponent<CircleCollider2D>();
+                Circle.radius = ((Mathf.Abs(m_ext.x) + Mathf.Abs(m_ext.y)) / 2.0f) / 2.0f;
+                Circle.offset = new Vector2(center.x, center.y);
+            }
+            else
+            {
+                m_ext = Quaternion.Inverse(mrot) * new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
+                BoxCollider2D abox = gameObject.AddComponent<BoxCollider2D>();
+                abox.size = new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
+                abox.offset = new Vector2(center.x, center.y);
+            }
+            //anchor collider, on X axis.
+            CircleCollider2D CircleLeft = gameObject.AddComponent<CircleCollider2D>();
+            CircleLeft.radius = radius;
+            CircleLeft.offset = new Vector2(-Mathf.Abs(m_ext.x)/2.0f + radius/2.0f, center.y);
+            CircleCollider2D CircleRight = gameObject.AddComponent<CircleCollider2D>();
+            CircleRight.radius = radius;
+            CircleRight.offset = new Vector2(Mathf.Abs(m_ext.x) / 2.0f - radius / 2.0f, center.y);
+            gameObject.layer = 13; //DNA. should we use nucleic acid depth ?
+            closing = isclosing;
+        }
+        else
+        {
+            TestPcpalAxis2D();
+        }
+        
+        transform.localScale = new Vector3(local_scale, local_scale, local_scale);
+        setuped = true;
+        surface_offset=surface_offset*local_scale;
+    }
+
+
     public void Setup(bool special = false) {
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer.sprite == null && sprites_asset.Count!=0) {
