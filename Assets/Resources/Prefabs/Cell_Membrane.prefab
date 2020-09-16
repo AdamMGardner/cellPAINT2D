@@ -361,6 +361,7 @@ MonoBehaviour:
   is_surface: 0
   surface_secondLayer: 0
   surface_offset: 0
+  y_offset: 0
   scale2d: 1
   local_scale: 1
   pcpAxe: {x: 0, y: 1, z: 0}
@@ -369,6 +370,7 @@ MonoBehaviour:
   fiber_Middle: 0
   fiber_Bottom: 0
   light_fiber: 0
+  closing: 1
   is_anchor: 1
   is_bound: 0
   bound_to: 
@@ -408,6 +410,7 @@ MonoBehaviour:
   spriteTumble_id: 0
   spriteRotation_id: 0
   bound_lines: {fileID: 0}
+  gLDebug: {fileID: 0}
   fiber_length: 1.425
   fiber_scale: 0.75
   maxNumber: 0
@@ -418,6 +421,8 @@ MonoBehaviour:
   background_mat: {fileID: 2100000, guid: d1aeec257510e6249a7b7a62979e644b, type: 2}
   zangle: 0
   initialized: 0
+  RB: {fileID: 0}
+  attachments: []
 --- !u!1 &1786315759672094
 GameObject:
   m_ObjectHideFlags: 0
@@ -428,7 +433,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4013457645102256}
   - component: {fileID: 212729372665511824}
-  - component: {fileID: 114867192465068068}
   m_Layer: 9
   m_Name: DrawMembrane _DiscMask1
   m_TagString: Untagged
@@ -500,88 +504,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &114867192465068068
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1786315759672094}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c9469b5b7690ac418499ac0796a0a91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: Cell_Membrane
-  common_name: 
-  function_group: 
-  compartment: 
-  description: 
-  order: 0
-  layer_number: 3
-  isCircleCollider: 0
-  circle_radius: 0
-  circle_offset: {x: 0, y: 0}
-  isCapsuleCollider: 0
-  capsule_size: {x: 0, y: 0}
-  capsule_offset: {x: 0, y: 0}
-  isHorizontal: 0
-  is_surface: 0
-  surface_secondLayer: 0
-  surface_offset: 0
-  scale2d: 1
-  local_scale: 1
-  pcpAxe: {x: 0, y: 1, z: 0}
-  offset: {x: 0, y: 0, z: 0}
-  is_fiber: 0
-  fiber_Middle: 0
-  fiber_Bottom: 0
-  light_fiber: 0
-  is_anchor: 0
-  is_bound: 0
-  bound_to: 
-  is_connected: 0
-  connected_to: 
-  connection_occupied: 0
-  nucleic_acid_depth: 0
-  sprite_random_switch: 0
-  prefab_random_switch: 0
-  sprite_ordered_switch: 0
-  sprite_tumble_switch: 0
-  sprite_icosahedronRotation_switch: 0
-  persistence_length: 0
-  persistence_strength: -1
-  fiber_hingeJoint_limits: 0
-  hingeJoint_UPPERlimit: 15
-  hingeJoint_LOWERlimit: -15
-  number_placed: 0
-  setuped: 0
-  outline: 0
-  outline_width: 12
-  sprites_asset: []
-  prefab_asset: []
-  pcp: []
-  Default_Sprite_Color: {r: 0.7799444, g: 0, b: 1, a: 1}
-  outline_color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  pin_color: {r: 1, g: 0, b: 0, a: 1}
-  entry: {x: 0, y: 0, z: 0}
-  exit: {x: 0, y: 0, z: 0}
-  area: 0
-  ispined: 0
-  enableCollision: 0
-  spriteTumble_id: 0
-  spriteRotation_id: 0
-  bound_lines: {fileID: 0}
-  fiber_length: 0
-  fiber_scale: 1
-  maxNumber: 0
-  maxLength: 0
-  gap_between_bound: 0
-  iterate_bound: 0
-  draw_background: 0
-  background_mat: {fileID: 0}
-  zangle: 0
-  initialized: 0
 --- !u!1 &1843326188522982
 GameObject:
   m_ObjectHideFlags: 0
@@ -592,7 +514,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4712144986995514}
   - component: {fileID: 212627179773110232}
-  - component: {fileID: 114898424696079270}
   m_Layer: 9
   m_Name: DrawMembrane _DiscMask1
   m_TagString: Untagged
@@ -664,88 +585,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &114898424696079270
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1843326188522982}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c9469b5b7690ac418499ac0796a0a91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: Cell_Membrane
-  common_name: 
-  function_group: 
-  compartment: 
-  description: 
-  order: 0
-  layer_number: 3
-  isCircleCollider: 0
-  circle_radius: 0
-  circle_offset: {x: 0, y: 0}
-  isCapsuleCollider: 0
-  capsule_size: {x: 0, y: 0}
-  capsule_offset: {x: 0, y: 0}
-  isHorizontal: 0
-  is_surface: 0
-  surface_secondLayer: 0
-  surface_offset: 0
-  scale2d: 1
-  local_scale: 1
-  pcpAxe: {x: 0, y: 1, z: 0}
-  offset: {x: 0, y: 0, z: 0}
-  is_fiber: 0
-  fiber_Middle: 0
-  fiber_Bottom: 0
-  light_fiber: 0
-  is_anchor: 0
-  is_bound: 0
-  bound_to: 
-  is_connected: 0
-  connected_to: 
-  connection_occupied: 0
-  nucleic_acid_depth: 0
-  sprite_random_switch: 0
-  prefab_random_switch: 0
-  sprite_ordered_switch: 0
-  sprite_tumble_switch: 0
-  sprite_icosahedronRotation_switch: 0
-  persistence_length: 0
-  persistence_strength: -1
-  fiber_hingeJoint_limits: 0
-  hingeJoint_UPPERlimit: 15
-  hingeJoint_LOWERlimit: -15
-  number_placed: 0
-  setuped: 0
-  outline: 0
-  outline_width: 12
-  sprites_asset: []
-  prefab_asset: []
-  pcp: []
-  Default_Sprite_Color: {r: 0.7799444, g: 0, b: 1, a: 1}
-  outline_color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  pin_color: {r: 1, g: 0, b: 0, a: 1}
-  entry: {x: 0, y: 0, z: 0}
-  exit: {x: 0, y: 0, z: 0}
-  area: 0
-  ispined: 0
-  enableCollision: 0
-  spriteTumble_id: 0
-  spriteRotation_id: 0
-  bound_lines: {fileID: 0}
-  fiber_length: 0
-  fiber_scale: 1
-  maxNumber: 0
-  maxLength: 0
-  gap_between_bound: 0
-  iterate_bound: 0
-  draw_background: 0
-  background_mat: {fileID: 0}
-  zangle: 0
-  initialized: 0
 --- !u!1 &1947143586691086
 GameObject:
   m_ObjectHideFlags: 0
