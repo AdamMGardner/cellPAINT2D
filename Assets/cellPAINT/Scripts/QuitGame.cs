@@ -352,6 +352,7 @@ public class QuitGame : MonoBehaviour
 
     public void SaveScene_cb(string filename)
     {
+        //what about group and new ingredient, look at the code from the 3D branch.
         string sep = ",";
         Debug.Log("You are in the saveScene_cb with filename: " + filename);
         if (filename == null) return;

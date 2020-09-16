@@ -195,6 +195,7 @@ public class Add_ingredient_ui : MonoBehaviour
         sprite_name = Path.GetFileName(filePath);
         sprite_path = Path.GetDirectoryName(filePath);
         PdbLoader.DataDirectories.Add(sprite_path);
+        Manager.Instance.AddUserDirectory(sprite_path);
     }
 
     public void AddTheIngredient(){

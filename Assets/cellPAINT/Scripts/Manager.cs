@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UIWidgets;
@@ -931,7 +932,7 @@ public class Manager : MonoBehaviour {
         Vector3 objectPosMiddle = new Vector3(objectPos.x, objectPos.y, 0.125f);
         Vector3 objectPosBottom = new Vector3(objectPos.x, objectPos.y, 0.250f);
 
-        float Zangle = Random.value * Mathf.PI * Mathf.Rad2Deg;
+        float Zangle = UnityEngine.Random.value * Mathf.PI * Mathf.Rad2Deg;
         Quaternion quat = Quaternion.AngleAxis(Zangle, Vector3.forward);
         
         GameObject newObject = Instantiate(instancePrefab, objectPos, quat) as GameObject;
@@ -1037,7 +1038,7 @@ public class Manager : MonoBehaviour {
     public void OneInstance(Vector3 objectPos)
     {
         if (stop) return;
-        float Zangle = Random.value * Mathf.PI * Mathf.Rad2Deg;
+        float Zangle = UnityEngine.Random.value * Mathf.PI * Mathf.Rad2Deg;
         Quaternion quat = Quaternion.AngleAxis(Zangle, Vector3.forward);
         GameObject newObject = Instantiate(myPrefab, objectPos, quat) as GameObject;
 
@@ -1145,7 +1146,7 @@ public class Manager : MonoBehaviour {
         //This if loop should change the prefab based on an array and switch in PrefabProperties.cs
         if (props.prefab_random_switch)
         {
-            int prefab_id = Random.Range(0, props.prefab_asset.Count);
+            int prefab_id = UnityEngine.Random.Range(0, props.prefab_asset.Count);
             aprefab = props.prefab_asset[prefab_id];
             string prefabName = aprefab.GetComponent<PrefabProperties>().name;
             SpriteRenderer sr = aprefab.GetComponent<SpriteRenderer>();
@@ -1463,6 +1464,17 @@ public class Manager : MonoBehaviour {
         attachments = new List<SpringJoint2D>();
     }
 
+    public void AddUserDirectory(string path) 
+    {
+        var current_paths = "";
+        if (PlayerPrefs.HasKey("UserDirectories")) {
+            current_paths = PlayerPrefs.GetString("UserDirectories");
+        }
+        if (!current_paths.Contains(path)) {
+            current_paths+=path+",";
+        }
+    }
+
     // Use this for initialization
     void Start() {
         /*image effect check*/
@@ -1479,7 +1491,14 @@ public class Manager : MonoBehaviour {
         VignetteActive();
         DepthBlurActive();
         GreyScaleActive();
-
+        //check for any dataDirectories in PlayerPref
+        if (PlayerPrefs.HasKey("UserDirectories")) {
+            var dirs = PlayerPrefs.GetString("UserDirectories");
+            string[] alldir = dirs.Split(new string[] { "," }, StringSplitOptions.None);
+            foreach (var d in alldir) {
+                if (d!="" && !PdbLoader.DataDirectories.Contains(d)) PdbLoader.DataDirectories.Add(d);
+            }
+        }
         PdbLoader.DataDirectories.Add(Application.dataPath + "/../Data/images/");
         UnityEngine.Random.InitState(_Seed);
         selected_prefab = new List<string>();
@@ -1564,7 +1583,7 @@ public class Manager : MonoBehaviour {
                 var props = myPrefab.GetComponent<PrefabProperties>();
                 if (props.prefab_random_switch)
                 {
-                    int prefab_id = Random.Range(0, props.prefab_asset.Count);
+                    int prefab_id = UnityEngine.Random.Range(0, props.prefab_asset.Count);
                     var aprefab = props.prefab_asset[prefab_id];
                     string prefabName = aprefab.GetComponent<PrefabProperties>().name;
                     SpriteRenderer sr = aprefab.GetComponent<SpriteRenderer>();
@@ -2385,7 +2404,7 @@ public class Manager : MonoBehaviour {
                     Vector3 point = new Vector3((float)System.Math.Round(x, 4), (float)System.Math.Round(y, 4));
                     Vector3 wPoint = current_camera.ViewportToWorldPoint(point);
                     wPoint.z = 0.0f;
-                    float Zangle = Random.value * Mathf.PI * Mathf.Rad2Deg;
+                    float Zangle = UnityEngine.Random.value * Mathf.PI * Mathf.Rad2Deg;
                     Quaternion quat = Quaternion.AngleAxis(Zangle, Vector3.forward);
                     InstanceAndCreatePrefab(selected_pref[obji], wPoint);
 
@@ -3123,7 +3142,7 @@ public class Manager : MonoBehaviour {
             if (allrb[i].GetComponent<PrefabProperties>().is_fiber) { reduce = 1.0f / 100.0f; }
             if (allrb[i].GetComponent<PrefabProperties>().is_surface) { reduce = 1.0f / 10.0f; }
             else reduce = 1.0f;
-            allrb[i].AddTorque(Random.Range(-(timeScale), (timeScale)) * (scale_force / 2), 0);
+            allrb[i].AddTorque( UnityEngine.Random.Range(-(timeScale), (timeScale)) * (scale_force / 2), 0);
             allrb[i].AddForce(UnityEngine.Random.insideUnitCircle * scale_force * reduce);
             yield return null;
         }
@@ -3171,7 +3190,7 @@ public class Manager : MonoBehaviour {
             if (player == null) continue;
             //player.bodyType = RigidbodyType2D.Dynamic;
             //player.collisionDetectionMode = CollisionDetectionMode2D.Discrete; //this is slow, put it in the on mouse up!
-            player.AddTorque(Random.Range(-(timeScale), (timeScale)) * (scale_force / 2), 0);
+            player.AddTorque( UnityEngine.Random.Range(-(timeScale), (timeScale)) * (scale_force / 2), 0);
             player.AddForce(UnityEngine.Random.insideUnitCircle * scale_force);
         }
         for (int i = 0; i < surface_objects.Count; i++)
@@ -3180,7 +3199,7 @@ public class Manager : MonoBehaviour {
             if (player == null) continue;
             //player.bodyType = RigidbodyType2D.Dynamic;
             //player.collisionDetectionMode = CollisionDetectionMode2D.Discrete; //this is slow, put it in the on mouse up!
-            player.AddTorque(Random.Range(-(timeScale), (timeScale)) * (scale_force / 2), 0);
+            player.AddTorque( UnityEngine.Random.Range(-(timeScale), (timeScale)) * (scale_force / 2), 0);
             player.AddForce(UnityEngine.Random.insideUnitCircle * scale_force/10.0f);
         }
         for (int i = 0; i < bounded.Length; i++)
@@ -3189,7 +3208,7 @@ public class Manager : MonoBehaviour {
             if (player == null) continue;
             //player.bodyType = RigidbodyType2D.Dynamic;
             //player.collisionDetectionMode = CollisionDetectionMode2D.Discrete; //this is slow, put it in the on mouse up!
-            player.AddTorque(Random.Range(-(timeScale), (timeScale)) * (scale_force / 2), 0);
+            player.AddTorque( UnityEngine.Random.Range(-(timeScale), (timeScale)) * (scale_force / 2), 0);
             player.AddForce(UnityEngine.Random.insideUnitCircle * scale_force);
         }
         //fiber?
@@ -3218,7 +3237,7 @@ public class Manager : MonoBehaviour {
             if (p.is_fiber) { reduce = 10.0f; }
             if (p.is_surface) { reduce = 1.0f / 10.0f; }
             else reduce = 1.0f;
-            allrb[i].AddTorque(Random.Range(-(timeScale), (timeScale)) * (scale_force / 2), 0);
+            allrb[i].AddTorque( UnityEngine.Random.Range(-(timeScale), (timeScale)) * (scale_force / 2), 0);
             allrb[i].AddForce(UnityEngine.Random.insideUnitCircle * scale_force * reduce);
         }
     }
@@ -3264,7 +3283,7 @@ public class Manager : MonoBehaviour {
             if (p == null) continue;
             var R = p.circle_radius*uScale;//angstrom
             var dtheta = 0.0f;
-            if (Random.value < 0.5f)
+            if ( UnityEngine.Random.value < 0.5f)
                 dtheta = 1;
             else
                 dtheta = -1;
@@ -3319,7 +3338,7 @@ public class Manager : MonoBehaviour {
             if (p == null) continue;
             var R = p.circle_radius * uScale;//angstrom
             var dtheta = 0.0f;
-            if (Random.value < 0.5f)
+            if (  UnityEngine.Random.value < 0.5f)
                 dtheta = 1;
             else
                 dtheta = -1;
@@ -3374,7 +3393,7 @@ public class Manager : MonoBehaviour {
             if (p == null) continue;
             var R = p.circle_radius * uScale;//angstrom
             var dtheta = 0.0f;
-            if (Random.value < 0.5f)
+            if ( UnityEngine.Random.value < 0.5f)
                 dtheta = 1;
             else
                 dtheta = -1;
@@ -3387,7 +3406,7 @@ public class Manager : MonoBehaviour {
             }
             else if (p.is_surface)
             {
-                float x = (Random.value < 0.5f) ? -1.0f : 1.0f;
+                float x = ( UnityEngine.Random.value < 0.5f) ? -1.0f : 1.0f;
                 Vector2 d = new Vector2(x,0.0f);
                 d = allrb[i].transform.TransformDirection(d);
                 direction_random = d * Mathf.Sqrt((4.0f * 8.0e-5f * dTime)/ R) * scaling_surface;//in nm
@@ -3446,7 +3465,7 @@ public class Manager : MonoBehaviour {
             if (p == null) continue;
             var R = p.circle_radius * uScale;//nm
             var dtheta = 0.0f;
-            if (Random.value < 0.5f)
+            if ( UnityEngine.Random.value < 0.5f)
                 dtheta = 1;
             else
                 dtheta = -1;
@@ -3465,7 +3484,7 @@ public class Manager : MonoBehaviour {
             if (player == null) continue;
             //player.bodyType = RigidbodyType2D.Dynamic;
             //player.collisionDetectionMode = CollisionDetectionMode2D.Discrete; //this is slow, put it in the on mouse up!
-            float x = (Random.value < 0.5f) ? -1.0f : 1.0f;
+            float x = ( UnityEngine.Random.value < 0.5f) ? -1.0f : 1.0f;
             Vector2 d = new Vector2(x,0.0f);
             d = player.transform.TransformDirection(d);
             Vector2 direction_random = d * Mathf.Sqrt((4.0f * 8.0e-5f * dTime)) * scaling_surface;//in nm
@@ -3484,7 +3503,7 @@ public class Manager : MonoBehaviour {
                 if (p == null) continue;
                 var R = p.circle_radius * uScale;//nm
                 var dtheta = 0.0f;
-                if (Random.value < 0.5f)
+                if ( UnityEngine.Random.value < 0.5f)
                     dtheta = 1;
                 else
                     dtheta = -1;
@@ -4206,7 +4225,7 @@ public class Manager : MonoBehaviour {
         //Debug.Log("Nucleic Acid Depth Active");
 
         //layerDirection decides if the next fiber prefab is going towards or away from the camera or staying at the same level.
-        layerDirection = Random.Range(0, 3);
+        layerDirection = UnityEngine.Random.Range(0, 3);
 
         //This portion of the code gets the color value of the prefab in HSV color space (We only modify the "V" or value in the following code).
         //prefabRGB = myPrefab.GetComponent<SpriteRenderer>().color;

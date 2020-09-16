@@ -24,7 +24,8 @@ public class RecipeUI : MonoBehaviour {
     //public static JSONNode resultData;
     public int map_radius = 1;
     public List<TextAsset> recipes;
-    
+    public int current_id;
+    public string current_recipe_file;
     public GameObject parent;
     private GameObject item;
 
@@ -177,6 +178,7 @@ public class RecipeUI : MonoBehaviour {
     }
 
     public void LoadRessourceRecipe(int id){
+        current_id = id;
         JSONNode resultData = JSONNode.Parse(recipes[id].text);
         if (merge_upon_loading){
             MergeRecipe_cb(resultData);
@@ -200,6 +202,7 @@ public class RecipeUI : MonoBehaviour {
     public void LoadRecipe(string filename=null) {
         //Debug.Log("*****");
         //Debug.Log("Loading scene: " + recipePath);
+        current_recipe_file = filename;
         if (merge_upon_loading){
             MergeRecipe(filename);
             return;
@@ -235,6 +238,7 @@ public class RecipeUI : MonoBehaviour {
         else {
             //add the filename directory as a search directory for data
             PdbLoader.DataDirectories.Add(Path.GetDirectoryName(filename));
+            Manager.Instance.AddUserDirectory(Path.GetDirectoryName(filename));
             resultData = JSONNode.Parse(File.ReadAllText(filename)); //JSONNode.LoadFromFile(filename);
         }
         LoadRecipe_cb(resultData);
@@ -318,6 +322,7 @@ public class RecipeUI : MonoBehaviour {
         else {
             //add the filename directory as a search directory for data
             PdbLoader.DataDirectories.Add(Path.GetDirectoryName(filename));
+            Manager.Instance.AddUserDirectory(Path.GetDirectoryName(filename));
             resultData = JSONNode.Parse(File.ReadAllText(filename)); //JSONNode.LoadFromFile(filename);
         }
         MergeRecipe_cb(resultData);
