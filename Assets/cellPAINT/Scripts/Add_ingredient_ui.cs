@@ -26,6 +26,7 @@ public class Add_ingredient_ui : MonoBehaviour
 
     public int query_id;
     public Image theSprite;
+    public Image theSpriteMb;
     public Toggle surface;
     public Toggle fiber;
     public Image loader;
@@ -107,6 +108,10 @@ public class Add_ingredient_ui : MonoBehaviour
             var filePath = PdbLoader.DownloadFile(input_name_field.text, "https://mesoscope.scripps.edu/data/tmp/ILL/"+query_id.ToString()+"/",  PdbLoader.DefaultDataDirectory + "/" + "images/", ".png");
             var sprite = Manager.Instance.LoadNewSprite(filePath);
             theSprite.sprite = sprite;
+            var ratio =(float) theSprite.sprite.texture.width/(float)theSprite.sprite.texture.height;
+            var w = 150;//(snode.data.thumbnail)?snode.data.thumbnail.width:150;
+            var h = w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
+            theSprite.rectTransform.sizeDelta = new Vector2(w,(int)h);
             Force = false;
             //try the getTexture
             StartCoroutine(GetText(query_answer_url));
@@ -115,6 +120,44 @@ public class Add_ingredient_ui : MonoBehaviour
             StartCoroutine(GetText(query_answer_url));
             query_done = false;
         }
+    }
+
+    public void setScale(float number){
+        input_pixel_ratio_field.text = number.ToString();
+        input_pixel_ratio = number;
+    }
+
+    public void setScale(string number){
+        input_pixel_ratio = float.Parse (number);
+    }
+
+    public void setYoffset(string number){
+        setYoffset_cb(float.Parse (number));
+    }
+
+    public void setYoffset(float number){
+        input_offset_y_field.text = number.ToString();
+        setYoffset_cb(number);
+    }
+
+    public void setYoffset_cb(float number){
+        input_offset_y_field.text = number.ToString();
+        input_offset_y = number;
+        //update on the sprite
+        float w = (float)theSprite.rectTransform.rect.width;
+        float h = (float)theSprite.rectTransform.rect.height;
+        Debug.Log(w.ToString()+" "+h.ToString()+" "+theSprite.sprite.texture.width.ToString());
+        var canvas_scale = w/theSprite.sprite.texture.width;
+        Debug.Log(canvas_scale);
+        var sc2d = input_pixel_ratio*canvas_scale;//*canvas_scale;
+        Debug.Log(sc2d);
+        var offy = input_offset_y*sc2d;//sc2d is angstrom to pixels
+        Debug.Log(offy);
+        var p = theSpriteMb.rectTransform.localPosition;
+        theSpriteMb.rectTransform.localPosition = new Vector3(p.x,offy,p.z);
+        var thickness = 42.0f*sc2d;//angstrom
+        theSpriteMb.rectTransform.sizeDelta = new Vector2((int)w,thickness);
+        //theSpriteMb.rectTransform.localPosition = new Vector3(p.x,h/2.0f-offy,p.z);
     }
 
     public void CallIllustrate(){
@@ -137,8 +180,8 @@ public class Add_ingredient_ui : MonoBehaviour
         var query="https://mesoscope.scripps.edu/beta/illustratecall.html?pdbid="+input_pdb;
         if (input_name !="") query += "&name="+input_name;
         if (input_bu!="") query += "&bu="+input_bu;
-        if (input_seletion!="") query += "&selection="+input_bu;
-        if (input_model!="") query += "&model="+input_bu;
+        if (input_seletion!="") query += "&selection="+input_seletion;
+        if (input_model!="") query += "&model="+input_model;
         query+="&qid="+query_id.ToString();
         sprite_name = input_name+".png";
         var options = new ChromeOptions();
@@ -192,6 +235,10 @@ public class Add_ingredient_ui : MonoBehaviour
         string filePath = FileBrowser.OpenSingleFile("Open image file", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "png", "jpg");
         var sprite = Manager.Instance.LoadNewSprite(filePath);
         theSprite.sprite = sprite;
+        var ratio =(float) theSprite.sprite.texture.width/(float)theSprite.sprite.texture.height;
+        var w = 150;//(snode.data.thumbnail)?snode.data.thumbnail.width:150;
+        var h = w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
+        theSprite.rectTransform.sizeDelta = new Vector2(w,(int)h);
         sprite_name = Path.GetFileName(filePath);
         sprite_path = Path.GetDirectoryName(filePath);
         PdbLoader.DataDirectories.Add(sprite_path);
@@ -199,9 +246,8 @@ public class Add_ingredient_ui : MonoBehaviour
     }
 
     public void AddTheIngredient(){
-        float scale2d = float.Parse (input_pixel_ratio_field.text);
-        float yoffset = (input_offset_y_field.text!="")?float.Parse (input_offset_y_field.text):0.0f;
-        Manager.Instance.recipeUI.AddOneIngredient(input_name_field.text, sprite_name, scale2d, yoffset, surface.isOn, fiber.isOn, 0);
+
+        Manager.Instance.recipeUI.AddOneIngredient(input_name_field.text, sprite_name, input_pixel_ratio, -input_offset_y, surface.isOn, fiber.isOn, 0);
     }
 
     IEnumerator GetRequest(string uri)
@@ -281,6 +327,10 @@ public class Add_ingredient_ui : MonoBehaviour
                 query_done = false;
                 var mySprite = Sprite.Create(tmp_texture, new Rect(0.0f, 0.0f, tmp_texture.width, tmp_texture.height), new Vector2(0.5f, 0.5f), 100.0f);
                 theSprite.sprite = mySprite;
+                var ratio =(float) theSprite.sprite.texture.width/(float)theSprite.sprite.texture.height;
+                var w = 150;//(snode.data.thumbnail)?snode.data.thumbnail.width:150;
+                var h = w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
+                theSprite.rectTransform.sizeDelta = new Vector2(w,(int)h);                
                 var current_bytes = tmp_texture.EncodeToPNG();
                 var filePath = PdbLoader.DefaultDataDirectory + "/" + "images/" + input_name+".png";
                 System.IO.File.WriteAllBytes(filePath, current_bytes);    

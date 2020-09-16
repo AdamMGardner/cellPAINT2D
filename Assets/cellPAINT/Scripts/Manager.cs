@@ -14,6 +14,7 @@ using System.IO;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
+using Accord;
 
 //handle the mouse interaction drawing and instancing
 //[ExecuteInEditMode]
@@ -21,6 +22,8 @@ public class Manager : MonoBehaviour {
     //need cleanup 
     //all boolean 
     public bool useECS=false;
+    public bool optimize_hull = false;
+    public double cluster_radius = 2.0;
     public bool useDefaultColor = true;
     public bool DEBUG = false;
     public bool HideInstance = true;
@@ -28,6 +31,7 @@ public class Manager : MonoBehaviour {
     public GameObject myPrefab;
     public GameObject current_prefab;
     public GameObject root;
+    public GameObject ghostArea;
     public bool layer_number_draw = true;
 
     public float brush_threshold = 0.005f;
@@ -953,6 +957,7 @@ public class Manager : MonoBehaviour {
         {
             toprb = newObject.AddComponent<Rigidbody2D>();
         }
+        Props.RB = toprb;
         toprb.collisionDetectionMode = CollisionDetectionMode2D.Discrete;// Continuous;
         toprb.angularDrag = 20.0f;
         toprb.drag = 20.0f;
@@ -2479,6 +2484,7 @@ public class Manager : MonoBehaviour {
     }
 
     void highLightHierarchy(Transform parent, bool toggle) {
+        if (parent == null) return;
         foreach (Transform ch in parent.transform)
         {
             PrefabProperties p = ch.GetComponent<PrefabProperties>();
@@ -2680,6 +2686,7 @@ public class Manager : MonoBehaviour {
         //check the shift keyEvent
         //if (Input.GetKeyUp(KeyCode.LeftShift)) CleanOutline();
         bool _shift = Input.GetKey(KeyCode.LeftShift);
+        bool _ctrl = Input.GetKey(KeyCode.LeftControl);
         //bool _shift_up = Input.GetKeyUp(KeyCode.LeftShift);
         if (!hit && Input.GetMouseButton(0)) selected_instance = null;
         if ((!hit) || (Input.GetMouseButtonUp(0))) {
@@ -2710,7 +2717,7 @@ public class Manager : MonoBehaviour {
                     p.outline_width = current_camera.orthographicSize;
                     p.UpdateOutline(true);
                 }
-                else {
+                else if (parent != null){
                     //check the parent
                     p = parent.GetComponent<PrefabProperties>();
                     if (p != null)
@@ -2725,15 +2732,21 @@ public class Manager : MonoBehaviour {
                 }
                 //check if shift, then highligh either every object of the same type or the chain.
                 if (_shift) {
-                    if (p.is_fiber)
-                    {
-                        //highlight the all chain parent
-                        highLightHierarchy(parent,true);
+                    if (p != null) {
+                        if (p.is_fiber)
+                        {
+                            //highlight the all chain parent
+                            highLightHierarchy(parent,true);
+                        }
+                        else {
+                            //find everyother object of same type
+                            highLightProteinType(p.name,true);
+                        }
                     }
-                    else {
-                        //find everyother object of same type
-                        highLightProteinType(p.name,true);
-                    }
+                }
+                if (other.name == "ghostArea"){
+                    //highlight ghost
+                    ghostHighlight(true);
                 }
             }
             if (!Input.GetMouseButtonDown(0)) return;
@@ -2741,8 +2754,10 @@ public class Manager : MonoBehaviour {
             last_other = other;
             var props = other.GetComponent<PrefabProperties>();
             current_properties = props;
-            current_name_below = props.name;
-            last_active_current_name_below =props.name;
+            if (props) {
+                current_name_below = props.name;
+                last_active_current_name_below =props.name;
+            }
             if (infoMode)
             {
                 if (other == null) return;
@@ -2760,8 +2775,42 @@ public class Manager : MonoBehaviour {
             }
             else if (pinMode)
             {
-                pinInstance(other);
-                togglePinOutline(true);
+                if (_ctrl){
+                    if (_shift) {
+                        if (p.is_fiber)
+                        {
+                            //highlight the all chain parent
+                            ghostHierarchy(parent);
+                        }
+                        else {
+                            //find everyother object of same type
+                            ghostProteinType(p.name);
+                        }
+                    }
+                    else {
+                        ghostInstance(other);
+                    }
+                    togglePinOutline(true);
+                    UpdateGhostArea();                    
+                }
+                else 
+                {
+                    if (_shift) {
+                    if (p.is_fiber)
+                    {
+                        //highlight the all chain parent
+                        pinHierarchy(parent);
+                    }
+                    else {
+                        //find everyother object of same type
+                        pinProteinType(p.name);
+                    }
+                }
+                    else {
+                    pinInstance(other);
+                }
+                    togglePinOutline(true);
+                }
             }
             else if (bindMode)
             {
@@ -2790,20 +2839,59 @@ public class Manager : MonoBehaviour {
         }
     }
 
+    void pinHierarchy(Transform parent){
+        foreach (Transform ch in parent.transform)
+        {
+            PrefabProperties p = ch.GetComponent<PrefabProperties>();
+            if (p)
+            {
+                p.ispined = !p.ispined;
+                p.outline_width = current_camera.orthographicSize;
+                if (p.ispined)
+                    {p.RB.bodyType = RigidbodyType2D.Static;
+                    pinned_object.Add(p);}
+                else
+                    {p.RB.bodyType = RigidbodyType2D.Dynamic;
+                    pinned_object.Remove(p);}
+            }
+        }
+    }
+
+    void pinProteinType(string name) {
+        var family =
+                from o in Manager.Instance.root.transform.GetComponentsInChildren<Transform>()
+                where o.name.Contains(name)
+                select o;
+        foreach (var o in family) {
+            PrefabProperties p = o.GetComponent<PrefabProperties>();
+            if (p)
+            {
+                p.ispined = !p.ispined;
+                p.outline_width = current_camera.orthographicSize;
+                if (p.ispined)
+                    {p.RB.bodyType = RigidbodyType2D.Static;
+                    pinned_object.Add(p);}
+                else
+                    {p.RB.bodyType = RigidbodyType2D.Dynamic;
+                    pinned_object.Remove(p);}
+            }
+        }
+    }
+
     public void pinInstance(GameObject other) {
 
         if (!below) return;
         //Debug.Log(below.name);
         PrefabProperties p = below.GetComponent<PrefabProperties>();
-
+    
         if (p.ispined == false)
         {
-            below.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+            p.RB.bodyType = RigidbodyType2D.Static;
             //Debug.Log(below + " is pinned");
         }
         else
         {
-            below.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+            p.RB.bodyType = RigidbodyType2D.Dynamic;
             //Debug.Log(below + " is unpinned");
         }
 
@@ -2814,6 +2902,162 @@ public class Manager : MonoBehaviour {
             pinned_object.Add(p);
         else
             pinned_object.Remove(p);
+    }
+
+    void ghostHierarchy(Transform parent){
+        foreach (Transform ch in parent.transform)
+        {
+            PrefabProperties p = ch.GetComponent<PrefabProperties>();
+            if (p)
+            {
+                p.RB.simulated = !p.RB.simulated;
+            }
+        }
+    }
+
+    void ghostProteinType(string name) {
+        var family =
+                from o in Manager.Instance.root.transform.GetComponentsInChildren<Transform>()
+                where o.name.Contains(name)
+                select o;
+        foreach (var o in family) {
+            PrefabProperties p = o.GetComponent<PrefabProperties>();
+            if (p)
+            {
+                p.RB.simulated = !p.RB.simulated;
+            }
+        }
+    }
+
+    public void ghostInstance(GameObject other) 
+    {
+        if (other.name == "ghostArea"){
+            //unGhost
+            for (int i = 0; i < everything.Count; i++)
+            {
+                Rigidbody2D player = everything[i];
+                if (player == null) continue;
+                if (!player.simulated) {
+                    player.simulated = true;
+                }
+            }
+            for (int i = 0; i < surface_objects.Count; i++)
+            {
+                Rigidbody2D player = surface_objects[i].GetComponent<Rigidbody2D>();
+                if (player == null) continue;
+                if (!player.simulated) {
+                    player.simulated = true;
+                }
+            }
+            for (int i=0;i< fibers_instances.Count;i++ ){
+                for (int j=0;j<fibers_instances[i].Count;j++ ){
+                    Rigidbody2D player = fibers_instances[i][j].GetComponent<Rigidbody2D>();
+                    if (player == null) continue;
+                    if (!player.simulated) {
+                        player.simulated = true;
+                    }
+                }
+            }
+        }
+        else 
+        {
+            PrefabProperties p = other.GetComponent<PrefabProperties>();
+            if (p) p.RB.simulated = !p.RB.simulated;
+        }
+    }
+
+    public void ghostHighlight(bool toggle){
+        var family =
+                from o in root.transform.GetComponentsInChildren<Rigidbody2D>()
+                where (o.simulated == false)
+                select o;
+        foreach (var o in family) {
+            PrefabProperties p = o.GetComponent<PrefabProperties>();
+            if (p)
+            {
+                p.outline_width = current_camera.orthographicSize;
+                p.UpdateOutline(toggle);
+            }
+        }
+    }
+
+    public void UpdateGhostArea(){
+        //we can grow our canvas and make this region collider.
+        //circle or box or polygon ?
+        if (ghostArea == null) {
+            ghostArea = new GameObject("ghostArea");
+        }
+        ghostArea.transform.localScale = new Vector3(1,1,1);
+        Rigidbody2D rb = ghostArea.GetComponent<Rigidbody2D>();
+        if (rb == null) rb = ghostArea.AddComponent<Rigidbody2D>();
+        rb.bodyType = RigidbodyType2D.Static;
+        //update the collider
+        //ghostArea.GetComponents<Collider2D>();
+        PolygonCollider2D box = ghostArea.GetComponent<PolygonCollider2D>();
+        if (box) DestroyImmediate(box);
+        box = ghostArea.AddComponent<PolygonCollider2D>();
+        //gather list of points
+        Bounds b = new Bounds(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+        //gather the points
+        //List<IntPoint> pts = new List<IntPoint>();
+        List<Vector2> pts = new List<Vector2>();
+        for (int i = 0; i < everything.Count; i++)
+        {
+            Rigidbody2D player = everything[i];
+            if (player == null) continue;
+            if (!player.simulated) {
+                //pts.Add(new IntPoint(Mathf.CeilToInt(player.position.x),Mathf.CeilToInt(player.position.y)));
+                pts.Add(new Vector2(Mathf.CeilToInt(player.position.x),Mathf.CeilToInt(player.position.y)));
+                b.Encapsulate(player.position);
+            }
+        }
+        for (int i = 0; i < surface_objects.Count; i++)
+        {
+            Rigidbody2D player = surface_objects[i].GetComponent<Rigidbody2D>();
+            if (player == null) continue;
+            if (!player.simulated) {
+                //pts.Add(new IntPoint(Mathf.CeilToInt(player.position.x),Mathf.CeilToInt(player.position.y)));
+                pts.Add(new Vector2(Mathf.CeilToInt(player.position.x),Mathf.CeilToInt(player.position.y)));
+                b.Encapsulate(player.position);
+            }
+        }
+        for (int i=0;i< fibers_instances.Count;i++ ){
+            for (int j=0;j<fibers_instances[i].Count;j++ ){
+                Rigidbody2D player = fibers_instances[i][j].GetComponent<Rigidbody2D>();
+                if (player == null) continue;
+                if (!player.simulated) {
+                    //pts.Add(new IntPoint(Mathf.CeilToInt(player.position.x),Mathf.CeilToInt(player.position.y)));
+                    pts.Add(new Vector2(Mathf.CeilToInt(player.position.x),Mathf.CeilToInt(player.position.y)));
+                    b.Encapsulate(player.position);
+                }
+            }
+        }
+        ghostArea.transform.position = b.center;
+        if (pts.Count == 0) {
+            DestroyImmediate(box);
+        }
+        else {
+            //cluster
+            List<int> labels = new List<int>();
+            int cluster_count = Helper.ComputeCluster(pts,cluster_radius, ref labels);
+            Debug.Log(labels);
+            Debug.Log(cluster_count);
+            List<List<IntPoint>> cl_points = new List<List<IntPoint>>();
+            for (var i=0;i < cluster_count;i++){
+                cl_points.Add(new List<IntPoint>());
+            }
+            for (var i=0;i < labels.Count;i++){
+                var l = labels[i];
+                cl_points[l].Add(new IntPoint(Mathf.CeilToInt(pts[i].x),Mathf.CeilToInt((pts[i].y))));
+            }
+            box.pathCount = cluster_count;
+            for (var i=0;i < cluster_count;i++){
+                List<Vector2> hull = Helper.ComputeConvexHull(cl_points[i],b.center,optimize_hull);
+                box.SetPath(i,hull);
+            }
+            //box.offset = new Vector2(b.center.x,b.center.y);
+        }
+        //ghostArea.transform.localScale = new Vector3(1.1f,1.1f,1.1f);
     }
 
     private void DrawLine(Vector3 start, Vector3 end) {
@@ -3443,7 +3687,11 @@ public class Manager : MonoBehaviour {
         if (Input.GetMouseButton(0)) temperature = 0;
         even = !even;
         //even = (count_update % 2)==0;
-
+        if (temperature == 0)
+        {
+            count_update++;
+            yield return null;
+        }
         //handle the jitter through the arrary of rigid bodies.
         //if (temperature == 0) yield return null; 
         if (temperature != 0)
@@ -3458,9 +3706,9 @@ public class Manager : MonoBehaviour {
 
         for (int i = 0; i < everything.Count; i++)
         {
-            if (temperature == 0) continue;
             Rigidbody2D player = everything[i];
             PrefabProperties p = player.GetComponent<PrefabProperties>();
+            if (p.ispined) continue;
             Vector2 direction_random = UnityEngine.Random.insideUnitCircle;
             if (p == null) continue;
             var R = p.circle_radius * uScale;//nm
@@ -3479,9 +3727,9 @@ public class Manager : MonoBehaviour {
         }
         for (int i = 0; i < surface_objects.Count; i++)
         {
-            if (temperature == 0) continue;
             Rigidbody2D player = surface_objects[i].GetComponent<Rigidbody2D>();
             if (player == null) continue;
+            if (player.bodyType == RigidbodyType2D.Static) continue;
             //player.bodyType = RigidbodyType2D.Dynamic;
             //player.collisionDetectionMode = CollisionDetectionMode2D.Discrete; //this is slow, put it in the on mouse up!
             float x = ( UnityEngine.Random.value < 0.5f) ? -1.0f : 1.0f;
@@ -3495,9 +3743,9 @@ public class Manager : MonoBehaviour {
         }
         for (int i=0;i< fibers_instances.Count;i++ ){
             for (int j=0;j<fibers_instances[i].Count;j++ ){
-                if (temperature == 0) continue;
                 Rigidbody2D player = fibers_instances[i][j].GetComponent<Rigidbody2D>();
                 if (player == null) continue;
+                if (player.bodyType == RigidbodyType2D.Static) continue;
                 PrefabProperties p = player.GetComponent<PrefabProperties>();
                 Vector2 direction_random = UnityEngine.Random.insideUnitCircle;
                 if (p == null) continue;
@@ -3704,6 +3952,10 @@ public class Manager : MonoBehaviour {
     {
         if (below && below != attach1)
         {
+            if (below.name == "ghostArea") {
+                ghostHighlight(false);
+                return;
+            }
             var parent = below.transform.parent;
             if (m_SpringJoint && m_SpringJoint.connectedBody != null)
                 return;

@@ -6,14 +6,24 @@ using SimpleJSON;
 using System.Collections;
 using System.Collections.Generic;
 
+using Accord;
 using Accord.Math;
+using Accord.Math.Geometry;
+using Accord.MachineLearning;
+using Accord.MachineLearning.VectorMachines;
+using Accord.MachineLearning.VectorMachines.Learning;
+using Accord.Statistics;
+using Accord.Statistics.Distributions.Fitting;
+using Accord.Statistics.Distributions.DensityKernels;
+using Accord.Math.Decompositions;
+using Accord.Statistics;
+
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3; // Note: this might be necessary often
 using Vector4 = UnityEngine.Vector4;
 using Matrix4x4 = UnityEngine.Matrix4x4;
 using Plane = UnityEngine.Plane;
-using Accord.Math.Decompositions;
-using Accord.Statistics;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -806,6 +816,64 @@ public static class Helper
         principal_vector.Add(new Vector4(m_rot.rotation.x, m_rot.rotation.y, m_rot.rotation.z, m_rot.rotation.w));
         //problem with fibrinogen ?
         return principal_vector;
+    }
+    //if accordmath not fast enough check loic lib
+    //http://loyc.net/2014/2d-convex-hull-in-cs.html
+    public static List<Vector2> ComputeConvexHull(List<IntPoint> points, Vector3 center, bool optimize = false)
+    {
+        IConvexHullAlgorithm hullFinder = new GrahamConvexHull( );
+        IShapeOptimizer opt = new ClosePointsMergingOptimizer();
+        List<IntPoint> hull = hullFinder.FindHull( points );
+        if (optimize) {
+            hull =  opt.OptimizeShape(hull);
+        }
+        //convert to Vector2
+        List<Vector2> hull_opt2d = new List<Vector2>();
+        foreach (var p in hull) {
+            hull_opt2d.Add(new Vector2(p.X-center.x,p.Y-center.y));
+        }
+        return hull_opt2d;
+    }
+
+    public static List<Vector2> ComputeConvexHull(List<Vector2> points2d, Vector3 center, bool optimize = false)
+    {
+        List<IntPoint> points = new List<IntPoint>();
+        foreach ( var p in points2d) {
+            points.Add(new IntPoint(Mathf.CeilToInt(p.x),Mathf.CeilToInt(p.y)));
+        }
+        IConvexHullAlgorithm hullFinder = new GrahamConvexHull( );
+        IShapeOptimizer opt = new ClosePointsMergingOptimizer();
+        List<IntPoint> hull = hullFinder.FindHull( points );
+        if (optimize) {
+            hull =  opt.OptimizeShape(hull);
+        }
+        //convert to Vector2
+        List<Vector2> hull_opt2d = new List<Vector2>();
+        foreach (var p in hull) {
+            hull_opt2d.Add(new Vector2(p.X-center.x,p.Y-center.y));
+        }
+        return hull_opt2d;
+    }
+
+
+    public static int ComputeCluster(List<Vector2> points2d, double radius, ref List<int> labels){
+        Accord.Math.Random.Generator.Seed = 0;
+        double[][] input = new double[points2d.Count][];
+        for (int i = 0; i < points2d.Count; i++)
+        {
+            input[i] = new double[] {points2d[i].x,points2d[i].y};
+        }
+
+        MeanShift meanShift = new MeanShift()
+        {
+            // Use a uniform kernel density
+            Kernel = new UniformKernel(),
+            Bandwidth = radius
+        };
+        MeanShiftClusterCollection clustering = meanShift.Learn(input);
+        Debug.Log("found "+clustering.Count.ToString());
+        labels = new List<int>(clustering.Decide(input));
+        return clustering.Count;
     }
 }
 
