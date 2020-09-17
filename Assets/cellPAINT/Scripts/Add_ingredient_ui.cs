@@ -193,7 +193,8 @@ public class Add_ingredient_ui : MonoBehaviour
         
         //Debug.Log(driver.PageSource);
         // wait for the results to appear
-        WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(20));
+        //IWebElement firstResult = driver.WaitForElement(By.Id("image_url"));
+        WebDriverWait wait = new WebDriverWait(driver, new TimeSpan(0, 0, 1, 120));//TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(0.1));
         try {
             IWebElement firstResult = wait.Until(e => {
                 return e.FindElement(By.Id("image_url"));
@@ -247,7 +248,7 @@ public class Add_ingredient_ui : MonoBehaviour
 
     public void AddTheIngredient(){
 
-        Manager.Instance.recipeUI.AddOneIngredient(input_name_field.text, sprite_name, input_pixel_ratio, -input_offset_y, surface.isOn, fiber.isOn, 0);
+        Manager.Instance.recipeUI.AddOneIngredient(input_name_field.text, sprite_name, input_pixel_ratio, -input_offset_y, surface.isOn, fiber.isOn, -1);
     }
 
     IEnumerator GetRequest(string uri)

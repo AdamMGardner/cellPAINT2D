@@ -1,0 +1,141 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2255010716814513417
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2684461262910158637}
+  - component: {fileID: 8197502161971476004}
+  - component: {fileID: 133325294636437234}
+  m_Layer: 0
+  m_Name: prefabGroup
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2684461262910158637
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2255010716814513417}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8197502161971476004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2255010716814513417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4144a08b116dbc4c92fb82b6a96015e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  name: 
+  instance_id: 0
+  bound:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  attachements: []
+  attachements_toskip: []
+--- !u!114 &133325294636437234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2255010716814513417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c9469b5b7690ac418499ac0796a0a91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  name: 
+  common_name: 
+  function_group: 
+  compartment: root
+  description: 
+  order: 0
+  layer_number: 3
+  isCircleCollider: 0
+  circle_radius: 0
+  circle_offset: {x: 0, y: 0}
+  isCapsuleCollider: 0
+  capsule_size: {x: 0, y: 0}
+  capsule_offset: {x: 0, y: 0}
+  isHorizontal: 0
+  is_surface: 0
+  surface_secondLayer: 1
+  surface_offset: 0
+  y_offset: 0
+  scale2d: 1
+  local_scale: 1
+  pcpAxe: {x: 0, y: 1, z: 0}
+  offset: {x: 0, y: 0, z: 0}
+  is_fiber: 0
+  fiber_Middle: 0
+  fiber_Bottom: 0
+  light_fiber: 0
+  closing: 1
+  is_Group: 1
+  is_anchor: 0
+  is_bound: 0
+  bound_to: 
+  is_connected: 0
+  connected_to: 
+  connection_occupied: 0
+  nucleic_acid_depth: 0
+  sprite_random_switch: 0
+  prefab_random_switch: 0
+  sprite_ordered_switch: 0
+  sprite_tumble_switch: 0
+  sprite_icosahedronRotation_switch: 0
+  persistence_length: 0
+  persistence_strength: -1
+  fiber_hingeJoint_limits: 0
+  hingeJoint_UPPERlimit: 15
+  hingeJoint_LOWERlimit: -15
+  number_placed: 0
+  setuped: 0
+  outline: 0
+  outline_width: 1
+  sprites_asset: []
+  prefab_asset: []
+  pcp: []
+  Default_Sprite_Color: {r: 1, g: 1, b: 1, a: 1}
+  outline_color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  pin_color: {r: 1, g: 0, b: 0, a: 1}
+  entry: {x: 0, y: 0, z: 0}
+  exit: {x: 0, y: 0, z: 0}
+  area: 0
+  ispined: 0
+  enableCollision: 0
+  spriteTumble_id: 0
+  spriteRotation_id: 0
+  bound_lines: {fileID: 0}
+  gLDebug: {fileID: 0}
+  fiber_length: 0
+  fiber_scale: 1
+  maxNumber: 0
+  maxLength: 0
+  gap_between_bound: 0
+  iterate_bound: 0
+  draw_background: 0
+  background_mat: {fileID: 0}
+  zangle: 0
+  initialized: 0
+  RB: {fileID: 0}
+  attachments: []

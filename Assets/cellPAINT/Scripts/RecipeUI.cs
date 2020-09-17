@@ -35,7 +35,7 @@ public class RecipeUI : MonoBehaviour {
     private List<GameObject> hex_instance;
     public List<string> Compartments;
     public bool use_coroutine=false;
-    private int current_compartments = 0;
+    public int current_compartments = 0;
     private Dictionary<int, Vector2> CompartmentsIngredients;
     private Dictionary<int, List<int>> CompartmentsIngredients_ids;//migrate to keep track of ingredients id to support merge
     private bool isGrouped = true; ////3/17/17
@@ -192,6 +192,7 @@ public class RecipeUI : MonoBehaviour {
         //Manager.Instance.ingredients_prefab.Clear();
         Manager.Instance.all_prefab.Clear();
         Manager.Instance.ingredients_names.Clear();
+        Manager.Instance.additional_ingredients_names.Clear();
         Manager.Instance.sprites_names.Clear();
         Manager.Instance.prefab_materials = new Dictionary<string, Material>();        
         Debug.Log("try loading ressource "+id.ToString());
@@ -219,6 +220,7 @@ public class RecipeUI : MonoBehaviour {
         }
         Manager.Instance.all_prefab.Clear();
         Manager.Instance.ingredients_names.Clear();
+        Manager.Instance.additional_ingredients_names.Clear();
         Manager.Instance.sprites_names.Clear();
         Manager.Instance.prefab_materials = new Dictionary<string, Material>();
         JSONNode resultData;
@@ -952,10 +954,14 @@ public class RecipeUI : MonoBehaviour {
             //change name
             name = name+"_user";
         }
+        string compname = "root";
+        if (comp == -1) comp = current_compartments;//first
+        compname = Compartments[comp];
 
-        CompartmentsIngredients_ids[current_compartments].Add(Manager.Instance.ingredients_names.Count); 
+        CompartmentsIngredients_ids[comp].Add(Manager.Instance.ingredients_names.Count); 
         Manager.Instance.ingredients_names.Add(name);
         Manager.Instance.sprites_names.Add(img_name);
+        Manager.Instance.additional_ingredients_names.Add(name);
         /*create a JSON NODE */
         //JSONNode node = createIngredientStringJson(img_name, is_surface, is_fiber, ascale2d, yoffset);
         //Manager.Instance.ingredient_node.Add(name, node);
@@ -965,13 +971,11 @@ public class RecipeUI : MonoBehaviour {
             myPrefab = Manager.Instance.Build(name,img_name);
         myPrefab.SetActive(true);
         Manager.Instance.all_prefab.Add(name, myPrefab);
-        string compname = "root";
-        if (comp == -1) comp = 1;//first
-        compname = Compartments[current_compartments];
+
         if (myPrefab)
         {
             PrefabProperties p = myPrefab.GetComponent<PrefabProperties>();
-            p.compartment = compname.Split('.')[0];
+            p.compartment = compname;
             p.SetupFromValues(is_surface, is_fiber, ascale2d, yoffset);
             if (p.is_fiber)
             {
@@ -981,6 +985,20 @@ public class RecipeUI : MonoBehaviour {
         }
         //oneHexInstance(hex_instance.Count + 1, new Point(), Manager.Instance.ingredients_names.Count - 1);
         //loadNextCompartments();
+        StartCoroutine(populateHexGridFromCenterSpiral());
+    }
+
+    public void AddOneGroup(string iname = null, int comp = -1, string compname = "Custom")
+    {
+        string name = iname;
+        if (comp == -1) {
+            comp = current_compartments;
+        }
+        //add one tile
+        //comp = customCompIndice;
+        CompartmentsIngredients_ids[comp].Add(Manager.Instance.ingredients_names.Count); 
+        Manager.Instance.ingredients_names.Add(name);
+        Manager.Instance.sprites_names.Add("grapes");//group icon
         StartCoroutine(populateHexGridFromCenterSpiral());
     }
 }

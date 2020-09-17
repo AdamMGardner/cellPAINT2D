@@ -35,6 +35,7 @@ public class PrefabProperties : MonoBehaviour
     public bool fiber_Bottom;
     public bool light_fiber=false;
     public bool closing = true;
+    public bool is_Group = false;
     public bool is_anchor;
     public bool is_bound;
     public string bound_to;
@@ -884,6 +885,7 @@ public class PrefabProperties : MonoBehaviour
     }
 
     public void Setup(bool special = false) {
+        if (is_Group) return;
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer.sprite == null && sprites_asset.Count!=0) {
             spriteRenderer.sprite = sprites_asset[0];

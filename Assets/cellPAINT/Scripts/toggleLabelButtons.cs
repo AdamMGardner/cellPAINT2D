@@ -239,14 +239,17 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
             
             if (prefab != null)
             {
+                var sr = prefab.GetComponent<SpriteRenderer>();
                 Debug.Log("actual name " + prefab.GetComponent<PrefabProperties>().common_name + " "+ prefab.GetComponent<PrefabProperties>().name);
-                Debug.Log(Manager.Instance.prefab_materials[prefab_name]);
-                prefab.GetComponent<SpriteRenderer>().sharedMaterial = Manager.Instance.prefab_materials[prefab_name];
+                //Debug.Log(Manager.Instance.prefab_materials[prefab_name]);
+                if ( Manager.Instance.prefab_materials.ContainsKey(prefab_name)) {
+                    if (sr) sr.sharedMaterial = Manager.Instance.prefab_materials[prefab_name];
+                }
                 //Manager.Instance.Description_Holder.transform.GetChild(0).GetComponent<ColorPicker>().active = false;
                 //Manager.Instance.Description_Holder_HSV.SetActive(false);
                 Manager.Instance.current_name_below = prefab_name;
                 Manager.Instance.current_objectparent_below = null;
-                Manager.Instance.changeDescription(prefab, prefab.GetComponent<SpriteRenderer>());
+                Manager.Instance.changeDescription(prefab, sr);
                 //dont use HSV just show the description
                 if (Manager.Instance.last_active_current_name_below == null) Manager.Instance.last_active_current_name_below = prefab_name;
             }

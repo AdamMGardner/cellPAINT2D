@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -349,8 +350,157 @@ public class QuitGame : MonoBehaviour
             });*/
         }
     }
-
     public void SaveScene_cb(string filename)
+    {
+        string sep = ",";
+        Debug.Log("You are in the saveScene_cb with filename: " + filename);
+        if (filename == null) return;
+        string text = "";
+        string towrite = "";
+        Debug.Log("should save in " + filename);
+        //first loop over all material and check if default color or not
+        text = "";
+        /*add extra ingredients data e.g. scale2d and offsetY
+        upon loading add the ingredient if not there already
+        */
+        int extra_ingredient = Manager.Instance.additional_ingredients_names.Count;
+        towrite += extra_ingredient.ToString()+ "\r\n";
+        //name,spritename,scale2d,yoffset,issurf,isfiber,comp
+        for (var i=0;i<extra_ingredient;i++){
+            var name = Manager.Instance.additional_ingredients_names[0];
+            var ind = Manager.Instance.ingredients_names.IndexOf(name);
+            var sprite_name = Manager.Instance.sprites_names[ind];
+            var prefab = Manager.Instance.all_prefab[name];
+            var props = prefab.GetComponent<PrefabProperties>();
+            var issurf = (props.is_surface)?"1":"0";
+            var isfiber = (props.is_fiber)?"1":"0";
+            var comp = Manager.Instance.recipeUI.Compartments.IndexOf(props.compartment);
+            towrite +=name+sep+sprite_name+sep+props.scale2d.ToString()+sep+props.y_offset.ToString()+sep; 
+            towrite +=issurf+sep+isfiber+sep+comp+ "\r\n";
+        }
+        int mat_count = 0;
+        /*Write the material colors values*/
+        foreach ( var keyvalue in Manager.Instance.prefab_materials)
+        {
+            if (keyvalue.Value == null) continue;
+            if (!Manager.Instance.all_prefab.ContainsKey(keyvalue.Key)) continue;
+            PrefabProperties props = Manager.Instance.all_prefab[keyvalue.Key].GetComponent<PrefabProperties>();
+            if (keyvalue.Value.color != props.Default_Sprite_Color) {
+                text += keyvalue.Key+sep+ keyvalue.Value.color.r.ToString() + sep + keyvalue.Value.color.g.ToString() + sep + keyvalue.Value.color.b.ToString()+"\r\n";
+                mat_count++;
+            }
+        }
+        towrite += mat_count.ToString()+ "\r\n";
+        towrite += text;
+        /*loop over every instance and save xyz,r,name.*/
+        int count = 0;
+        float angle = 0.0F;
+        Vector3 axis = Vector3.zero;
+        text = "";
+        for (int i = 0; i < Manager.Instance.everything.Count; i++)//Manager.Instance.rbCount
+        {
+            Rigidbody2D player = Manager.Instance.everything[i];
+            if (player == null) continue;
+            PrefabProperties props = player.gameObject.GetComponent<PrefabProperties>();
+            text += player.position.x.ToString()+sep+ player.position.y.ToString()+sep+ player.gameObject.transform.position.z+sep;
+            text += player.rotation.ToString() + sep;
+            text += props.name + sep;
+            text += props.order + sep;
+            text += (player.bodyType==RigidbodyType2D.Static)? "1" : "0" + sep;//is it pinned
+            text += (player.simulated)? "1" : "0";//is it ghosted
+            //text += (player.isKinematic)? "1" : "0";//is it pinned or should we use the ispin ?
+            string g = sep+"n"+ sep+"0";
+            PrefabGroup pg = player.gameObject.GetComponentInParent<PrefabGroup>();
+            if (pg != null){
+                g = sep+pg.name;
+                g += sep+pg.instance_id.ToString();
+            }
+            text += g;
+            text += "\r\n";
+            count++;
+        }
+        //write rb count, fiber chain count, surface object count
+        towrite += count.ToString() + sep + 
+            Manager.Instance.fiber_parents.Count.ToString() + sep +
+            Manager.Instance.surface_objects.Count.ToString()+ "\r\n";
+        towrite += text;
+        
+        //Handle the fiber. loop over every chain parent
+        for (int i = 0; i < Manager.Instance.fiber_parents.Count;i++) {
+            //firs line is name and nbPoints
+            //is it closed ?
+            towrite += Manager.Instance.fiber_parents[i].name+sep+
+                Manager.Instance.fiber_parents[i].transform.childCount.ToString();
+            string g = sep+"n"+ sep+"0";
+            PrefabGroup pg = Manager.Instance.fiber_parents[i].gameObject.GetComponentInParent<PrefabGroup>();
+            if (pg != null){
+                g = sep+pg.name;
+                g += sep+pg.instance_id.ToString();
+            }
+            towrite += g;
+            towrite +="\r\n";
+            //chain segments or bound object e.g. nucleocapside
+            //fiberinstance order instead
+            //for (int j = 0; j < Manager.Instance.fiber_parents[i].transform.childCount; j++)
+            for (int j=0;j < Manager.Instance.fibers_instances[i].Count ;j++)
+            {
+                GameObject ch = Manager.Instance.fibers_instances[i][j];
+                //write down posxyz, r, bind 0/1
+                //GameObject ch = Manager.Instance.fiber_parents[i].transform.GetChild(j).gameObject;
+                Rigidbody2D player = ch.GetComponent<Rigidbody2D>();
+                towrite += player.position.x.ToString() + sep + player.position.y.ToString() +sep+ ch.transform.position.z+sep;
+                towrite += player.rotation.ToString() + sep;
+                //player.gameObject.transform.rotation.ToAngleAxis(out angle, out axis);
+                //towrite += angle.ToString() + " ";
+                if (ch.GetComponent<PrefabProperties>().is_bound)
+                {
+                    towrite += player.gameObject.GetComponent<PrefabProperties>().name+sep;
+                }
+                else { towrite += "0"+sep; }
+                towrite += (player.bodyType == RigidbodyType2D.Static) ? "1" : "0" + sep;//is it pinned
+                towrite += (player.simulated)? "1" : "0";//is it ghosted
+                towrite += "\r\n";
+            }
+        }
+        //surface object
+        for (int i = 0; i < Manager.Instance.surface_objects.Count; i++)
+        {
+            Rigidbody2D player = Manager.Instance.surface_objects[i].GetComponent<Rigidbody2D>();
+            towrite += player.position.x.ToString() + sep + player.position.y.ToString() + sep + Manager.Instance.surface_objects[i].transform.position.z + sep;
+            towrite += player.rotation.ToString() + sep;
+            towrite += Manager.Instance.surface_objects[i].GetComponent<PrefabProperties>().name + sep;
+            towrite += (player.bodyType == RigidbodyType2D.Static) ? "1" : "0" + sep;
+            towrite += (player.simulated)? "1" : "0";//is it ghosted
+            string g = sep+"n"+ sep+"0";
+            PrefabGroup pg = player.gameObject.GetComponentInParent<PrefabGroup>();
+            if (pg != null){
+                g = sep+pg.name;
+                g += sep+pg.instance_id.ToString();
+            }
+            towrite += g;
+            towrite += "\r\n";
+        }
+
+        int nLink = Manager.Instance.attached.Count/2;
+        towrite += nLink.ToString() + "\r\n";
+        for (int i = 0; i < nLink; i++) {
+            //write xyzid
+            SpringJoint2D jt1 = Manager.Instance.attached[i*2].GetComponent<SpringJoint2D>();//HighlightManager.Instance.pinned_to_bonds[i];
+            Vector3 p1 = jt1.anchor;
+            Vector3 p2 = jt1.connectedAnchor;
+            Debug.Log(i.ToString()+" retrieve for 1 " + jt1.gameObject.name);
+            string id1 = Manager.Instance.FindIdString(jt1.gameObject);
+            Debug.Log(i.ToString() + " retrieve for 2 " + jt1.connectedBody.gameObject.name);
+            string id2 = Manager.Instance.FindIdString(jt1.connectedBody.gameObject);
+            if (id1 == "" || id2 == "") Debug.Log("problem with jt " + i.ToString());
+            else Debug.Log(id1+" "+ id2);
+            towrite += p1.x.ToString() + sep + p1.y.ToString() + sep + p1.z.ToString() + sep + id1 + sep;
+            towrite += p2.x.ToString() + sep + p2.y.ToString() + sep + p2.z.ToString() + sep + id2 + "\r\n";
+        }
+        System.IO.File.WriteAllText(filename, towrite);
+    }
+
+    public void SaveScene_original_cb(string filename)
     {
         //what about group and new ingredient, look at the code from the 3D branch.
         string sep = ",";
@@ -631,6 +781,24 @@ public class QuitGame : MonoBehaviour
         //split with space and get x y r name
         //first line is nb of material color to overwrote
         string[] elems = lines[lineCounter].Split(sep[0]);
+        int extra_ingredient = int.Parse(elems[0]);
+        lineCounter++;
+        for (int i = lineCounter; i < lineCounter + extra_ingredient; i++)
+        {
+            elems = lines[i].Split(sep[0]);
+            var name = elems[0];
+            var sprite_name = elems[1];
+            var scale2d = float.Parse(elems[2]);
+            var yoffset = float.Parse(elems[3]);
+            var issurf = (elems[4] == "0")? false : true;
+            var isfiber = (elems[5] == "0")? false : true;
+            var comp = int.Parse(elems[6] );
+            if (!Manager.Instance.ingredients_names.Contains(name)) {
+                Manager.Instance.recipeUI.AddOneIngredient(name, sprite_name, scale2d, -yoffset, issurf, isfiber, comp);
+            }
+        }
+        lineCounter += extra_ingredient;
+        elems = lines[lineCounter].Split(sep[0]);
         int n_mat = int.Parse(elems[0]);
         Debug.Log("found n_mat "+n_mat.ToString());
         lineCounter++;
@@ -659,19 +827,24 @@ public class QuitGame : MonoBehaviour
         int nObj = int.Parse(elems[0]);             //nb instances
         int nFiber = int.Parse(elems[1]);           //nb chains fiber
         int nSurfaceOfFiber = int.Parse(elems[2]);  //nb surface objects
+        Dictionary<string,Group> groups = new Dictionary<string,Group>();
         lineCounter++;
         for (int i = lineCounter; i < lineCounter + nObj; i++)
         {
             // 9.848226,21.78014,0.0004882813,197.4075,LDL,0,0
             elems = lines[i].Split(sep[0]);
-            var x = float.Parse(elems[0]);Debug.Log(x);
-            var y = float.Parse(elems[1]);Debug.Log(y);
-            var z = float.Parse(elems[2]);Debug.Log(z);
-            var zangle = float.Parse(elems[3]);Debug.Log(zangle);
-            var name = elems[4];Debug.Log(name);
-            var order = int.Parse(elems[5]);Debug.Log(order);
-            var kinematic = int.Parse(elems[6]);Debug.Log(kinematic);
-            Manager.Instance.restoreOneInstance(name, new Vector3(x, y, z), zangle, order, false, (kinematic == 1));
+            var x = float.Parse(elems[0]);//Debug.Log(x);
+            var y = float.Parse(elems[1]);//Debug.Log(y);
+            var z = float.Parse(elems[2]);//Debug.Log(z);
+            var zangle = float.Parse(elems[3]);//Debug.Log(zangle);
+            var name = elems[4];//Debug.Log(name);
+            var order = int.Parse(elems[5]);//Debug.Log(order);
+            var kinematic = int.Parse(elems[6]);//Debug.Log(kinematic);
+            var ghost = int.Parse(elems[7]); 
+            var group_name = elems[8];
+            var group_id = int.Parse(elems[9]);           
+            var newObject = Manager.Instance.restoreOneInstance(name, new Vector3(x, y, z), zangle, order, false, (kinematic == 1), (ghost == 0));
+            GroupManager.Get.UpdateGroupFromObject(newObject, group_name, group_id);
         }
         //in case of fiber need to do the random choice of sprite id, or save it
         lineCounter += nObj;
@@ -690,7 +863,9 @@ public class QuitGame : MonoBehaviour
             var prefabName = checkFiberName(name);
             if (prefabName == "DrawDNA") prefabName = "Draw DNA";
             Debug.Log(name + " fiber  ??  " + prefabName);
-            Manager.Instance.AddFiberParent(prefabName);
+            GameObject fp = Manager.Instance.AddFiberParent(prefabName);
+            var group_name = elems[2];
+            var group_id = int.Parse(elems[3]);            
             bool closed = name.EndsWith("_Closed");
             for (int j = 0; j < nPoints; j++)
             {
@@ -701,6 +876,7 @@ public class QuitGame : MonoBehaviour
                 var zangle = float.Parse(elems[3]);
                 var bounded = elems[4];
                 var kinematic = int.Parse(elems[5]);
+                var ghost = int.Parse(elems[6]); 
                 if (bounded == "0")
                 {
                     if (attached != null)
@@ -729,6 +905,9 @@ public class QuitGame : MonoBehaviour
                     if (kinematic == 1)
                         Manager.Instance.pin_object(attached, kinematic == 1); //SceneManager.Instance.pinInstance(attached);
                 }
+                if (ghost==0){
+                    fiber.GetComponent<Rigidbody2D>().simulated = false;
+                }
                 lineCounter++;
             }
             if (closed)
@@ -746,6 +925,7 @@ public class QuitGame : MonoBehaviour
                     rb.angularDrag = 0.05f;
                 }
             }
+            GroupManager.Get.UpdateGroupFromObject(fp, group_name, group_id);
         }
         Debug.Log("found nSurfaceOfFiber " + nSurfaceOfFiber.ToString());
         for (int i = 0; i < nSurfaceOfFiber; i++)
@@ -757,7 +937,11 @@ public class QuitGame : MonoBehaviour
             var zangle = float.Parse(elems[3]);
             var name = elems[4];
             var kinematic = int.Parse(elems[5]);
-            Manager.Instance.restoreOneInstance(name, new Vector3(x, y, z), zangle, 0, true, (kinematic == 1));
+            var ghost = int.Parse(elems[6]); 
+            var group_name = elems[7];
+            var group_id = int.Parse(elems[8]);
+            var newObject = Manager.Instance.restoreOneInstance(name, new Vector3(x, y, z), zangle, 0, true, (kinematic == 1), (ghost == 0));
+            GroupManager.Get.UpdateGroupFromObject(newObject, group_name, group_id); 
             lineCounter++;
         }
         //reset ui and manager
@@ -780,7 +964,10 @@ public class QuitGame : MonoBehaviour
             Manager.Instance.restoreOneBond(new Vector3(x1, y1, z1),id1, new Vector3(x2, y2, z2),id2);
             lineCounter++;
         }
+        Manager.Instance.UpdateGhostArea();   
         if (current_name!="") Manager.Instance.SwitchPrefabFromName(current_name);
+        //restore groups
+        GroupManager.Get.RestoreGroups();
     }
 
     public void LoadScene_cb(string filename)

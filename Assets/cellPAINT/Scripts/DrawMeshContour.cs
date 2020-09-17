@@ -14,7 +14,7 @@ public class DrawMeshContour : MonoBehaviour {
 
     private MeshFilter meshFilter;
     public MeshRenderer mr;
-    
+    private bool running = false;
     void Start() {
         Setup();
         StartCoroutine(updateBackground());
@@ -56,7 +56,7 @@ public class DrawMeshContour : MonoBehaviour {
         List<Vector3> vertices = new List<Vector3>();
         //int i = 0;
         foreach (Transform child in transform) {
-            pos.Add(new Vector2 (child.position.x, child.position.y));
+            pos.Add(new Vector2 (child.localPosition.x, child.localPosition.y));
             if ((matToApply!=null)&&(matToApply.name == "HIVCAhex_bg"))
             {
                 offset = 0.4f;
@@ -65,7 +65,7 @@ public class DrawMeshContour : MonoBehaviour {
             {
                 offset = 0.5f;
             }
-            vertices.Add(new Vector3(child.position.x, child.position.y, child.position.z+offset));
+            vertices.Add(new Vector3(child.localPosition.x, child.localPosition.y, child.localPosition.z+offset));
             //uvs[i] = new Vector2(child.position.x, child.position.z);
             //i++;
         }
@@ -76,13 +76,7 @@ public class DrawMeshContour : MonoBehaviour {
         //indices = tr.Triangulate();
 
         //finish up
-
-        Mesh mesh = meshFilter.sharedMesh;
-        if (mesh == null)
-        {
-            meshFilter.mesh = new Mesh();
-            mesh = meshFilter.sharedMesh;
-        }
+        Mesh mesh = new Mesh();
         mesh.Clear();
         mesh.vertices = vertices.ToArray();
         mesh.triangles = indices;
@@ -96,10 +90,12 @@ public class DrawMeshContour : MonoBehaviour {
             i++;
         }
         mesh.uv = uvs;
+        meshFilter.sharedMesh = mesh;
         //mesh.Optimize();
     }
 
     IEnumerator updateBackground() {
+        running = true;
         //gather the  children
         int N = transform.childCount;
         pos = new List<Vector2>();
@@ -110,7 +106,7 @@ public class DrawMeshContour : MonoBehaviour {
         float offset = 0.5f;
         foreach (Transform child in transform)
         {
-            pos.Add(new Vector2(child.position.x, child.position.y));
+            pos.Add(new Vector2(child.localPosition.x, child.localPosition.y));
             if ((matToApply != null) && (matToApply.name == "HIVCAhex_bg"))
             {
                 offset = 0.4f;
@@ -119,7 +115,7 @@ public class DrawMeshContour : MonoBehaviour {
             {
                 offset = 0.5f;
             }
-            vertices.Add(new Vector3(child.position.x, child.position.y, child.position.z + offset));
+            vertices.Add(new Vector3(child.localPosition.x, child.localPosition.y, child.localPosition.z + offset));
         }
         // Use the triangulator to get indices for creating triangles
         //Triangulate tr1 = new Triangulate();
@@ -155,5 +151,6 @@ public class DrawMeshContour : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         //Setup();
+        if (!running) StartCoroutine(updateBackground());
     }
 }
