@@ -71,7 +71,7 @@ public class QuitGame : MonoBehaviour
     // Open a file browser to save and load files
     private void OpenFileBrowser()
     {
-        GetComponent<GracesGames.SimpleFileBrowser.Scripts.DemoCaller > ().OpenFileBrowser((!load_scene), FileSelectedCallback);
+        GetComponent<GracesGames.SimpleFileBrowser.Scripts.DemoCaller > ().OpenFileBrowser(save_scene, FileSelectedCallback);
     }
 
     protected void FileSelectedCallback(string path)
@@ -139,13 +139,8 @@ public class QuitGame : MonoBehaviour
         current_bytes = File.ReadAllBytes(path);
         Texture2D backgroundImage = new Texture2D (2,2);
         backgroundImage.LoadImage(current_bytes);
-
-        backgroundImageManager.backgroundImageContainer.GetComponent<Renderer>().material.mainTexture = backgroundImage;
-        backgroundImageManager.backgroundImageOriginalResoution = new Vector2 (backgroundImage.width, backgroundImage.height);
-        backgroundImageManager.backgroundImageContainer.transform.localScale = new Vector3 (backgroundImage.width/100, 1,  backgroundImage.height/100);
-
-        backgroundImageManager.backgroundImageContainer.SetActive(true);
-        backgroundImageManager.showBackgroundImageToggle.isOn = true;
+        //backgroundImageManager.AddBackgroundImage(backgroundImage);
+        backgroundImageManager.AddBackgroundSprites(backgroundImage);
     }
 
     public void OriginalScreenShot() {
@@ -277,7 +272,7 @@ public class QuitGame : MonoBehaviour
         //getFileFromBrowser(gameObject.name, "LoadFromLines");
         //#else
         else {
-            string filePath = FileBrowser.OpenSingleFile("Open single file", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "png");
+            string filePath = FileBrowser.OpenSingleFile("Open single file", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "png","jpeg","jpg","tiff","bmp");
             /*FileBrowser.OpenFilePanel("Open file Title", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), new string[] { "txt","json" }, null, (bool canceled, string filePath) => {
                 if (canceled)
                 {
@@ -367,7 +362,7 @@ public class QuitGame : MonoBehaviour
         towrite += extra_ingredient.ToString()+ "\r\n";
         //name,spritename,scale2d,yoffset,issurf,isfiber,comp
         for (var i=0;i<extra_ingredient;i++){
-            var name = Manager.Instance.additional_ingredients_names[0];
+            var name = Manager.Instance.additional_ingredients_names[i];
             var ind = Manager.Instance.ingredients_names.IndexOf(name);
             var sprite_name = Manager.Instance.sprites_names[ind];
             var prefab = Manager.Instance.all_prefab[name];
@@ -406,8 +401,9 @@ public class QuitGame : MonoBehaviour
             text += player.rotation.ToString() + sep;
             text += props.name + sep;
             text += props.order + sep;
-            text += (player.bodyType==RigidbodyType2D.Static)? "1" : "0" + sep;//is it pinned
-            text += (player.simulated)? "1" : "0";//is it ghosted
+            text += (player.bodyType==RigidbodyType2D.Static)? "1"+ sep : "0" + sep;//is it pinned
+            //retrieve the ghost ID ?
+            text += props.ghost_id.ToString();//is it ghosted 
             //text += (player.isKinematic)? "1" : "0";//is it pinned or should we use the ispin ?
             string g = sep+"n"+ sep+"0";
             PrefabGroup pg = player.gameObject.GetComponentInParent<PrefabGroup>();
@@ -452,13 +448,14 @@ public class QuitGame : MonoBehaviour
                 towrite += player.rotation.ToString() + sep;
                 //player.gameObject.transform.rotation.ToAngleAxis(out angle, out axis);
                 //towrite += angle.ToString() + " ";
+                var props = player.gameObject.GetComponent<PrefabProperties>();
                 if (ch.GetComponent<PrefabProperties>().is_bound)
                 {
                     towrite += player.gameObject.GetComponent<PrefabProperties>().name+sep;
                 }
                 else { towrite += "0"+sep; }
-                towrite += (player.bodyType == RigidbodyType2D.Static) ? "1" : "0" + sep;//is it pinned
-                towrite += (player.simulated)? "1" : "0";//is it ghosted
+                towrite += (player.bodyType == RigidbodyType2D.Static) ? "1" + sep : "0" + sep;//is it pinned
+                towrite += props.ghost_id.ToString();//is it ghosted
                 towrite += "\r\n";
             }
         }
@@ -466,11 +463,12 @@ public class QuitGame : MonoBehaviour
         for (int i = 0; i < Manager.Instance.surface_objects.Count; i++)
         {
             Rigidbody2D player = Manager.Instance.surface_objects[i].GetComponent<Rigidbody2D>();
+            var props = Manager.Instance.surface_objects[i].GetComponent<PrefabProperties>();
             towrite += player.position.x.ToString() + sep + player.position.y.ToString() + sep + Manager.Instance.surface_objects[i].transform.position.z + sep;
             towrite += player.rotation.ToString() + sep;
-            towrite += Manager.Instance.surface_objects[i].GetComponent<PrefabProperties>().name + sep;
-            towrite += (player.bodyType == RigidbodyType2D.Static) ? "1" : "0" + sep;
-            towrite += (player.simulated)? "1" : "0";//is it ghosted
+            towrite += props.name + sep;
+            towrite += (player.bodyType == RigidbodyType2D.Static) ? "1"+ sep : "0" + sep;
+            towrite += props.ghost_id.ToString();//is it ghosted
             string g = sep+"n"+ sep+"0";
             PrefabGroup pg = player.gameObject.GetComponentInParent<PrefabGroup>();
             if (pg != null){
@@ -842,9 +840,12 @@ public class QuitGame : MonoBehaviour
             var kinematic = int.Parse(elems[6]);//Debug.Log(kinematic);
             var ghost = int.Parse(elems[7]); 
             var group_name = elems[8];
-            var group_id = int.Parse(elems[9]);           
-            var newObject = Manager.Instance.restoreOneInstance(name, new Vector3(x, y, z), zangle, order, false, (kinematic == 1), (ghost == 0));
+            var group_id = int.Parse(elems[9]);      
+            var newObject = Manager.Instance.restoreOneInstance(name, new Vector3(x, y, z), zangle, order, false, (kinematic == 1),false);
             GroupManager.Get.UpdateGroupFromObject(newObject, group_name, group_id);
+            if (ghost != -1) {
+                GhostManager.Get.UpdateFromObject(newObject, group_id);
+            }    
         }
         //in case of fiber need to do the random choice of sprite id, or save it
         lineCounter += nObj;
@@ -862,21 +863,26 @@ public class QuitGame : MonoBehaviour
             int nPoints = int.Parse(elems[1]);
             var prefabName = checkFiberName(name);
             if (prefabName == "DrawDNA") prefabName = "Draw DNA";
-            Debug.Log(name + " fiber  ??  " + prefabName);
+            Debug.Log(name + " fiber  ??  " + prefabName+" "+nPoints.ToString());
             GameObject fp = Manager.Instance.AddFiberParent(prefabName);
             var group_name = elems[2];
             var group_id = int.Parse(elems[3]);            
             bool closed = name.EndsWith("_Closed");
+            var do_ghost = -1;
             for (int j = 0; j < nPoints; j++)
             {
+                //-38.75513,-14.91165,0,158.7505,0,0,1
                 elems = lines[lineCounter].Split(sep[0]);
+                if (elems.Length != 7) {
+                    Debug.Log("problem fiber line "+j.ToString()+ " "+lines[lineCounter]);
+                }
                 var x = float.Parse(elems[0]);
                 var y = float.Parse(elems[1]);
                 var z = float.Parse(elems[2]);
                 var zangle = float.Parse(elems[3]);
                 var bounded = elems[4];
                 var kinematic = int.Parse(elems[5]);
-                var ghost = int.Parse(elems[6]); 
+                do_ghost = int.Parse(elems[6]); 
                 if (bounded == "0")
                 {
                     if (attached != null)
@@ -905,9 +911,6 @@ public class QuitGame : MonoBehaviour
                     if (kinematic == 1)
                         Manager.Instance.pin_object(attached, kinematic == 1); //SceneManager.Instance.pinInstance(attached);
                 }
-                if (ghost==0){
-                    fiber.GetComponent<Rigidbody2D>().simulated = false;
-                }
                 lineCounter++;
             }
             if (closed)
@@ -926,6 +929,9 @@ public class QuitGame : MonoBehaviour
                 }
             }
             GroupManager.Get.UpdateGroupFromObject(fp, group_name, group_id);
+            if (do_ghost != -1){
+                GhostManager.Get.UpdateFromObject(fp, do_ghost);
+            }
         }
         Debug.Log("found nSurfaceOfFiber " + nSurfaceOfFiber.ToString());
         for (int i = 0; i < nSurfaceOfFiber; i++)
@@ -940,8 +946,11 @@ public class QuitGame : MonoBehaviour
             var ghost = int.Parse(elems[6]); 
             var group_name = elems[7];
             var group_id = int.Parse(elems[8]);
-            var newObject = Manager.Instance.restoreOneInstance(name, new Vector3(x, y, z), zangle, 0, true, (kinematic == 1), (ghost == 0));
+            var newObject = Manager.Instance.restoreOneInstance(name, new Vector3(x, y, z), zangle, 0, true, (kinematic == 1), false);
             GroupManager.Get.UpdateGroupFromObject(newObject, group_name, group_id); 
+            if (ghost != -1) {
+                GhostManager.Get.UpdateFromObject(newObject, group_id);
+            }               
             lineCounter++;
         }
         //reset ui and manager
@@ -968,10 +977,12 @@ public class QuitGame : MonoBehaviour
         if (current_name!="") Manager.Instance.SwitchPrefabFromName(current_name);
         //restore groups
         GroupManager.Get.RestoreGroups();
+        GhostManager.Get.RestoreGhost();
     }
 
     public void LoadScene_cb(string filename)
     {
+        Manager.Instance.CheckDir();
         Debug.Log("You are in the loadScene_cb with filename: " + filename);
         var ext = Path.GetExtension(filename);
         if (ext == ".txt")

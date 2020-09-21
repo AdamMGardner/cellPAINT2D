@@ -19,7 +19,6 @@ public class GroupManager : MonoBehaviour
 {
     //help to create and manag group
     // Declare the scene manager as a singleton
-    private static GroupManager _instance = null;
     public GameObject prefabGroup;
     public List<string> groupnames;
     public Dictionary<string,int> groupinstances;
@@ -27,6 +26,8 @@ public class GroupManager : MonoBehaviour
     public Dictionary<string,Group> groups;
     public List<GameObject> current_selections;
 
+
+    private static GroupManager _instance = null;
     public static GroupManager Get
     {
         get
@@ -103,7 +104,6 @@ public class GroupManager : MonoBehaviour
     public Bounds getBound() {
         Vector3 center = Vector3.zero;
         float r = 0.0f;
-        Bounds global_bounds = new Bounds();
         bool first = true;
         int ntotal = 0;
         foreach (var o in current_selections)
@@ -114,6 +114,7 @@ public class GroupManager : MonoBehaviour
                     PrefabProperties p = o.transform.GetChild(i).gameObject.GetComponent<PrefabProperties>();
                     if (p) r += p.circle_radius;
                     center += o.transform.GetChild(i).position;
+                    //global_bounds.Encapsulate(o.transform.GetChild(i).position);
                     ntotal++;
                 }
             }
@@ -122,12 +123,37 @@ public class GroupManager : MonoBehaviour
                 PrefabProperties p = o.GetComponent<PrefabProperties>();
                 if (p) r += p.circle_radius;
                 center += o.transform.position;
+                //global_bounds.Encapsulate(o.transform.position);
                 ntotal++;
             }
         }
         center /= (float)ntotal;
-        r/= (float)ntotal;
-        global_bounds = new Bounds(center, new Vector3(r,r,r));
+        Bounds global_bounds = new Bounds(center,Vector3.one);
+        foreach (var o in current_selections)
+        {
+            if (Manager.Instance.fiber_parents.Contains(o)) {
+                for (int i = 0; i < o.transform.childCount; i++)
+                {
+                    //PrefabProperties p = o.transform.GetChild(i).gameObject.GetComponent<PrefabProperties>();
+                    //if (p) r += p.circle_radius;
+                    //center += o.transform.GetChild(i).position;
+                    global_bounds.Encapsulate(o.transform.GetChild(i).position);
+                    //ntotal++;
+                }
+            }
+            else
+            {
+                //PrefabProperties p = o.GetComponent<PrefabProperties>();
+                //if (p) r += p.circle_radius;
+                //center += o.transform.position;
+                global_bounds.Encapsulate(o.transform.position);
+                //ntotal++;
+            }
+        }
+        //r/= (float)ntotal;
+        //global_bounds.center = center;
+        //r=global_bounds.size.x;
+        //global_bounds = new Bounds(center, global_bounds.size);//new Vector3(r,r,r));
         return global_bounds;
     }
 
@@ -410,7 +436,13 @@ public class GroupManager : MonoBehaviour
             }
             else
             {
-                if (props) props.UpdateOutline(true);
+                if (props) {
+                    if (props.is_Group) Manager.Instance.highLightHierarchy(o.transform, true);
+                    else {
+                        props.outline_width = Manager.Instance.current_camera.orthographicSize;
+                        props.UpdateOutline(true);
+                    }
+                }
             }
         }
     }

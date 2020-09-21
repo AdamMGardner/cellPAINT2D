@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using Crosstales.FB;
 using System.IO;
-using System.Windows.Forms;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
@@ -16,6 +14,7 @@ using System.Threading.Tasks;
 
 public class Add_ingredient_ui : MonoBehaviour
 {
+    public bool use_webDriver = false;
     public InputField input_pdb_field;
     public InputField input_name_field;
     public InputField input_seletion_field;
@@ -23,18 +22,24 @@ public class Add_ingredient_ui : MonoBehaviour
     public InputField input_model_field;
     public InputField input_pixel_ratio_field;
     public InputField input_offset_y_field;
-
+    public InputField Zrotation_field;
+    public Button Load;
+    public Button Illustrate;
+    public Button Create;
     public int query_id;
     public Image theSprite;
     public Image theSpriteMb;
     public Toggle surface;
     public Toggle fiber;
     public Image loader;
+    public Image browser_image;
     public string query_answer="";
     public string query_answer_url="";
+    public bool do_screen_capture = false;
     public bool query_sent = false;
     public bool query_done = true;
     public bool redo_query = false;
+    public bool illustrated = false;
     public string sprite_name="";
     public string sprite_path="";
     public bool Force = false;
@@ -46,9 +51,11 @@ public class Add_ingredient_ui : MonoBehaviour
     public string input_seletion;
     public string input_bu;
     public string input_model;
-    public float input_pixel_ratio;
-    public float input_offset_y;    
+    public float input_pixel_ratio = 1.0f;
+    public float input_offset_y;   
+    public float Zrotation = 0.0f; 
     private Texture2D tmp_texture;
+    private Texture2D browser_texture;
     private string webdriverspath;
     public static Add_ingredient_ui Get
     {
@@ -72,6 +79,7 @@ public class Add_ingredient_ui : MonoBehaviour
     
     void Start()
     {
+        browser_texture = new Texture2D(2, 2);
         webdriverspath = UnityEngine.Application.dataPath + "/../Data/webdrivers/win/";
 #if UNITY_STANDALONE_OSX
         webdriverspath = UnityEngine.Application.dataPath + "/../Data/webdrivers/mac/";
@@ -120,6 +128,16 @@ public class Add_ingredient_ui : MonoBehaviour
             StartCoroutine(GetText(query_answer_url));
             query_done = false;
         }
+        if (!query_done &&(driver!=null)&&do_screen_capture){
+            Screenshot image = ((ITakesScreenshot)driver).GetScreenshot();
+            //Save the screenshot
+            //AsByteArray
+            browser_texture.LoadImage(image.AsByteArray);
+            if (browser_image) {
+                browser_image.sprite = Sprite.Create(browser_texture, new Rect(0, 0, browser_texture.width, browser_texture.height), new Vector2(0.5f, 0.5f), 100.0f);
+            }
+            //image.SaveAsFile("C:/temp/Screenshot.png");
+        }
     }
 
     public void setScale(float number){
@@ -140,7 +158,19 @@ public class Add_ingredient_ui : MonoBehaviour
         setYoffset_cb(number);
     }
 
+    public void setZrot(float number){
+        Zrotation_field.text = number.ToString();
+        theSprite.rectTransform.rotation = Quaternion.Euler(0, 0, number);
+        Zrotation = number; 
+    }
+
+    public void setZrot(string number){
+        theSprite.rectTransform.rotation = Quaternion.Euler(0, 0, float.Parse (number));
+        Zrotation = float.Parse (number); 
+    }
+
     public void setYoffset_cb(float number){
+        input_pixel_ratio = float.Parse (input_pixel_ratio_field.text ); 
         input_offset_y_field.text = number.ToString();
         input_offset_y = number;
         //update on the sprite
@@ -168,11 +198,22 @@ public class Add_ingredient_ui : MonoBehaviour
         input_bu = input_bu_field.text;
         input_seletion = input_seletion_field.text;
         input_model = input_model_field.text;
-        input_name = input_name_field.text;
         input_pixel_ratio_field.text = "6.0";
         var q_id = (query_id==-1)? Mathf.CeilToInt(UnityEngine.Random.Range(0.0f, 1.0f)*1000000000.0f) : query_id;
         query_id = q_id;
-        DoAsyncIllustrate();
+        illustrated = true;
+        if (use_webDriver) {
+            DoAsyncIllustrate();
+        }
+        else {
+            var query="https://mesoscope.scripps.edu/beta//cgi-bin/hILL.py?pdbid="+input_pdb;
+            if (input_name !="") query += "&name="+input_name;
+            if (input_bu!="") query += "&bu="+input_bu;
+            if (input_seletion!="") query += "&selection="+input_seletion;
+            if (input_model!="") query += "&model="+input_model;
+            query+="&qid="+query_id.ToString();
+            StartCoroutine(GetRequest(query));
+        }
     }
 
     public void DoCallIllustrate(){
@@ -232,6 +273,7 @@ public class Add_ingredient_ui : MonoBehaviour
     }
 
     public void LoadASprite(){
+        illustrated = false;
         //call fileBrowser and pass it to load sprites
         string filePath = FileBrowser.OpenSingleFile("Open image file", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "png", "jpg");
         var sprite = Manager.Instance.LoadNewSprite(filePath);
@@ -242,13 +284,150 @@ public class Add_ingredient_ui : MonoBehaviour
         theSprite.rectTransform.sizeDelta = new Vector2(w,(int)h);
         sprite_name = Path.GetFileName(filePath);
         sprite_path = Path.GetDirectoryName(filePath);
-        PdbLoader.DataDirectories.Add(sprite_path);
+        if (input_name_field.text == "") input_name_field.text =  Path.GetFileNameWithoutExtension(filePath);
         Manager.Instance.AddUserDirectory(sprite_path);
     }
 
-    public void AddTheIngredient(){
+    public Texture2D RotateImage(Texture2D image, float angle){
+        float pi2 = Mathf.PI / 2.0f;
+        int oldWidth = image.width;
+        int oldHeight = image.height;
+        float theta = angle;//* Math.PI / 180.0 
+        float locked_theta = theta;
+        if (locked_theta < 0.0) locked_theta += 2.0f * Mathf.PI;
+        float newWidth;
+        float newHeight;
+        int nWidth;
+        int nHeight;
+        float adjacentTop;
+        float oppositeTop;
+        float adjacentBottom;
+        float oppositeBottom;
+        if ((locked_theta >= 0.0f && locked_theta < pi2) ||
+             (locked_theta >= Mathf.PI && locked_theta < (Mathf.PI + pi2)))
+        {
+            adjacentTop = Mathf.Abs(Mathf.Cos(locked_theta)) * oldWidth;
+            oppositeTop = Mathf.Abs(Mathf.Sin(locked_theta)) * oldWidth;
 
+            adjacentBottom = Mathf.Abs(Mathf.Cos(locked_theta)) * oldHeight;
+            oppositeBottom = Mathf.Abs(Mathf.Sin(locked_theta)) * oldHeight;
+        }
+        else
+        {
+            adjacentTop = Mathf.Abs(Mathf.Sin(locked_theta)) * oldHeight;
+            oppositeTop = Mathf.Abs(Mathf.Cos(locked_theta)) * oldHeight;
+
+            adjacentBottom = Mathf.Abs(Mathf.Sin(locked_theta)) * oldWidth;
+            oppositeBottom = Mathf.Abs(Mathf.Cos(locked_theta)) * oldWidth;
+        }
+        newWidth = adjacentTop + oppositeBottom;
+        newHeight = adjacentBottom + oppositeTop;
+        Vector2 center = new Vector2(oldWidth/2,oldHeight/2);
+        var rotation = Quaternion.Euler(0, 0, angle);
+        Bounds b = new Bounds();
+        Vector2 upleft = rotation*(new Vector2(0,oldHeight) - center);
+        b.Encapsulate(new Vector3(upleft.x,upleft.y,0));
+        Vector2 upright = rotation*(new Vector2(oldWidth,oldHeight) - center);
+        b.Encapsulate(new Vector3(upright.x,upright.y,0));
+        //Vector2 botleft = rotation*(new Vector2(0,0) - center);
+        //b.Encapsulate(new Vector3(botleft.x,botleft.y,0));
+        //Vector2 botright = rotation*(new Vector2(oldWidth,0) - center);
+        //b.Encapsulate(new Vector3(botright.x,botright.y,0));
+        nWidth = Mathf.CeilToInt(b.size.x*2);
+        nHeight = Mathf.CeilToInt(b.size.y*2);
+
+        //nWidth = Mathf.CeilToInt(newWidth);
+        //nHeight = Mathf.CeilToInt(newHeight);
+        
+        Texture2D rotatedBmp = new Texture2D(nWidth,nHeight);
+        for (int i = 0; i <nWidth; i++)
+        {
+            for (int j = 0; j < nHeight; j++)
+            {
+                rotatedBmp.SetPixel(i,j,Color.clear);
+            }
+        }
+        rotatedBmp.Apply();
+        
+        Vector2 center2 = new Vector2(nWidth/2,nHeight/2);
+        Vector2 offset = new Vector2(Mathf.Abs(nWidth-oldWidth)/2,Mathf.Abs(nHeight-oldHeight)/2);
+        //pass the rotated data to the new texture ?
+        //Color[] pixels = image.GetPixels();
+        //Now rotate your original image around its center but add an offset to the coordinates before putting them into the new array. 
+        //The offset would be half the difference in width and height between both arrays.
+        for (int i = 0; i <oldWidth; i++)
+        {
+            for (int j = 0; j < oldHeight; j++)
+            {
+                Vector2 new_coord = rotation*(new Vector2(i,j) - center);
+                var pix = image.GetPixel(i, j);
+                var newi = Mathf.RoundToInt(new_coord.x+center2.x+ 0.5f);//use 0.5 ?
+                var newj = Mathf.RoundToInt(new_coord.y+center2.y+ 0.5f);
+                rotatedBmp.SetPixel(newi,newj,pix);
+            }
+        }
+        rotatedBmp.Apply();
+        return rotatedBmp;
+    }
+
+    public Texture2D RotateImageReverse(Texture2D image, float angle){
+        float pi2 = Mathf.PI / 2.0f;
+        int oldWidth = image.width;
+        int oldHeight = image.height;
+        Vector2 center = new Vector2(oldWidth/2,oldHeight/2);
+        var rotation = Quaternion.Euler(0, 0, angle);
+        Bounds b = new Bounds();
+        Vector2 upleft = rotation*(new Vector2(0,oldHeight) - center);
+        b.Encapsulate(upleft);
+        Vector2 upright = rotation*(new Vector2(oldWidth,oldHeight) - center);
+        b.Encapsulate(upright);
+        Vector2 botleft = rotation*(new Vector2(0,0) - center);
+        b.Encapsulate(botleft);
+        Vector2 botright = rotation*(new Vector2(oldWidth,0) - center);
+        b.Encapsulate(botright);
+        int nWidth = Mathf.CeilToInt(b.size.x);
+        int nHeight = Mathf.CeilToInt(b.size.y);
+        Vector2 center2 = new Vector2(nWidth/2,nHeight/2);
+        Texture2D rotatedBmp = new Texture2D(nWidth,nHeight);
+        for (int i = 0; i <nWidth; i++)
+        {
+            for (int j = 0; j < nHeight; j++)
+            {
+                //inverse rotation to get the original pixel
+                Vector2 new_coord =  Quaternion.Inverse(rotation) * (new Vector2(i,j) - center2);
+                var newi = Mathf.RoundToInt(new_coord.x+center.x);
+                var newj = Mathf.RoundToInt(new_coord.y+center.y);
+                if (newi >= 0 && newi < oldWidth && newj >=0 && newj < oldHeight)
+                {   
+                    var pix = image.GetPixel(newi, newj);
+                    rotatedBmp.SetPixel(i,j,pix);
+                }
+                else {
+                    rotatedBmp.SetPixel(i,j,Color.clear);
+                }
+            }
+        }
+        rotatedBmp.Apply();
+        return rotatedBmp;
+    }
+
+    public void AddTheIngredient(){
+        //make sure we have the values
+        input_pixel_ratio = float.Parse (input_pixel_ratio_field.text );
+        if (illustrated || Zrotation!= 0.0f) {
+            if (Zrotation!= 0.0f) {
+                //apply the rotation to the pixels.
+                 var texture = RotateImageReverse(theSprite.sprite.texture,Zrotation);
+                 theSprite.sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
+                 Zrotation = 0.0f;
+            }
+            var current_bytes = theSprite.sprite.texture.EncodeToPNG();
+            var filePath = PdbLoader.DefaultDataDirectory + "/" + "images/" + input_name_field.text+".png";
+            System.IO.File.WriteAllBytes(filePath, current_bytes);
+            sprite_name = input_name_field.text+".png";
+        }
         Manager.Instance.recipeUI.AddOneIngredient(input_name_field.text, sprite_name, input_pixel_ratio, -input_offset_y, surface.isOn, fiber.isOn, -1);
+        input_name_field.text = "";
     }
 
     IEnumerator GetRequest(string uri)
@@ -264,24 +443,27 @@ public class Add_ingredient_ui : MonoBehaviour
             if (webRequest.isNetworkError || webRequest.isHttpError )
             {
                 Debug.Log(pages[page] + ": Error: " + webRequest.error);
+                var sprite = Resources.Load<Sprite>("Recipie/error");
+                theSprite.sprite = sprite;
                 query_done = false;
                 redo_query = false;
             }
             else
             {
-                var filePath = PdbLoader.DownloadFile(input_name, "https://mesoscope.scripps.edu/data/tmp/ILL/"+query_id.ToString()+"/",  PdbLoader.DefaultDataDirectory + "/" + "images/", ".png");
+                //var filePath = PdbLoader.DownloadFile(input_name, "https://mesoscope.scripps.edu/data/tmp/ILL/"+query_id.ToString()+"/",  PdbLoader.DefaultDataDirectory + "/" + "images/", ".png");
                 //Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
                 //var filePath = PdbLoader.DefaultDataDirectory + "/" + "images/" + input_name.text+".png";
                 //File.WriteAllText(filePath, webRequest.downloadHandler.text);
-                query_done = false;
+                query_done = true;
                 redo_query = false;
-                var sprite = Manager.Instance.LoadNewSprite(filePath);
-                theSprite.sprite = sprite;
-                driver.Close();
+                query_sent = true; 
+                //var sprite = Manager.Instance.LoadNewSprite(filePath);
+                //theSprite.sprite = sprite;
             }
         }
     }
 
+/*
     private IEnumerator onResponse(UnityWebRequest req)
     {
         yield return req.SendWebRequest();
@@ -307,7 +489,7 @@ public class Add_ingredient_ui : MonoBehaviour
                 query_sent = true;         
             }
         }
-    }
+    }*/
     
     IEnumerator GetText(string url)
     {
@@ -320,6 +502,8 @@ public class Add_ingredient_ui : MonoBehaviour
                 Debug.Log(": Error: " + uwr.error);
                 query_done = false;
                 redo_query = false;
+                var sprite = Resources.Load<Sprite>("Recipie/error");
+                theSprite.sprite = sprite;
             }
             else
             {
@@ -331,14 +515,25 @@ public class Add_ingredient_ui : MonoBehaviour
                 var ratio =(float) theSprite.sprite.texture.width/(float)theSprite.sprite.texture.height;
                 var w = 150;//(snode.data.thumbnail)?snode.data.thumbnail.width:150;
                 var h = w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
-                theSprite.rectTransform.sizeDelta = new Vector2(w,(int)h);                
-                var current_bytes = tmp_texture.EncodeToPNG();
-                var filePath = PdbLoader.DefaultDataDirectory + "/" + "images/" + input_name+".png";
-                System.IO.File.WriteAllBytes(filePath, current_bytes);    
-                if (loader) loader.gameObject.SetActive(false);       
-                driver.Close();     
-                driver.Quit();           
+                theSprite.rectTransform.sizeDelta = new Vector2(w,(int)h);    
+                if (loader) loader.gameObject.SetActive(false);                  
+                //driver.Close();     
+                //driver.Quit();           
             }
+            Load.interactable = true;
+            Illustrate.interactable = true;
+            Create.interactable = true;
+            if (use_webDriver) {
+                 driver.Close();
+                driver.Quit();
+            }
+        }
+    }
+
+    void OnApplicationQuit(){
+        if (driver != null && use_webDriver) {
+            driver.Close();
+            driver.Quit();
         }
     }
 }

@@ -239,7 +239,7 @@ public class RecipeUI : MonoBehaviour {
         }
         else {
             //add the filename directory as a search directory for data
-            PdbLoader.DataDirectories.Add(Path.GetDirectoryName(filename));
+            //PdbLoader.DataDirectories.Add(Path.GetDirectoryName(filename));
             Manager.Instance.AddUserDirectory(Path.GetDirectoryName(filename));
             resultData = JSONNode.Parse(File.ReadAllText(filename)); //JSONNode.LoadFromFile(filename);
         }
@@ -323,7 +323,7 @@ public class RecipeUI : MonoBehaviour {
         }
         else {
             //add the filename directory as a search directory for data
-            PdbLoader.DataDirectories.Add(Path.GetDirectoryName(filename));
+            //PdbLoader.DataDirectories.Add(Path.GetDirectoryName(filename));
             Manager.Instance.AddUserDirectory(Path.GetDirectoryName(filename));
             resultData = JSONNode.Parse(File.ReadAllText(filename)); //JSONNode.LoadFromFile(filename);
         }
@@ -976,11 +976,13 @@ public class RecipeUI : MonoBehaviour {
         {
             PrefabProperties p = myPrefab.GetComponent<PrefabProperties>();
             p.compartment = compname;
+            p.setuped = false;
             p.SetupFromValues(is_surface, is_fiber, ascale2d, yoffset);
             if (p.is_fiber)
             {
                 p.persistence_length = 3;
             }            
+            Debug.Log("SetupedFromValues "+p.scale2d.ToString()+" "+p.y_offset.ToString());
             //need to setup the collider without the node information
         }
         //oneHexInstance(hex_instance.Count + 1, new Point(), Manager.Instance.ingredients_names.Count - 1);

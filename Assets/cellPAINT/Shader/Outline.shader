@@ -5,7 +5,7 @@ Shader "Custom/Outline" {
 		Properties
 		{
 			[PerRendererData] _MainTex("Sprite Texture", 2D) = "white" {}
-			_Color("Sprite Tint", Color) = (1,1,1,1)
+			[PerRendererData] _Color("Sprite Tint", Color) = (1,1,1,1)
 			_Blend("Blend", Range(0, 1)) = 0.5
 			//_Color2("Background", Color) = (1,1,1,1)
 			[MaterialToggle] PixelSnap("Pixel snap", Float) = 0
@@ -203,7 +203,7 @@ Shader "Custom/Outline" {
 					if (_Nucleic == 0) c.a = totalAlpha;
 				}
 			}
-
+			c.a *= _Color.a;
 			//c.rgb *= c.a;
 			//c.a = 1;
 			//c.rgb = fixed4(c.rgb.r, c.rgb.g, c.rgb.b, c.a);

@@ -83,6 +83,7 @@ public class buildBoundary : MonoBehaviour
     }
 
     void Update() {
+        return;
         //check if aspect ratio change or window size changed 
         //is that what we want ?
         last_width = Screen.width;//cam.pixelRect.width;

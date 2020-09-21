@@ -47,21 +47,19 @@ public static class PdbLoader
 
     public static string GetAFile(string filename, string type, string extension) {
         //look for filename in repo and local directory
+        //priority on which folder ?
         Debug.Log("GetAFile "+filename+" "+extension);
-        var filePath = DefaultDataDirectory + "/" + type + "/"  + filename + extension;
-        Debug.Log(filePath);
-        if (!File.Exists(filePath))
+        var filePath="";
+        foreach (var dir in DataDirectories)
         {
-            foreach (var dir in DataDirectories)
+            filePath = dir + "/" + filename + extension;
+            Debug.Log(filePath);
+            if (File.Exists(filePath))
             {
-                filePath = dir + "/" + filename + extension;
-                Debug.Log(filePath);
-                if (File.Exists(filePath))
-                {
-                    return filePath;
-                }
+                return filePath;
             }
         }
+        filePath = DefaultDataDirectory + "/" + type + "/"  + filename + extension;
         if (!File.Exists(filePath))
         {
             filePath = DownloadFile(filename, cellpack_repo + "/" + type, DefaultDataDirectory + "/" + type, extension);
