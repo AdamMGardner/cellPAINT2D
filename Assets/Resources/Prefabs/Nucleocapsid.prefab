@@ -117,6 +117,7 @@ MonoBehaviour:
   is_surface: 0
   surface_secondLayer: 0
   surface_offset: -0
+  y_offset: 0
   scale2d: 12
   local_scale: 0.23809524
   pcpAxe: {x: 0, y: 1, z: 0}
@@ -126,6 +127,7 @@ MonoBehaviour:
   fiber_Bottom: 0
   light_fiber: 0
   closing: 0
+  is_Group: 0
   is_anchor: 0
   is_bound: 0
   bound_to: 
@@ -175,6 +177,7 @@ MonoBehaviour:
   background_mat: {fileID: 0}
   zangle: 0
   initialized: 0
+  RB: {fileID: 0}
   attachments: []
 --- !u!50 &5765639105121201946
 Rigidbody2D:

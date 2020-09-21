@@ -125,7 +125,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5523681745357314512
 Transform:
   m_ObjectHideFlags: 0
@@ -222,6 +222,7 @@ MonoBehaviour:
   is_surface: 1
   surface_secondLayer: 1
   surface_offset: -2
+  y_offset: 0
   scale2d: 12
   local_scale: 0.23809524
   pcpAxe: {x: 0, y: 1, z: 0}
@@ -231,6 +232,7 @@ MonoBehaviour:
   fiber_Bottom: 0
   light_fiber: 0
   closing: 1
+  is_Group: 0
   is_anchor: 0
   is_bound: 0
   bound_to: 
@@ -280,6 +282,7 @@ MonoBehaviour:
   background_mat: {fileID: 0}
   zangle: 0
   initialized: 0
+  RB: {fileID: 0}
   attachments: []
 --- !u!50 &4114774888870342756
 Rigidbody2D:

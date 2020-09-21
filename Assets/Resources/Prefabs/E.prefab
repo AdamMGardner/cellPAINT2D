@@ -326,6 +326,7 @@ MonoBehaviour:
   is_surface: 1
   surface_secondLayer: 1
   surface_offset: -0
+  y_offset: 0
   scale2d: 12
   local_scale: 0.23809524
   pcpAxe: {x: 0, y: 1, z: 0}
@@ -335,6 +336,7 @@ MonoBehaviour:
   fiber_Bottom: 0
   light_fiber: 0
   closing: 1
+  is_Group: 0
   is_anchor: 0
   is_bound: 0
   bound_to: 
@@ -367,7 +369,7 @@ MonoBehaviour:
   pin_color: {r: 1, g: 0, b: 0, a: 1}
   entry: {x: 0, y: 0, z: 0}
   exit: {x: 0, y: 0, z: 0}
-  area: 9100.108
+  area: 9327.071
   ispined: 0
   enableCollision: 0
   spriteTumble_id: 0
@@ -384,6 +386,7 @@ MonoBehaviour:
   background_mat: {fileID: 0}
   zangle: 0
   initialized: 0
+  RB: {fileID: 0}
   attachments: []
 --- !u!50 &3104263572664519830
 Rigidbody2D:
