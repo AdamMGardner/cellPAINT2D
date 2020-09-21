@@ -23,6 +23,7 @@ public class Add_ingredient_ui : MonoBehaviour
     public InputField input_pixel_ratio_field;
     public InputField input_offset_y_field;
     public InputField Zrotation_field;
+    public Text log_label;
     public Button Load;
     public Button Illustrate;
     public Button Create;
@@ -117,8 +118,8 @@ public class Add_ingredient_ui : MonoBehaviour
             var sprite = Manager.Instance.LoadNewSprite(filePath);
             theSprite.sprite = sprite;
             var ratio =(float) theSprite.sprite.texture.width/(float)theSprite.sprite.texture.height;
-            var w = 150;//(snode.data.thumbnail)?snode.data.thumbnail.width:150;
-            var h = w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
+            var h = 210;//w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
+            var w = h*ratio;
             theSprite.rectTransform.sizeDelta = new Vector2(w,(int)h);
             Force = false;
             //try the getTexture
@@ -279,8 +280,8 @@ public class Add_ingredient_ui : MonoBehaviour
         var sprite = Manager.Instance.LoadNewSprite(filePath);
         theSprite.sprite = sprite;
         var ratio =(float) theSprite.sprite.texture.width/(float)theSprite.sprite.texture.height;
-        var w = 150;//(snode.data.thumbnail)?snode.data.thumbnail.width:150;
-        var h = w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
+        var h = 210;//w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
+        var w = h*ratio;
         theSprite.rectTransform.sizeDelta = new Vector2(w,(int)h);
         sprite_name = Path.GetFileName(filePath);
         sprite_path = Path.GetDirectoryName(filePath);
@@ -445,8 +446,13 @@ public class Add_ingredient_ui : MonoBehaviour
                 Debug.Log(pages[page] + ": Error: " + webRequest.error);
                 var sprite = Resources.Load<Sprite>("Recipie/error");
                 theSprite.sprite = sprite;
+                Load.interactable = true;
+                Illustrate.interactable = true;
+                Create.interactable = true;  
+                if (loader) loader.gameObject.SetActive(false); 
                 query_done = false;
                 redo_query = false;
+                log_label.text = webRequest.error;
             }
             else
             {
@@ -457,6 +463,7 @@ public class Add_ingredient_ui : MonoBehaviour
                 query_done = true;
                 redo_query = false;
                 query_sent = true; 
+                log_label.text = "";
                 //var sprite = Manager.Instance.LoadNewSprite(filePath);
                 //theSprite.sprite = sprite;
             }
@@ -504,6 +511,11 @@ public class Add_ingredient_ui : MonoBehaviour
                 redo_query = false;
                 var sprite = Resources.Load<Sprite>("Recipie/error");
                 theSprite.sprite = sprite;
+                Load.interactable = true;
+                Illustrate.interactable = true;
+                Create.interactable = true;  
+                if (loader) loader.gameObject.SetActive(false); 
+                log_label.text = uwr.error;           
             }
             else
             {
@@ -513,12 +525,14 @@ public class Add_ingredient_ui : MonoBehaviour
                 var mySprite = Sprite.Create(tmp_texture, new Rect(0.0f, 0.0f, tmp_texture.width, tmp_texture.height), new Vector2(0.5f, 0.5f), 100.0f);
                 theSprite.sprite = mySprite;
                 var ratio =(float) theSprite.sprite.texture.width/(float)theSprite.sprite.texture.height;
-                var w = 150;//(snode.data.thumbnail)?snode.data.thumbnail.width:150;
-                var h = w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
+                //var w = 150;//(snode.data.thumbnail)?snode.data.thumbnail.width:150;
+                var h = 210;//w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
+                var w = h*ratio;
                 theSprite.rectTransform.sizeDelta = new Vector2(w,(int)h);    
                 if (loader) loader.gameObject.SetActive(false);                  
                 //driver.Close();     
-                //driver.Quit();           
+                //driver.Quit();      
+                log_label.text = "";     
             }
             Load.interactable = true;
             Illustrate.interactable = true;

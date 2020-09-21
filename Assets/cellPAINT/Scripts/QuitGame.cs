@@ -844,7 +844,7 @@ public class QuitGame : MonoBehaviour
             var newObject = Manager.Instance.restoreOneInstance(name, new Vector3(x, y, z), zangle, order, false, (kinematic == 1),false);
             GroupManager.Get.UpdateGroupFromObject(newObject, group_name, group_id);
             if (ghost != -1) {
-                GhostManager.Get.UpdateFromObject(newObject, group_id);
+                GhostManager.Get.UpdateFromObject(newObject, ghost, group_name, group_id);
             }    
         }
         //in case of fiber need to do the random choice of sprite id, or save it
@@ -930,7 +930,7 @@ public class QuitGame : MonoBehaviour
             }
             GroupManager.Get.UpdateGroupFromObject(fp, group_name, group_id);
             if (do_ghost != -1){
-                GhostManager.Get.UpdateFromObject(fp, do_ghost);
+                GhostManager.Get.UpdateFromObject(fp, do_ghost, group_name, group_id);
             }
         }
         Debug.Log("found nSurfaceOfFiber " + nSurfaceOfFiber.ToString());
@@ -949,7 +949,7 @@ public class QuitGame : MonoBehaviour
             var newObject = Manager.Instance.restoreOneInstance(name, new Vector3(x, y, z), zangle, 0, true, (kinematic == 1), false);
             GroupManager.Get.UpdateGroupFromObject(newObject, group_name, group_id); 
             if (ghost != -1) {
-                GhostManager.Get.UpdateFromObject(newObject, group_id);
+                GhostManager.Get.UpdateFromObject(newObject, ghost, group_name, group_id);
             }               
             lineCounter++;
         }
@@ -973,8 +973,8 @@ public class QuitGame : MonoBehaviour
             Manager.Instance.restoreOneBond(new Vector3(x1, y1, z1),id1, new Vector3(x2, y2, z2),id2);
             lineCounter++;
         }
-        Manager.Instance.UpdateGhostArea();   
-        if (current_name!="") Manager.Instance.SwitchPrefabFromName(current_name);
+        //Manager.Instance.UpdateGhostArea();   
+        //if (current_name!="") Manager.Instance.SwitchPrefabFromName(current_name);
         //restore groups
         GroupManager.Get.RestoreGroups();
         GhostManager.Get.RestoreGhost();

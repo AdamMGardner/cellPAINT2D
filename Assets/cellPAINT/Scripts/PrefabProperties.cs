@@ -608,7 +608,7 @@ public class PrefabProperties : MonoBehaviour
 
     }
     
-    public void UpdateYOffset(float new_value){
+    /*public void UpdateYOffset(float new_value){
         var pixel_scale = (Manager.Instance.unit_scale * 10.0f) / 100.0f;
         var unity_scale2d = 1.0f / (Manager.Instance.unit_scale * 10.0f);
         y_offset = new_value;
@@ -650,7 +650,7 @@ public class PrefabProperties : MonoBehaviour
         }
         else if (is_fiber) {
             //persistence length ?
-            /*persistence_length = 1;//nb of spring
+            persistence_length = 1;//nb of spring
             persistence_strength = 5.0f;
             fiber_scale = local_scale;
             //setup the collider
@@ -681,7 +681,7 @@ public class PrefabProperties : MonoBehaviour
             if (node.HasKey("closed")) 
             {
                 closing = bool.Parse(node["closed"].Value);
-            }*/
+            }
         }
         else
         {
@@ -691,6 +691,7 @@ public class PrefabProperties : MonoBehaviour
         //setuped = true;
         surface_offset=surface_offset*local_scale;        
     }
+    */
 
     public void SetupBicycle(){
         Vector3 center = (pcp[0] + pcp[1]) * 0.5f;
@@ -698,8 +699,7 @@ public class PrefabProperties : MonoBehaviour
         //instead of 2 circle up and down, try 2 box up and down. bow width == ingredient radius
         float thickness = (84.0f / 4.0f) * unity_scale2d;//42 angstrom
         float width = TestPcpalAxis2D();
-        float bradius = Manager.Instance.bicycle_radius;
-        float bicycle_radius = bradius*1.0f/local_scale;
+        float bicycle_radius = width*1.0f/local_scale;
         bicycleUp = new GameObject("up");
         bicycleUp.layer = 15;
         bicycleUp.transform.parent = gameObject.transform;
@@ -758,7 +758,6 @@ public class PrefabProperties : MonoBehaviour
         //instead of 2 circle up and down, try 2 box up and down. bow width == ingredient radius
         float thickness = (23.0f) * unity_scale2d * 1.0f/local_scale;
         float width = TestPcpalAxis2D();
-        float bradius = Manager.Instance.bicycle_radius;
         float bicycle_radius = thickness;
         bicycleUp = new GameObject("up");
         bicycleUp.layer = 15;
@@ -786,7 +785,6 @@ public class PrefabProperties : MonoBehaviour
         //instead of 2 circle up and down, try 2 box up and down. bow width == ingredient radius
         float thickness = (23.0f) * unity_scale2d;//(84.0f / 4.0f) * unity_scale2d;//42 angstrom
         float width = TestPcpalAxis2D();
-        float bradius = Manager.Instance.bicycle_radius;
         float height = thickness;//bradius*1.0f/local_scale;
         bicycleUp = new GameObject("up");
         bicycleUp.layer = 15;
@@ -832,7 +830,6 @@ public class PrefabProperties : MonoBehaviour
         //instead of 2 circle up and down, try 2 box up and down. bow width == ingredient radius
         float thickness = (23.0f) * unity_scale2d * 1.0f/local_scale;//(84.0f / 4.0f) * unity_scale2d;//42 angstrom
         float width = TestPcpalAxis2D();
-        float bradius = Manager.Instance.bicycle_radius;
         float height = thickness;//bradius*1.0f/local_scale;
         bicycleUp = new GameObject("up");
         bicycleUp.layer = 15;
@@ -999,64 +996,7 @@ public class PrefabProperties : MonoBehaviour
         if (!is_fiber && is_surface)
         {
             gameObject.layer = 12;
-            float thickness = (84.0f / 2.0f) * unity_scale2d;//42 angstrom
-            float radius = (m_ext.y + m_ext.z) / 4.0f;
-            //C0ircleCollider2D c = gameObject.AddComponent<CircleCollider2D>();
-            //c.radius = thickness;
-            //c.offset = new Vector2(center.y, center.z + surface_offset);
-            float bradius = Manager.Instance.bicycle_radius;
-            float bicycle_radius = bradius*1.0f/local_scale;
-            TestPcpalAxis2D();
-            bicycleUp = new GameObject("up");
-            bicycleUp.layer = 15;
-            bicycleUp.transform.parent = gameObject.transform;
-            bicycleUp.transform.localPosition = new Vector3(center.y, center.z + thickness + bicycle_radius + surface_offset, 0.0f);
-            CircleUp = bicycleUp.AddComponent<CircleCollider2D>();
-            CircleUp.radius = bicycle_radius;
-            CircleUp.offset = new Vector2(bicycle_radius,0);
-            CircleUp2 = bicycleUp.AddComponent<CircleCollider2D>();
-            CircleUp2.radius = bicycle_radius;
-            CircleUp2.offset = new Vector2(-bicycle_radius,0);
-            CircleUpRb = bicycleUp.AddComponent<Rigidbody2D>();
-            //CircleUpRb.bodyType = RigidbodyType2D.Kinematic;
-            //add the joint FixedJoint2D or Hinge
-            hjup = bicycleUp.AddComponent<FixedJoint2D>();
-            hjup.autoConfigureConnectedAnchor = false;
-            hjup.connectedBody = rb;
-            hjup.anchor = new Vector2(-bicycle_radius, 0);
-            hjup.connectedAnchor = new Vector2(-bicycle_radius, center.z + thickness + bicycle_radius + surface_offset);
-            //hjup.frequency = 1.0f;
-            hjup2 = bicycleUp.AddComponent<FixedJoint2D>();
-            hjup2.autoConfigureConnectedAnchor = false;
-            hjup2.connectedBody = rb;
-            hjup2.anchor = new Vector2(bicycle_radius, 0);
-            hjup2.connectedAnchor = new Vector2(bicycle_radius, center.z + thickness + bicycle_radius+ surface_offset);
-            //hjup.frequency = 1.0f;
-            bicycleDown = new GameObject("down");
-            bicycleDown.layer = 15;
-            bicycleDown.transform.parent = gameObject.transform;
-            bicycleDown.transform.localPosition = new Vector3(center.y, center.z - thickness - bicycle_radius + surface_offset, 0.0f);
-            CircleDown = bicycleDown.AddComponent<CircleCollider2D>();
-            CircleDown.radius = bicycle_radius;
-            CircleDown.offset = new Vector2(bicycle_radius,0);
-            CircleDown2 = bicycleDown.AddComponent<CircleCollider2D>();
-            CircleDown2.radius = bicycle_radius;
-            CircleDown2.offset = new Vector2(-bicycle_radius,0);
-            CircleDownRb = bicycleDown.AddComponent<Rigidbody2D>();
-            //CircleDownRb.bodyType = RigidbodyType2D.Kinematic;
-            //add the joint
-            hjdown = bicycleDown.AddComponent<FixedJoint2D>();
-            hjdown.autoConfigureConnectedAnchor = false;
-            hjdown.connectedBody = rb;
-            hjdown.anchor = new Vector2(-bicycle_radius, 0);
-            hjdown.connectedAnchor = new Vector2(-bicycle_radius, center.z - thickness -bicycle_radius + surface_offset);
-            //hjdown.frequency = 1.0f;
-            hjdown2 = bicycleDown.AddComponent<FixedJoint2D>();
-            hjdown2.autoConfigureConnectedAnchor = false;
-            hjdown2.connectedBody = rb;
-            hjdown2.anchor = new Vector2(bicycle_radius, 0);
-            hjdown2.connectedAnchor = new Vector2(bicycle_radius, center.z - thickness -bicycle_radius + surface_offset);
-            //hjdown.frequency = 1.0f;
+            SetupBicycleNew();//SetupBoxCycleNew();
         }
         else if (is_fiber) {
             //persistence length ?

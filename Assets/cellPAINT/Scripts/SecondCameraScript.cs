@@ -6,7 +6,7 @@ public class SecondCameraScript : MonoBehaviour {
 
     public Camera mainCamera;
     public int down_sample;
-    public Dictionary<float,string> mapping;
+    public Dictionary<float,string> mapping = new Dictionary<float, string>();
     private Color originalColor;
     private Camera cam;
     private Color[] color_back;
@@ -42,6 +42,7 @@ public class SecondCameraScript : MonoBehaviour {
         cam.targetTexture = compartment_texture;
         Manager.Instance.secondRenderTexture = compartment_texture;
     }
+
 
     void OnPreRender()
     {

@@ -15,27 +15,23 @@ using System.IO;
 using UnityEditor;
 #endif
 using Accord;
-
+//TODO:
+//-loading async
 //handle the mouse interaction drawing and instancing
 //[ExecuteInEditMode]
 public class Manager : MonoBehaviour {
     //need cleanup 
     //all boolean 
-    public string version = "v1.0";
-    public bool useECS=false;
-    public bool optimize_hull = false;
-    public double cluster_radius = 2.0;
-    public bool useDefaultColor = true;
     public bool DEBUG = false;
+    public string version = "v1.0";
+    //public bool useECS=false;
     public bool HideInstance = true;
-    public Camera current_camera;
-    public GameObject myPrefab;
-    public GameObject current_prefab;
-    public GameObject root;
-    public GameObject ghostArea;
-    public bool layer_number_draw = true;
 
-    public float brush_threshold = 0.005f;
+    public Camera current_camera;
+    public GameObject current_prefab;
+    public GameObject myPrefab;
+    public GameObject root;
+    public bool layer_number_draw = true;
     public bool boundMode = false;
     public bool surfaceMode = false;//set geT ?
     public bool fiberMode = false;
@@ -51,29 +47,72 @@ public class Manager : MonoBehaviour {
     public bool bucketMode = false;
     public bool bindMode = false;
     private bool group_interact_mode = true;
-    public bool erase_collider_mode = false;
-    public bool pin_collider_mode = false;
-    public bool drag_collider_mode = false;
+    //public bool erase_collider_mode = false;
+    //public bool pin_collider_mode = false;
+    //public bool drag_collider_mode = false;
 
+    #region mouse parameters
+    public int layer_frequence = 3;
+    public int nbInstancePerClick = 1;
+    public float radiusPerClick = 1;
+    public bool mask_ui = false;
+    private Vector3 mousePos;
+    private Vector3 prev_mousePos;
+    private Vector3 startPos;    // Start position of line
+    private Vector3 endPos;    // End position of line
+    //private Vector3 lastEndPos;    // last End position of line
+
+    private Vector3 lastPos;
+    public float delta;
+    public float delta_threshold = 5;
+    public float sprayModulous;
+    private bool even = true;
+
+    //private CircleCollider2D mouseCollide;
+    private bool mouseDown;
+    public Vector2 mousePositionInViewPort;
+    #endregion mouse parameters
+    #region fiber parameters
     public float fiber_length;
     public float fiber_closing_distance;
-    public float fiber_current_distance;
+    //public float fiber_current_distance;
     public bool fiber_distanceJoint = false;
     public bool fiber_hingeJoint = false;
     public float fiber_distance = 0.05f;
     public int fiber_persistence = 1;
     public int fiber_count=0;
-    //public TreeViewSample ui;//prefab selection user interface
+    private int fiber_nextNameNumber = 0;
+    private bool fiber_init = false;
+    public string fiber_init_compartment = "";
+    public string fiber_compartment = "";
+    public GameObject fiber_parent;
+    public List<GameObject> fiber_parents;
+    public List<List<GameObject>> fibers_instances;
+    public GameObject fiber_attachto;
 
-    //public Image tools_toggle_image;
+    #endregion fiber parameters
+    #region UI parameters
+    public RectTransform uiHolder;
+    public Text scale_bar_text;
+    public Toggle ToggleBrush;
+    public Toggle TogglePhysics;
+    public GameObject message_panel;
+    //need a progress bar for loading
+    //private Progressbar pb;
+    private Text currentLabel;
+
+    #region UI descriptions parameters
     public Image tools_toggle_description_image;  //description panel protein image
-
     public GameObject Description_Holder;
     public GameObject Description_Holder_HSV;
     public Text textCommonName;
     public Text textCompartment;
     public Text textFunctionGroup;
     public Text textDescription;
+    #endregion UI descriptions parameters
+    #endregion UI parameters
+    #region attachemnts 
+    private List<PrefabProperties> attached_object;
     public List<GameObject> attached;
     public List<SpringJoint2D> attachments;
     public GameObject bound_lines_holder;
@@ -82,119 +121,69 @@ public class Manager : MonoBehaviour {
     public GameObject attach2;
     public Vector3 attachPos1;
     public Vector3 attachPos2;
+    #endregion attachemnts
+
     public float proteinArea;
     public float screenArea;
     public float percentFilled;
 
     public int totalNprotein = 0;
-
-    public int layer_frequence = 3;
-    public int nbInstancePerClick = 1;
-    public float radiusPerClick = 1;
-    public bool mask_ui = false;
-
-    public RectTransform uiHolder;
     //public GameObject listHolder;
     public string current_name_below;
     public string last_active_current_name_below;
     public GameObject current_objectparent_below;
     private string current_name;
-    private Vector3 mousePos;
-    private Vector3 prev_mousePos;
-    private Vector3 startPos;    // Start position of line
-    private Vector3 endPos;    // End position of line
-    private Vector3 lastEndPos;    // last End position of line
 
-    private Vector3 lastPos;
-    public float delta;
-    public float delta_threshold = 5;
-    public float sprayModulous;
-    private bool even = true;
-
-    private Rigidbody2D topRB = null;
-    private Rigidbody2D middleRB = null;
-    private Rigidbody2D bottomRB = null;
-
-    private CircleCollider2D mouseCollide;
     private LineRenderer line;
     private Collider2D otherSurf;
     public GameObject other;
     public GameObject last_other;
-    private bool mouseDown;
+    
 
-    private DragRigidbody2D dragger;
     private ErasePrefab eraser;
-
-    public GameObject toolBar;
-    public GameObject toolBar_Button;
-    public GameObject toolBar_Triangle;
-    private bool toolBarExpanded = true;
-
-    public GameObject sideBar;
-    public GameObject sideBar_Button;
-    public GameObject sideBar_Triangle;
-    private bool sideBarExpanded = true;
-
-    private float circleArea;
-    private float boxArea;
-    private float circleRadius;
-
-    private Progressbar pb;
-    private Text currentLabel;
+    
     private PrefabProperties current_properties;
-
     public Dictionary<string, int> proteins_count;
     private Dictionary<string, Text> proteins_ui_labels;
     public Dictionary<string, Material> prefab_materials;
     public Dictionary<string, GameObject> all_prefab = new Dictionary<string, GameObject>();
 
     private GameObject pushAway;
-    private bool fiber_init = false;
-    public string fiber_init_compartment = "";
-    public string fiber_compartment = "";
     public bool update_texture = false;
     private Texture2D compartment_texture;
-    public GameObject fiber_parent;
-    private bool stop = false;
-    private int fiber_nextNameNumber = 0;
-    private int count_removed = 0;
-    /*erase option*/
-    private GameObject toDestroy;
 
-    /*drag option*/
+    private bool stop = false;
+    
+    #region erase options
+    private int count_removed = 0;
+    #endregion erase options
+    #region drag options
+    private DragRigidbody2D dragger;
     public float frequency = 10.0f;
     public float damping = 1.0f;
 
-    const float k_Spring = 50.0f;
-    const float k_Damper = 20.0f;
+    //const float k_Spring = 50.0f;
+    //const float k_Damper = 20.0f;
     const float k_Drag = 10.0f;
     const float k_AngularDrag = 5.0f;
-    const float k_Distance = 0.2f;
-    const bool k_AttachToCenterOfMass = false;
+    //const float k_Distance = 0.2f;
+    //const bool k_AttachToCenterOfMass = false;
 
     private SpringJoint2D m_SpringJoint;
     private RigidbodyType2D bodyType;
+    #endregion drag options
+
     private GameObject below;
     private List<PrefabProperties> pinned_object;
-    private List<PrefabProperties> attached_object;
-    public GameObject bloom_active;
-    public GameObject bloom_threshold;
-    public GameObject bloom_amount;
-    public GameObject vignette_slider;
-    public GameObject blur_active;
-    public GameObject greyscale_active;
+    
+
     public GameObject thermometer;
     public GameObject mercury;
-    public Text scale_bar_text;
     public GameObject clockwise;
-    public Toggle ToggleBrush;
-    //[HideInInspector]
-    public List<GameObject> fiber_parents;
-    public List<List<GameObject>> fibers_instances;
-    public GameObject fiber_attachto;
 
     public JSONNode AllIngredients;
     public JSONNode AllRecipes;
+    public Dictionary<string, JSONNode> ingredient_node;
     public List<string> ingredients_names;
     public List<string> additional_ingredients_names = new List<string>();
     public List<string> sprites_names;
@@ -202,9 +191,6 @@ public class Manager : MonoBehaviour {
     public float zLevel = 0.00f;
     public float colorValue = 1.00f;
     public int layerDirection;
-    public Color prefabRGB;
-    public Color newRGB;
-    private int layerOrder;
 
     [HideInInspector]
     public List<Rigidbody2D> everything;
@@ -213,10 +199,10 @@ public class Manager : MonoBehaviour {
     public Rigidbody2D[] bounded;
     public List<GameObject> selectedobject;
     public int rbCount = 0;
-    public int rbSurfaceCount = 0;
+    //public int rbSurfaceCount = 0;
     public int boundedCount = 0;
     public int MaxRigidBodies = 5000;
-    public int Ninstance;
+    //public int Ninstance;
     public float scale_force = 1.0f;
     public float timeScale = 1.0f;
     public float unit_scale = 1.0f;
@@ -226,11 +212,14 @@ public class Manager : MonoBehaviour {
     public GameObject selected_instance;
     private bool prefab_changing_lock = false;
 
-    public Material spritedefault;
+    #region materials 
+    //public Material spritedefault;
     public Material outline_material;
     public Material nucleicacid_material;
     public Material manager_prefab_material;
     public Material lineMat;
+    #endregion materials
+
     public GameObject Background;
 
     public LineRenderer lines;
@@ -239,11 +228,11 @@ public class Manager : MonoBehaviour {
     public Camera secondCamera;
     public Shader secondShader;
     public RenderTexture secondRenderTexture;
-    private Vector2 mousePositionInViewPort;
+    
     public RecipeUI recipeUI;
     public GameObject warningPanel;
 
-    private static Manager _instance = null;
+    
 
     private int count_used = 0;
     private int fixedCount = 0;
@@ -253,15 +242,17 @@ public class Manager : MonoBehaviour {
     private int count_update = 0;
 
     public Text timescale_label;
-    public bool show_time;
+    //public bool show_time;
     public Text deltatime_labels;
     public float total_time;
     public float total_time_sec;
+    public float dt;
+    public float safety_deltaTime = 0.5f;
+    public int safety_frame =0;
     public float scaling_fiber=1.0f;
     public float scaling_surface=1.0f;
     public float scaling_soluble=1.0f;
-    public float bicycle_radius = 1.0f;//should be equal the size of the membrane
-    public Dictionary<string, JSONNode> ingredient_node;
+    //public float bicycle_radius = 1.0f;//should be equal the size of the membrane
 
 
     /*image effect*/
@@ -269,7 +260,7 @@ public class Manager : MonoBehaviour {
     //private UnityStandardAssets.ImageEffects.VignetteAndChromaticAberration vignetteEffect;
     //private UnityStandardAssets.ImageEffects.BlurOptimized blurEffect;
     //private UnityStandardAssets.ImageEffects.Grayscale grayscaleEffect;
-
+    private static Manager _instance = null;
     public static Manager Instance
     {
         get
@@ -1020,10 +1011,6 @@ public class Manager : MonoBehaviour {
             twoLayerBottom.transform.parent = root.transform;
             twoLayerBottom.GetComponent<SpriteRenderer>().sortingOrder = -1;
             //Add Rigidbody2D to loop and count.
-            if (bottomRB != null)
-            {
-                bottomRB.collisionDetectionMode = CollisionDetectionMode2D.Discrete;
-            }
             Rigidbody2D rb = twoLayerBottom.GetComponent<Rigidbody2D>();
             rb.collisionDetectionMode = CollisionDetectionMode2D.Discrete;//.Continuous;
             //everything[rbCount] = rb;
@@ -1032,7 +1019,7 @@ public class Manager : MonoBehaviour {
             rbCount++;
             name = instancePrefab.name;
             UpdateCountAndLabel(name, newObject);
-            bottomRB = rb;
+            //bottomRB = rb;
         }
         else
         {
@@ -1052,10 +1039,6 @@ public class Manager : MonoBehaviour {
 
             //Add Rigidbody2D to loop and count.
             Rigidbody2D rb = threeLayerMiddle.GetComponent<Rigidbody2D>();
-            if (middleRB != null)
-            {
-                middleRB.collisionDetectionMode = CollisionDetectionMode2D.Discrete;
-            }
             rb.collisionDetectionMode = CollisionDetectionMode2D.Discrete;// Continuous;
             //everything[rbCount] = rb;
             everything.Add(rb);
@@ -1063,13 +1046,9 @@ public class Manager : MonoBehaviour {
             rbCount++;
             name = instancePrefab.name;
             UpdateCountAndLabel(name, newObject);
-            middleRB = rb;
+            //middleRB = rb;
 
             Rigidbody2D rb2 = threeLayerBottom.GetComponent<Rigidbody2D>();
-            if (bottomRB != null)
-            {
-                bottomRB.collisionDetectionMode = CollisionDetectionMode2D.Discrete;
-            }
             rb.collisionDetectionMode = CollisionDetectionMode2D.Discrete;//.Continuous;
             //everything[rbCount] = rb;
             everything.Add(rb2);
@@ -1077,7 +1056,7 @@ public class Manager : MonoBehaviour {
             rbCount++;
             string name2 = instancePrefab.name;
             UpdateCountAndLabel(name2, newObject);
-            bottomRB = rb2;
+            //bottomRB = rb2;
         }
     }
 
@@ -1196,10 +1175,7 @@ public class Manager : MonoBehaviour {
             aprefab = props.prefab_asset[prefab_id];
             string prefabName = aprefab.GetComponent<PrefabProperties>().name;
             SpriteRenderer sr = aprefab.GetComponent<SpriteRenderer>();
-            Debug.Log("The prefab name (For material application) is: " + prefabName);
-            Debug.Log(" The shared material name is: " + prefab_materials[prefabName]);
             sr.sharedMaterial = prefab_materials[prefabName];
-            if (DEBUG) Debug.Log("Prefab Randomize is True " + "The prefab_id is " + prefab_id);
         }
         Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         GameObject fiber_quadOb = Instantiate(aprefab, pos, rotation) as GameObject;
@@ -2267,11 +2243,19 @@ public class Manager : MonoBehaviour {
             //transform.position
             RaycastHit2D hit = raycast();
             if (hit) {
-                if (hit.collider){
-                    if (hit.collider.gameObject.layer == 13 ) {
+                if (hit.collider.gameObject.layer == 13 || 
+                    hit.collider.gameObject.layer == 11 || 
+                    hit.collider.gameObject.layer == 20 || 
+                    hit.collider.gameObject.layer == 24) 
+                    {
+                        //Debug.Log("skip "+hit.collider.gameObject.layer.ToString());
                         return;
                     }
+                else {
+                    //Debug.Log("didnt skip  "+hit.collider.gameObject.layer.ToString());
                 }
+            } else {
+                 //Debug.Log("no HIT");
             }
         }
         var props = myPrefab.GetComponent<PrefabProperties>();
@@ -2294,7 +2278,7 @@ public class Manager : MonoBehaviour {
         {
             if (fiber_init == false)
             {
-                fiber_init_compartment = GetCurrentCompartmentBelow();
+                fiber_init_compartment = GetCurrentCompartmentBelow(mousePositionInViewPort.x,mousePositionInViewPort.y);
                 //what the compartment below mouse               
                 fiber_init = true;
                 //check if close to another chain start/end 
@@ -2359,7 +2343,7 @@ public class Manager : MonoBehaviour {
             fiber_nextNameNumber = 0; //Reset the chain number after Button up.
 
             float D = Vector3.Distance(first.position, transform.position);// last.position);
-            fiber_current_distance = D;
+            //fiber_current_distance = D;
             if (D < fiber_closing_distance && props.closing)
             {
                 //Debug.Log(first.name);
@@ -2394,7 +2378,7 @@ public class Manager : MonoBehaviour {
         {
             if (fiber_init == false) return;
             if (stop) return;
-            fiber_compartment = GetCurrentCompartmentBelow();
+            fiber_compartment = GetCurrentCompartmentBelow(mousePositionInViewPort.x,mousePositionInViewPort.y);
             if (fiber_compartment != fiber_init_compartment) return;
             endPos = transform.position;
             if (props.closing) drawFiberToClose();
@@ -2404,9 +2388,13 @@ public class Manager : MonoBehaviour {
             {
                 Vector3 cStart = startPos;
                 Vector3 cEnd = cStart + (endPos - startPos).normalized * fiber_length;
-                int n = Mathf.RoundToInt(lineLength / fiber_length);
+                int n = Mathf.RoundToInt(lineLength / fiber_length);//Mathf.Min(2,Mathf.RoundToInt(lineLength / fiber_length));//Mathf.RoundToInt(lineLength / fiber_length);
                 for (int i = 0; i < n; i++)
                 {
+                    var spx = current_camera.WorldToViewportPoint(cEnd);
+                    fiber_compartment = GetCurrentCompartmentBelow(spx.x,spx.y);
+                    if (fiber_compartment != fiber_init_compartment) continue;
+                    //check again the compartment 
                     var fiber = oneInstanceFiber(cStart, cEnd);
                     cStart = cEnd;
                     cEnd = cStart + (endPos - startPos).normalized * fiber_length;
@@ -2423,7 +2411,7 @@ public class Manager : MonoBehaviour {
         Transform first = fiber_parent.transform.GetChild(0);
         Transform last = fiber_parent.transform.GetChild(fiber_parent.transform.childCount - 1);
         float D = Vector3.Distance(first.position, transform.position);
-        fiber_current_distance = D;
+        //fiber_current_distance = D;
         if (D < fiber_closing_distance)
         { //show something{
             fiber_lines.enabled = true;
@@ -2485,7 +2473,7 @@ public class Manager : MonoBehaviour {
         return result;
     }
 
-    string GetCurrentCompartmentBelow(){
+    string GetCurrentCompartmentBelow(float x, float y){
         if (update_texture || (compartment_texture == null)) {
             RenderTexture currentActiveRT = RenderTexture.active;
             RenderTexture.active = secondRenderTexture;
@@ -2495,10 +2483,10 @@ public class Manager : MonoBehaviour {
             compartment_texture.Apply(true);
             update_texture = false;
         }
-        int xLocation = Mathf.RoundToInt(mousePositionInViewPort.x * compartment_texture.width);
-        int yLocation = Mathf.RoundToInt(mousePositionInViewPort.y * compartment_texture.height);
+        int xLocation = Mathf.RoundToInt(x * compartment_texture.width);
+        int yLocation = Mathf.RoundToInt(y * compartment_texture.height);
         Color color = compartment_texture.GetPixel(xLocation, yLocation);//compartment color
-        Debug.Log("GetCurrentCompartmentBelow "+color.r.ToString()+" "+xLocation.ToString()+" "+yLocation.ToString());
+        //Debug.Log("GetCurrentCompartmentBelow "+color.r.ToString()+" "+xLocation.ToString()+" "+yLocation.ToString());
         if (color == RenderSettings.fogColor) return "exterior";
         else if (SecondCameraScript.Get.mapping.ContainsKey(color.r))
             return SecondCameraScript.Get.mapping[color.r];
@@ -3038,12 +3026,15 @@ public class Manager : MonoBehaviour {
             };
             PrefabProperties p = other.GetComponent<PrefabProperties>();
             PrefabGroup pg = other.GetComponentInParent<PrefabGroup>();
-            Debug.Log("hitting something in the update " + other.name+" "+(pb==null).ToString()+" "+(p==null).ToString());//cube ?
+            //Debug.Log("hitting something in the update " + other.name+" "+(pb==null).ToString()+" "+(p==null).ToString());//cube ?
             if (pg == null && p == null)
             {
-                p = other.transform.parent.GetComponent<PrefabProperties>();
-                other = other.transform.parent.gameObject;
-                pg = other.GetComponentInParent<PrefabGroup>();
+                if (other.transform.parent)
+                {
+                    p = other.transform.parent.GetComponent<PrefabProperties>();
+                    other = other.transform.parent.gameObject;
+                    pg = other.GetComponentInParent<PrefabGroup>();
+                }
             }
             if (pg!=null) {
                 other = pg.gameObject;
@@ -3162,7 +3153,7 @@ public class Manager : MonoBehaviour {
     }
 
     void pindragInstance() {
-        if (pin_collider_mode) return;
+        //if (pin_collider_mode) return;
         RaycastHit2D hit = raycast();
         //check the shift keyEvent
         //if (Input.GetKeyUp(KeyCode.LeftShift)) CleanOutline();
@@ -3273,7 +3264,7 @@ public class Manager : MonoBehaviour {
                         ghostInstance(other);
                     }
                     togglePinOutline(true);
-                    UpdateGhostArea();                    
+                    //UpdateGhostArea();                    
                 }
                 else 
                 {
@@ -3486,7 +3477,8 @@ public class Manager : MonoBehaviour {
         }
     }
 
-    public void UpdateGhostArea(){
+    /*public void UpdateGhostArea(){
+        return;
         //we can grow our canvas and make this region collider.
         //circle or box or polygon ?
         if (ghostArea == null) {
@@ -3494,15 +3486,6 @@ public class Manager : MonoBehaviour {
         }
         ghostArea.transform.localScale = new Vector3(1,1,1);
         //if we want a mesh 
-        /*
-        MeshFilter mf = ghostArea.GetComponent<MeshFilter>();
-        if (mf == null) mf = ghostArea.AddComponent<MeshFilter>();
-        MeshRenderer mr = ghostArea.GetComponent<MeshRenderer>();
-        if (mr == null) mr = ghostArea.AddComponent<MeshRenderer>();
-        if (mf.sharedMesh) {
-            Destroy(mf.sharedMesh);
-        }
-        */
         Rigidbody2D rb = ghostArea.GetComponent<Rigidbody2D>();
         if (rb == null) rb = ghostArea.AddComponent<Rigidbody2D>();
         rb.bodyType = RigidbodyType2D.Static;
@@ -3568,18 +3551,13 @@ public class Manager : MonoBehaviour {
             }
             box.pathCount = cluster_count;
             for (var i=0;i < cluster_count;i++){
-                List<Vector2> hull = Helper.ComputeConvexHull(cl_points[i],b.center,optimize_hull);
+                List<Vector2> hull = Helper.ComputeConvexHull(cl_points[i],b.center,false);
                 box.SetPath(i,hull);
             }
             //box.offset = new Vector2(b.center.x,b.center.y);
-            /*
-            if we want a mesh
-            var mesh = box.CreateMesh(false,false);
-            mf.sharedMesh = mesh;
-            */
         }
         //ghostArea.transform.localScale = new Vector3(1.1f,1.1f,1.1f);
-    }
+    }*/
 
     private void DrawLine(Vector3 start, Vector3 end) {
         lines.SetPosition(0, new Vector3(start.x, start.y, -10));
@@ -3622,7 +3600,7 @@ public class Manager : MonoBehaviour {
         int rank = fiber_element.transform.GetSiblingIndex();
         if ((rank == 0) || (rank == fiber_parent.transform.childCount- 1)) {
             float D = Vector3.Distance(first.transform.position, last.transform.position);
-            fiber_current_distance = D;
+            //fiber_current_distance = D;
             if (D < fiber_closing_distance)
             {
                 fiber_lines.enabled = true;
@@ -3650,7 +3628,7 @@ public class Manager : MonoBehaviour {
         if ((rank == 0) || (rank == fiber_parent.transform.childCount - 1))
         {
             float D = Vector3.Distance(first.transform.position, last.transform.position);
-            fiber_current_distance = D;
+            //fiber_current_distance = D;
             if (D < fiber_closing_distance)
             {
                 closePersistence();
@@ -3752,19 +3730,15 @@ public class Manager : MonoBehaviour {
     }
 
     void eraseInstance() {
-        if (!erase_collider_mode)
+        if (Input.GetMouseButton(0) || Input.GetMouseButtonDown(0))
         {
-            if (Input.GetMouseButton(0) || Input.GetMouseButtonDown(0))
+            RaycastHit2D hit = raycast();
+            if (hit)
             {
-                RaycastHit2D hit = raycast();
-                if (hit)
-                {
-                    if (hit.collider.gameObject == gameObject) return;
-                    DestroyInstance(hit.collider.gameObject);
-                }
+                if (hit.collider.gameObject == gameObject) return;
+                DestroyInstance(hit.collider.gameObject);
             }
         }
-
     }
 
     void ShowAttachmentsLineRenderer(){
@@ -3790,6 +3764,7 @@ public class Manager : MonoBehaviour {
                 }
                 for(int i=0;i< attachments.Count; i++){
                     var jt = attachments[i];
+                    if (jt.gameObject.GetComponent<PrefabProperties>().is_fiber) continue;
                     LineRenderer line;
                     if (i < nLines)
                     {
@@ -3821,6 +3796,22 @@ public class Manager : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        dt = Time.deltaTime;
+        if (dt > safety_deltaTime) {
+            safety_frame ++;
+            if (safety_frame > 3) {
+                if (TogglePhysics) TogglePhysics.isOn = false;
+                Physics2D.autoSimulation = false;
+                //pop up warning
+                if (message_panel) {
+                    message_panel.SetActive(true);
+                    message_panel.GetComponentInChildren<Text>().text = "Physics was turned off; something went wrong";
+                }
+            }
+            //find the toggle ?
+        } else {
+            safety_frame =0;
+        }
         //JitterEverything();
         //DiffuseEverything();
         //DiffuseRBandSurface();
@@ -3838,7 +3829,7 @@ public class Manager : MonoBehaviour {
         //if (uiHolder.rect.Contains(Input.mousePosition) && sideBarExpanded) return;
         Vector2 lp;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(uiHolder, Input.mousePosition, null, out lp);
-        if (uiHolder.rect.Contains(lp) && sideBarExpanded) return;
+        if (uiHolder.rect.Contains(lp)) return;
         if (mask_ui) return;
         if (fiberMode)
         {
@@ -4633,7 +4624,7 @@ public class Manager : MonoBehaviour {
         }
         togglePinOutline(toggle);
         pushAway.SetActive(false);
-        if (toggle) UpdateGhostArea();
+        //if (toggle) UpdateGhostArea();
     }
 
     public void ToggleGroup(bool toggle)
@@ -4865,6 +4856,7 @@ public class Manager : MonoBehaviour {
         total_time_sec = 0.0f;
         GroupManager.Get.Clear();
         GhostManager.Get.Clear();
+        update_texture = true;
     }
 
     public void countProteins(ListViewItem component, GameObject addedObject)
@@ -4895,113 +4887,6 @@ public class Manager : MonoBehaviour {
             string name = addedObject.name;
         }
     }
-    public void toggleToolBar()
-    {
-         if (toolBarExpanded)
-         {
-             //collapseToolBar();
-             toolBarExpanded =!toolBarExpanded;
-         }
-         else
-         {
-             //expandToolBar();
-             toolBarExpanded =!toolBarExpanded;
-         }
-         Manager.Instance.mask_ui = false;
-    }
-
-    private void collapseToolBar()
-    {
-        //Move bar down by height
-        //Button PosY=12
-        //ToolBar PosY=-65
-        //Flip triangle so it can be expanded
-        //Could do an animation, but I kind of like the immediate effect.
-        Vector3 posYTools = new Vector3 (toolBar.transform.position.x, -65.0f, toolBar.transform.position.z);
-        Vector3 posYButton = new Vector3 (toolBar.transform.position.x, 12.0f, toolBar.transform.position.z);
-        toolBar.transform.position = posYTools;
-        //toolBar_Button.transform.position = posYButton;
-        //Quaternion newRot = new Quaternion();
-        //newRot.eulerAngles = new Vector3 (toolBar_Triangle.transform.rotation.x, toolBar_Triangle.transform.rotation.y, 180.0f); 
-        //toolBar_Triangle.transform.rotation = newRot;
-    }
-
-    private void expandToolBar()
-    {
-        //Move bar up by height
-        //Button PosY=12
-        //ToolBar PosY=-65
-        //Flip triangle so it can be collapsed
-        Vector3 posYTools = new Vector3 (toolBar.transform.position.x, 65.0f, toolBar.transform.position.z);
-        Vector3 posYButton = new Vector3 (toolBar.transform.position.x, 132.0f, toolBar.transform.position.z);
-        toolBar.transform.position = posYTools;
-        //toolBar_Button.transform.position = posYButton;
-        //Quaternion newRot = new Quaternion();
-        //newRot.eulerAngles = new Vector3 (toolBar_Triangle.transform.rotation.x, toolBar_Triangle.transform.rotation.y, 0.0f); 
-        //toolBar_Triangle.transform.rotation = newRot;
-    }
-
-    public void toggleSideBar()
-    {
-         if (sideBarExpanded)
-         {
-            collapseSideBar();
-            sideBarExpanded =!sideBarExpanded;
-         }
-         else
-         {
-            expandSideBar();
-            sideBarExpanded =!sideBarExpanded;
-         }
-         Manager.Instance.mask_ui = false;
-    }
-
-    private void collapseSideBar()
-    {
-        //I think this solution could cause some serious problems, but I have no time.
-
-        RectTransform sideBarRect = sideBar.GetComponent<RectTransform>();
-        sideBarRect.anchoredPosition = new Vector2 (10000, 0);
-        sideBarRect.anchoredPosition3D = new Vector3 (-10000, 0, 0);
-        //sideBar.transform.GetChild(1).gameObject.SetActive(false);
-        //sideBar.transform.GetChild(2).gameObject.SetActive(false);
-
-        //RectTransform ButtonRect = sideBar_Button.GetComponent<RectTransform>();
-        //ButtonRect.anchorMin = new Vector2(0, ButtonRect.anchorMin.y);
-        //ButtonRect.anchorMax = new Vector2(0, ButtonRect.anchorMax.y);
-
-        //Vector3 newPosY = new Vector3 (12.0f,ButtonRect.anchoredPosition.y);
-        //ButtonRect.anchoredPosition = newPosY;
-
-        //Quaternion newRot = new Quaternion();
-        //newRot.eulerAngles = new Vector3 (sideBar_Triangle.transform.rotation.x, sideBar_Triangle.transform.rotation.y, 90.0f); 
-        //sideBar_Triangle.transform.rotation = newRot;
-
-    }
-
-    private void expandSideBar()
-    {
-        //I think this solution could cause some serious problems, but I have no time.
-        //sideBar.transform.GetChild(1).gameObject.SetActive(true);
-        //sideBar.transform.GetChild(2).gameObject.SetActive(true);
-
-        RectTransform sideBarRect = sideBar.GetComponent<RectTransform>();
-        sideBarRect.anchoredPosition = new Vector2 (0, 0);
-        sideBarRect.anchoredPosition3D = new Vector3 (0, 0, 0);
-
-        /*RectTransform ButtonRect = sideBar_Button.GetComponent<RectTransform>();
-        ButtonRect.anchorMin = new Vector2(1, ButtonRect.anchorMin.y);
-        ButtonRect.anchorMax = new Vector2(1, ButtonRect.anchorMax.y);
-
-        Vector3 newPosY = new Vector3 (12.0f,ButtonRect.anchoredPosition.y);
-        ButtonRect.anchoredPosition = newPosY;
-
-        Quaternion newRot = new Quaternion();
-        newRot.eulerAngles = new Vector3 (sideBar_Triangle.transform.rotation.x, sideBar_Triangle.transform.rotation.y, -90.0f); 
-        sideBar_Triangle.transform.rotation = newRot;
-            */
-    }
-
     public void updateScale()
     {
         var pixel_scale = (unit_scale * 10.0f) / 100.0f;

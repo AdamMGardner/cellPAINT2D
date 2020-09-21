@@ -11,6 +11,7 @@ public class GhostManager : MonoBehaviour
     public float cluster_radius = 8.0f;
     private int _counter = 0;
     private List<List<GameObject>> ghosts_selections= new List<List<GameObject>>();
+    private List<List<string>> ghosts_selections_group= new List<List<string>>();
     private List<int> ghosts_ids = new List<int>();
     private static GhostManager _instance = null;
     public static GhostManager Get
@@ -63,23 +64,52 @@ public class GhostManager : MonoBehaviour
         //reset the ghost ID ?
     }
 
-    public void UpdateFromObject(GameObject newObject, int ghost_id){
+    public void UpdateFromObject(GameObject newObject, int ghost_id, string group_name, int group_id){
         if (ghost_id!=-1){
             var index = ghosts_ids.IndexOf(ghost_id);
             if (index!=-1)
             {
-                if (!ghosts_selections[index].Contains(newObject)){
-                    ghosts_selections[index].Add(newObject);
+                if (group_name != "n") {
+                    var n = group_name+"_"+group_id;
+                    if (!ghosts_selections_group[index].Contains(n)){
+                        ghosts_selections_group[index].Add(n);
+                    }                    
+                }
+                else {
+                    if (!ghosts_selections[index].Contains(newObject)){
+                        ghosts_selections[index].Add(newObject);
+                    }
                 }
             }
             else {
                 var ghost = CreateGhost(ghost_id);
+                if (group_name != "n") {
+                    string n = group_name+"_"+group_id;
+                    ghosts_selections_group.Add(new List<string>(){n});                 
+                }
+                else { 
+                    ghosts_selections_group.Add(new List<string>(){});
+                }
                 ghosts_selections.Add(new List<GameObject>(){newObject});
             }
         }        
     }
 
     public void RestoreGhost(){
+        //add the group in the selection
+        for (var i = 0; i < ghosts_selections_group.Count;i++) 
+        {
+            for (var j = 0; j < ghosts_selections_group[i].Count;j++ )
+            {
+                string n = ghosts_selections_group[i][j];
+                //find the gameObject
+                var o = GameObject.Find(n);
+                if ((o)&&(!ghosts_selections[i].Contains(o)))
+                {
+                    ghosts_selections[i].Add(o);
+                }
+            }
+        }
         for (var i = 0; i < ghosts_selections.Count;i++) 
         {
             var ghost = ghosts[i];
@@ -88,6 +118,7 @@ public class GhostManager : MonoBehaviour
             ghosts_selections[i].Clear();       
         }
         ghosts_selections.Clear();
+        ghosts_selections_group.Clear();
     }
 
     public void Clear(){
@@ -96,6 +127,7 @@ public class GhostManager : MonoBehaviour
             //GameObject.Destroy(o.gameObject);
             Destroy(o.gameObject);
         }
+        ghosts_selections_group.Clear();
         ghosts_selections.Clear();
         ghosts.Clear();
         ghosts_ids.Clear();
