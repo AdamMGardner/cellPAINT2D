@@ -188,6 +188,7 @@ MonoBehaviour:
   layer_number: 3
   isCircleCollider: 0
   circle_radius: 12.68928
+  m_ext: {x: 0, y: 0, z: 0}
   circle_offset: {x: 0, y: 0}
   isCapsuleCollider: 0
   capsule_size: {x: 0, y: 0}
@@ -259,6 +260,7 @@ MonoBehaviour:
   initialized: 0
   RB: {fileID: 0}
   attachments: []
+  ghost_id: -1
 --- !u!114 &114000010433335472
 MonoBehaviour:
   m_ObjectHideFlags: 0
