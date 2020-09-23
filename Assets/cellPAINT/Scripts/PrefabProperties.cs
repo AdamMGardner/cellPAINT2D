@@ -27,6 +27,7 @@ public class PrefabProperties : MonoBehaviour
     public bool surface_secondLayer = true;
     public float surface_offset = 0.0f;
     public float y_offset = 0.0f;
+    public float y_length = 0.0f;
     public float scale2d = 1.0f;
     public float local_scale = 1.0f;
     public Vector3 pcpAxe = Vector3.up;
@@ -87,7 +88,7 @@ public class PrefabProperties : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     public LineRenderer bound_lines;
     public GLDebug gLDebug;
-    public float fiber_length = 0.0f;
+    public float fiber_length = -1.0f;
     public float fiber_scale = 1.0f;
     public int maxNumber = 0;
     public float maxLength = 0.0f;
@@ -391,7 +392,7 @@ public class PrefabProperties : MonoBehaviour
         if (flip) m_ext = new Vector2(m_ext.y,m_ext.x);
 
         var unity_scale2d = 1.0f / (Manager.Instance.unit_scale * 10.0f);
-        float thickness = (23.0f) * unity_scale2d * 1.0f/local_scale;
+        float thickness = (23.0f*2.0f) * unity_scale2d * 1.0f/local_scale;
         //surface offset is +/-
         float up_height = 0.0f;
         float down_height = 0.0f;
@@ -894,7 +895,7 @@ public class PrefabProperties : MonoBehaviour
         box.size = v;
         */
         //what is pixel-angstrom ratio in unity
-        //1pixel = 1.0/100.0funit = 0.01 u = 0.35Ang * scale2d
+        //1pixel = 1.0/100.0f unit = 0.01 u = 0.35Ang * scale2d
         //any sprite to unity sprite scale is 
         var pixel_scale = (Manager.Instance.unit_scale * 10.0f) / 100.0f;
         var unity_scale2d = 1.0f / (Manager.Instance.unit_scale * 10.0f);
@@ -902,10 +903,15 @@ public class PrefabProperties : MonoBehaviour
         //sprite is scale2d 
         scale2d = 1.0f;
         y_offset = 0.0f;
+        y_length = -1.0f;
         if (node.HasKey("sprite"))
         {
             scale2d = float.Parse(node["sprite"]["scale2d"]);//1 angstrom in the image is scale2d pixel
             y_offset = -float.Parse(node["sprite"]["offsety"]) * unity_scale2d;// offset.magnitude / (Manager.Instance.unit_scale * 10.0f);
+            if (node["sprite"].HasKey("lengthy")) {
+                y_length= float.Parse(node["sprite"]["lengthy"]) ;
+                if (y_length == 0.0f) y_length = -1.0f;
+            }
         }
         local_scale = 1.0f/(pixel_scale * scale2d);
         surface_offset=(y_offset/local_scale);
@@ -940,13 +946,14 @@ public class PrefabProperties : MonoBehaviour
                 abox.size = new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
                 abox.offset = new Vector2(center.x, center.y);
             }
+            float lengthy = (y_length==-1.0f)?Mathf.Abs(m_ext.x):y_length* unity_scale2d/local_scale;
             //anchor collider, on X axis.
             CircleCollider2D CircleLeft = gameObject.AddComponent<CircleCollider2D>();
             CircleLeft.radius = radius;
-            CircleLeft.offset = new Vector2(-Mathf.Abs(m_ext.x)/2.0f + radius/2.0f, center.y);
+            CircleLeft.offset = new Vector2(-lengthy/2.0f , center.y);
             CircleCollider2D CircleRight = gameObject.AddComponent<CircleCollider2D>();
             CircleRight.radius = radius;
-            CircleRight.offset = new Vector2(Mathf.Abs(m_ext.x) / 2.0f - radius / 2.0f, center.y);
+            CircleRight.offset = new Vector2(lengthy / 2.0f , center.y);
             gameObject.layer = 13; //DNA. should we use nucleic acid depth ?
             if (node.HasKey("closed")) 
             {
@@ -964,7 +971,7 @@ public class PrefabProperties : MonoBehaviour
 
     }
 
-    public void SetupFromValues(bool issurface, bool isfiber, float ascale2d, float offsety, bool isclosing = false ) {
+    public void SetupFromValues(bool issurface, bool isfiber, float ascale2d, float offsety, float alength, bool isclosing = false ) {
         //setup color ?
         Debug.Log("SetupFromValues "+ascale2d.ToString()+" "+offsety.ToString());
         if (setuped) return;
@@ -985,9 +992,10 @@ public class PrefabProperties : MonoBehaviour
         var unity_scale2d = 1.0f / (Manager.Instance.unit_scale * 10.0f);
         //1 unit scale is 3.5nm e.g. Manager.Instance.unit_scale. Divide by (uscale*10.0) to get unity unit.
         //sprite is scale2d 
-        y_offset = -offsety * unity_scale2d;
+        y_offset = offsety;
         scale2d = ascale2d;
-        surface_offset = y_offset;
+        y_length = alength;
+        surface_offset = -y_offset * unity_scale2d;
         local_scale = 1.0f/(pixel_scale * scale2d);
         surface_offset=(surface_offset/local_scale);
         Vector3 center = (pcp[0] + pcp[1]) * 0.5f;
@@ -1020,13 +1028,14 @@ public class PrefabProperties : MonoBehaviour
                 abox.size = new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
                 abox.offset = new Vector2(center.x, center.y);
             }
-            //anchor collider, on X axis.
+            //anchor collider, on X axis. depends on fiber_length
+            float lengthy = y_length * unity_scale2d * 1.0f/local_scale;//Mathf.Abs(m_ext.x);
             CircleCollider2D CircleLeft = gameObject.AddComponent<CircleCollider2D>();
             CircleLeft.radius = radius;
-            CircleLeft.offset = new Vector2(-Mathf.Abs(m_ext.x)/2.0f + radius/2.0f, center.y);
+            CircleLeft.offset = new Vector2(-lengthy/2.0f, center.y);
             CircleCollider2D CircleRight = gameObject.AddComponent<CircleCollider2D>();
             CircleRight.radius = radius;
-            CircleRight.offset = new Vector2(Mathf.Abs(m_ext.x) / 2.0f - radius / 2.0f, center.y);
+            CircleRight.offset = new Vector2(lengthy/2.0f, center.y);
             gameObject.layer = 13; //DNA. should we use nucleic acid depth ?
             closing = isclosing;
         }

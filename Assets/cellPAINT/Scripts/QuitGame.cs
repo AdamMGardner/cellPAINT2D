@@ -136,11 +136,7 @@ public class QuitGame : MonoBehaviour
     public void LoadImage_cb(string path) 
     {
         if (path == null) return;
-        current_bytes = File.ReadAllBytes(path);
-        Texture2D backgroundImage = new Texture2D (2,2);
-        backgroundImage.LoadImage(current_bytes);
-        //backgroundImageManager.AddBackgroundImage(backgroundImage);
-        backgroundImageManager.AddBackgroundSprites(backgroundImage);
+        BackgroundImageManager.Get.AddBackgroundSprites(path,Vector3.zero,1.0f,0.0f);
     }
 
     public void OriginalScreenShot() {
@@ -354,7 +350,25 @@ public class QuitGame : MonoBehaviour
         string towrite = "";
         Debug.Log("should save in " + filename);
         //first loop over all material and check if default color or not
+        /* background image */
+        int nbg_images = BackgroundImageManager.Get.bg_Images.Count;
+        towrite += nbg_images.ToString()+ "\r\n";
+        for (var i=0;i<nbg_images;i++){
+            var path  = BackgroundImageManager.Get.bg_Images[i];
+            var scale2d = BackgroundImageManager.Get.GetScale(i);
+            var pos = BackgroundImageManager.Get.GetPosition(i);
+            var rot = BackgroundImageManager.Get.GetRotation(i);
+            towrite += path+sep+scale2d.ToString()+sep+rot.ToString()+sep+pos.x.ToString()+sep+pos.y.ToString()+sep+pos.z.ToString()+ "\r\n";
+        }
         text = "";
+        /* Extra compartments */
+        int extra_compartments = Manager.Instance.additional_compartments_names.Count;
+        towrite += extra_compartments.ToString()+ "\r\n";
+        for (var i=0;i<extra_compartments;i++){
+            var name = Manager.Instance.additional_compartments_names[i];
+            towrite += name+ "\r\n";
+        }
+        //Manager.Instance.additional_compartments_names.Clear();
         /*add extra ingredients data e.g. scale2d and offsetY
         upon loading add the ingredient if not there already
         */
@@ -363,17 +377,22 @@ public class QuitGame : MonoBehaviour
         //name,spritename,scale2d,yoffset,issurf,isfiber,comp
         for (var i=0;i<extra_ingredient;i++){
             var name = Manager.Instance.additional_ingredients_names[i];
-            var ind = Manager.Instance.ingredients_names.IndexOf(name);
+            var ind = Manager.Instance.ingredients_names[name];
             var sprite_name = Manager.Instance.sprites_names[ind];
             var prefab = Manager.Instance.all_prefab[name];
             var props = prefab.GetComponent<PrefabProperties>();
             var issurf = (props.is_surface)?"1":"0";
             var isfiber = (props.is_fiber)?"1":"0";
-            var comp = Manager.Instance.recipeUI.Compartments.IndexOf(props.compartment);
-            towrite +=name+sep+sprite_name+sep+props.scale2d.ToString()+sep+props.y_offset.ToString()+sep; 
+            var fiber_length = props.fiber_length;
+            var comp = props.compartment;//.IndexOf(props.compartment);
+            towrite +=name+sep+sprite_name+sep+props.scale2d.ToString()+sep+props.y_offset.ToString()+sep+fiber_length.ToString()+sep; 
             towrite +=issurf+sep+isfiber+sep+comp+ "\r\n";
         }
         int mat_count = 0;
+        /*Background Color*/
+        var bgcolor = Manager.Instance.Background.GetComponent<Renderer>().material.color;
+        text ="background"+sep+bgcolor.r.ToString() +sep+bgcolor.g.ToString() + sep + bgcolor.b.ToString()+"\r\n";
+        mat_count++;
         /*Write the material colors values*/
         foreach ( var keyvalue in Manager.Instance.prefab_materials)
         {
@@ -779,6 +798,30 @@ public class QuitGame : MonoBehaviour
         //split with space and get x y r name
         //first line is nb of material color to overwrote
         string[] elems = lines[lineCounter].Split(sep[0]);
+        int nbg_images =int.Parse(elems[0]);
+        lineCounter++;
+        for (int i = lineCounter; i < lineCounter + nbg_images; i++)
+        {
+            elems = lines[i].Split(sep[0]);
+            var path  = elems[0];
+            var scale2d = float.Parse(elems[1]);
+            var rot = float.Parse(elems[2]);
+            var x = float.Parse(elems[3]);//Debug.Log(x);
+            var y = float.Parse(elems[4]);//Debug.Log(y);
+            var z = float.Parse(elems[5]);//Debug.Log(z);          
+            BackgroundImageManager.Get.AddBackgroundSprites(path,new Vector3(x,y,z),scale2d,rot);
+        }
+        lineCounter += nbg_images;
+        elems = lines[lineCounter].Split(sep[0]);
+        int extra_compartments = int.Parse(elems[0]);
+        lineCounter++;
+        for (int i = lineCounter; i < lineCounter + extra_compartments; i++)
+        {
+            elems = lines[i].Split(sep[0]);
+            Manager.Instance.recipeUI.AddOneCompartment(elems[0],false);
+        }
+        lineCounter += extra_compartments;
+        elems = lines[lineCounter].Split(sep[0]);
         int extra_ingredient = int.Parse(elems[0]);
         lineCounter++;
         for (int i = lineCounter; i < lineCounter + extra_ingredient; i++)
@@ -788,11 +831,12 @@ public class QuitGame : MonoBehaviour
             var sprite_name = elems[1];
             var scale2d = float.Parse(elems[2]);
             var yoffset = float.Parse(elems[3]);
-            var issurf = (elems[4] == "0")? false : true;
-            var isfiber = (elems[5] == "0")? false : true;
-            var comp = int.Parse(elems[6] );
-            if (!Manager.Instance.ingredients_names.Contains(name)) {
-                Manager.Instance.recipeUI.AddOneIngredient(name, sprite_name, scale2d, -yoffset, issurf, isfiber, comp);
+            var fiber_length = float.Parse(elems[4]);
+            var issurf = (elems[5] == "0")? false : true;
+            var isfiber = (elems[6] == "0")? false : true;
+            var comp = elems[7];//int.Parse(elems[6] );
+            if (!Manager.Instance.ingredients_names.ContainsKey(name)) {
+                Manager.Instance.recipeUI.AddOneIngredient(name, sprite_name, scale2d, yoffset, fiber_length, issurf, isfiber, comp);
             }
         }
         lineCounter += extra_ingredient;
@@ -813,6 +857,10 @@ public class QuitGame : MonoBehaviour
             var r = float.Parse(elems[1]);
             var g = float.Parse(elems[2]);
             var b = float.Parse(elems[3]);
+            if (name == "background") {
+                Manager.Instance.changeColorBackground( new Color(r, g, b) );
+                continue;
+            }
             if (!Manager.Instance.prefab_materials.ContainsKey(name))
             {
                 Manager.Instance.prefab_materials.Add(name, Manager.Instance.createNewSpriteMaterial(name));
@@ -1009,4 +1057,19 @@ public class QuitGame : MonoBehaviour
             Debug.Log("not supported");
         }
     }
+
+    public void OpenURL_mesoscope(){
+        var url = "https://mesoscope.scripps.edu/beta/";
+        Application.OpenURL(url);
+    }
+
+    public void OpenURL_ccsb(){
+        var url = "https://ccsb.scripps.edu/";
+        Application.OpenURL(url);
+    }
+
+    public void OpenURL(string url){
+        Application.OpenURL(url);
+    }
 }
+//5oxv,6b8h, 1sm1,5jhm

@@ -345,13 +345,13 @@ public class GroupManager : MonoBehaviour
         emptyGroup.name = "group_" + nGroup.ToString()+"_0";
         emptyGroup.layer = 22;//midle layer == group
         emptyGroup.transform.position = new Vector3(bb.center.x,bb.center.y,0.0f);
-        emptyGroup.transform.parent = current_selections[0].transform.parent;//root or compartment
+        emptyGroup.transform.parent = Manager.Instance.root.transform;//current_selections[0].transform.parent;//root or compartment
         var compartment = "root";
         var pro = current_selections[0].GetComponent<PrefabProperties>();
         if (pro == null) pro = current_selections[0].transform.GetChild(0).GetComponent<PrefabProperties>();
         if (pro!=null) compartment = pro.compartment;
         //if the parent was already a group use his parent
-        if (current_selections[0].transform.parent.GetComponent<PrefabGroup>()!= null)
+        /*if (current_selections[0].transform.parent.GetComponent<PrefabGroup>()!= null)
         {
             emptyGroup.transform.parent = current_selections[0].transform.parent.parent;
         }
@@ -364,11 +364,11 @@ public class GroupManager : MonoBehaviour
             }
             if (pro!=null) compartment = pro.compartment;
             if (compartment == "outside") compartment = "root";
-        }
+        }*/
         //use compartment of first object selected.
         var pp= emptyGroup.GetComponent<PrefabProperties>();
         pp.is_Group = true;
-        pp.compartment = Manager.Instance.recipeUI.Compartments[Manager.Instance.recipeUI.current_compartments];
+        pp.compartment = Manager.Instance.recipeUI.GetCurrentCname();
         pp.name = g.name;
         Debug.Log("group compartment is "+compartment);
 

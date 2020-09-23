@@ -12,6 +12,7 @@ using OpenQA.Selenium.Support.UI;
 using System.Threading;
 using System.Threading.Tasks;
 
+//TODO fix the sprites_name for illustrate. use _sprite
 public class Add_ingredient_ui : MonoBehaviour
 {
     public bool use_webDriver = false;
@@ -23,6 +24,8 @@ public class Add_ingredient_ui : MonoBehaviour
     public InputField input_pixel_ratio_field;
     public InputField input_offset_y_field;
     public InputField Zrotation_field;
+    public InputField fiber_length_field;
+    public InputField comp_name_field;
     public Text log_label;
     public Button Load;
     public Button Illustrate;
@@ -30,6 +33,9 @@ public class Add_ingredient_ui : MonoBehaviour
     public int query_id;
     public Image theSprite;
     public Image theSpriteMb;
+    public Image theSpriteAxis;
+    public Image theSpriteFiberLeft;
+    public Image theSpriteFiberRight;
     public Toggle surface;
     public Toggle fiber;
     public Image loader;
@@ -55,6 +61,7 @@ public class Add_ingredient_ui : MonoBehaviour
     public float input_pixel_ratio = 1.0f;
     public float input_offset_y;   
     public float Zrotation = 0.0f; 
+    public float fiber_length = 0.0f; 
     private Texture2D tmp_texture;
     private Texture2D browser_texture;
     private string webdriverspath;
@@ -163,11 +170,13 @@ public class Add_ingredient_ui : MonoBehaviour
         Zrotation_field.text = number.ToString();
         theSprite.rectTransform.rotation = Quaternion.Euler(0, 0, number);
         Zrotation = number; 
+        if (fiber.isOn) setFiberLength_cb();
     }
 
     public void setZrot(string number){
         theSprite.rectTransform.rotation = Quaternion.Euler(0, 0, float.Parse (number));
         Zrotation = float.Parse (number); 
+        if (fiber.isOn) setFiberLength_cb();
     }
 
     public void setYoffset_cb(float number){
@@ -189,6 +198,43 @@ public class Add_ingredient_ui : MonoBehaviour
         var thickness = 42.0f*sc2d;//angstrom
         theSpriteMb.rectTransform.sizeDelta = new Vector2((int)w,thickness);
         //theSpriteMb.rectTransform.localPosition = new Vector3(p.x,h/2.0f-offy,p.z);
+    }
+
+    public void ToggleMainImage(bool toggle){
+        //if fiber disable the image
+        theSprite.enabled = ! toggle;
+    }
+    
+    public void setFiberLength(float number){
+        fiber_length_field.text = number.ToString();
+        //theSprite.rectTransform.rotation = Quaternion.Euler(0, 0, number);
+        fiber_length = number; 
+        setFiberLength_cb();
+    }
+
+    public void setFiberLength(string number){
+        //theSprite.rectTransform.rotation = Quaternion.Euler(0, 0, float.Parse (number));
+        fiber_length = float.Parse (number);
+        setFiberLength_cb(); 
+    }
+
+    public void setFiberLength_cb(){
+        input_pixel_ratio = float.Parse (input_pixel_ratio_field.text ); 
+        //update on the sprite
+        float w = (float)theSprite.rectTransform.rect.width;
+        float h = (float)theSprite.rectTransform.rect.height;
+        var canvas_scale = w/theSprite.sprite.texture.width;
+        var sc2d = input_pixel_ratio*canvas_scale;//*canvas_scale;
+        var pixel_length = fiber_length*sc2d;//sc2d is angstrom to pixels
+        var scaling = pixel_length/154.0f;
+        //theSpriteMb.rectTransform.localPosition = new Vector3(p.x,h/2.0f-offy,p.z);
+        //the line is 154pixel long in the image. scale it to accomodate the fiber length.
+        //theSpriteAxis.rectTransform.sizeDelta = new Vector2(scaling,1.0f);
+        var p = theSprite.rectTransform.position;
+        theSpriteAxis.transform.localScale = new Vector3(scaling,scaling,1.0f);
+        //this doesnt work when rotate the parent.
+        theSpriteFiberLeft.rectTransform.position = new Vector3(p.x-pixel_length/2.0f,p.y,p.z);
+        theSpriteFiberRight.rectTransform.position = new Vector3(p.x+pixel_length/2.0f,p.y,p.z);
     }
 
     public void CallIllustrate(){
@@ -279,6 +325,8 @@ public class Add_ingredient_ui : MonoBehaviour
         string filePath = FileBrowser.OpenSingleFile("Open image file", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "png", "jpg");
         var sprite = Manager.Instance.LoadNewSprite(filePath);
         theSprite.sprite = sprite;
+        theSpriteFiberLeft.sprite = sprite;
+        theSpriteFiberRight.sprite = sprite;
         var ratio =(float) theSprite.sprite.texture.width/(float)theSprite.sprite.texture.height;
         var h = 210;//w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
         var w = h*ratio;
@@ -423,11 +471,12 @@ public class Add_ingredient_ui : MonoBehaviour
                  Zrotation = 0.0f;
             }
             var current_bytes = theSprite.sprite.texture.EncodeToPNG();
-            var filePath = PdbLoader.DefaultDataDirectory + "/" + "images/" + input_name_field.text+".png";
+            var filePath = PdbLoader.DefaultDataDirectory + "/" + "images/" + input_name_field.text+"_sprite_ill.png";
             System.IO.File.WriteAllBytes(filePath, current_bytes);
-            sprite_name = input_name_field.text+".png";
+            sprite_name = input_name_field.text+"_sprite_ill.png";
         }
-        Manager.Instance.recipeUI.AddOneIngredient(input_name_field.text, sprite_name, input_pixel_ratio, -input_offset_y, surface.isOn, fiber.isOn, -1);
+        Manager.Instance.recipeUI.AddOneIngredient(input_name_field.text, sprite_name, input_pixel_ratio, 
+                                                    -input_offset_y, fiber_length, surface.isOn, fiber.isOn, "");
         input_name_field.text = "";
     }
 
@@ -446,6 +495,8 @@ public class Add_ingredient_ui : MonoBehaviour
                 Debug.Log(pages[page] + ": Error: " + webRequest.error);
                 var sprite = Resources.Load<Sprite>("Recipie/error");
                 theSprite.sprite = sprite;
+                theSpriteFiberLeft.sprite = sprite;
+                theSpriteFiberRight.sprite = sprite;
                 Load.interactable = true;
                 Illustrate.interactable = true;
                 Create.interactable = true;  
@@ -511,6 +562,8 @@ public class Add_ingredient_ui : MonoBehaviour
                 redo_query = false;
                 var sprite = Resources.Load<Sprite>("Recipie/error");
                 theSprite.sprite = sprite;
+                theSpriteFiberLeft.sprite = sprite;
+                theSpriteFiberRight.sprite = sprite;
                 Load.interactable = true;
                 Illustrate.interactable = true;
                 Create.interactable = true;  
@@ -524,6 +577,8 @@ public class Add_ingredient_ui : MonoBehaviour
                 query_done = false;
                 var mySprite = Sprite.Create(tmp_texture, new Rect(0.0f, 0.0f, tmp_texture.width, tmp_texture.height), new Vector2(0.5f, 0.5f), 100.0f);
                 theSprite.sprite = mySprite;
+                theSpriteFiberLeft.sprite = mySprite;
+                theSpriteFiberRight.sprite = mySprite;
                 var ratio =(float) theSprite.sprite.texture.width/(float)theSprite.sprite.texture.height;
                 //var w = 150;//(snode.data.thumbnail)?snode.data.thumbnail.width:150;
                 var h = 210;//w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
@@ -542,6 +597,20 @@ public class Add_ingredient_ui : MonoBehaviour
                 driver.Quit();
             }
         }
+    }
+
+    public void AddCompartment(){
+        //when creating a compartment give a name and create the membrane prefab for it.
+        //check if name exist already
+        var cname = comp_name_field.text;
+        if (Manager.Instance.recipeUI.CompartmentsNames.ContainsKey(cname)) {
+            log_label.text = cname+" already exist in the list of compartment. Choose a different name.";
+            return;
+        }
+        Manager.Instance.recipeUI.AddOneCompartment(cname);
+        log_label.text = "";
+        gameObject.SetActive(false);
+        Manager.Instance.mask_ui = false;
     }
 
     void OnApplicationQuit(){

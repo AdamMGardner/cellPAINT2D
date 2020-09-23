@@ -74,7 +74,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 56c9083eed34f224c8ca69e5a968f040, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 651803a0d4e4bee498bf4545fc38c6cd, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -143,6 +143,7 @@ MonoBehaviour:
   layer_number: 3
   isCircleCollider: 0
   circle_radius: 3.5693135
+  m_ext: {x: 0, y: 0, z: 0}
   circle_offset: {x: 0, y: 0}
   isCapsuleCollider: 0
   capsule_size: {x: 0, y: 0}
@@ -151,6 +152,8 @@ MonoBehaviour:
   is_surface: 0
   surface_secondLayer: 1
   surface_offset: 0
+  y_offset: 0
+  y_length: 0
   scale2d: 1
   local_scale: 1
   pcpAxe: {x: 0, y: 1, z: 0}
@@ -160,6 +163,7 @@ MonoBehaviour:
   fiber_Bottom: 0
   light_fiber: 0
   closing: 1
+  is_Group: 0
   is_anchor: 0
   is_bound: 0
   bound_to: 
@@ -201,7 +205,7 @@ MonoBehaviour:
   pin_color: {r: 1, g: 0, b: 0, a: 1}
   entry: {x: 0, y: 0, z: 0}
   exit: {x: 0, y: 0, z: 0}
-  area: 67.73272
+  area: 76.96902
   ispined: 0
   enableCollision: 0
   spriteTumble_id: 0
@@ -218,7 +222,9 @@ MonoBehaviour:
   background_mat: {fileID: 0}
   zangle: 0
   initialized: 0
+  RB: {fileID: 0}
   attachments: []
+  ghost_id: -1
 --- !u!58 &58000013026000410
 CircleCollider2D:
   m_ObjectHideFlags: 0

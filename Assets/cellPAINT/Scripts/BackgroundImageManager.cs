@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -31,17 +31,42 @@ public class BackgroundImageManager : MonoBehaviour
     public GameObject backgroundImageContainer;
     //hold a list of background image that we could move around
     public int current_bg = 0;
+    public List<string> bg_Images = new List<string>();
     private GameObject bg_holder;
     private List<GameObject> allbg;
+    
     private Renderer backgroundImageRenderer;
     private Vector3 start_pos;
     private Vector3 offset;
     // Start is called before the first frame update
+
+    private static BackgroundImageManager _instance = null;
+    public static BackgroundImageManager Get
+    {
+        get
+        {
+            if (_instance != null) return _instance;
+            //currently in LoadImage_Panel
+            _instance = FindObjectOfType<BackgroundImageManager>();
+            if (_instance == null)
+            {
+                var go = GameObject.Find("_GroupManager");
+                if (go != null) DestroyImmediate(go);
+
+                go = new GameObject("_GroupManager");
+                _instance = go.AddComponent<BackgroundImageManager>();
+                //_instance.hideFlags = HideFlags.HideInInspector;
+            }
+            return _instance;
+        }
+    }
+
     void Start()
     {
         allbg = new List<GameObject>();
         bg_holder = new GameObject("Backgrounds");
         bg_holder.transform.position = Vector3.zero;
+        bg_Images.Clear();
         /*if (!backgroundImageContainer)
         {
             backgroundImageContainer = GameObject.CreatePrimitive(PrimitiveType.Plane);
@@ -69,7 +94,7 @@ public class BackgroundImageManager : MonoBehaviour
                 interactive_mode = false;
                 interactive_mode_toggle.isOn = false;
             }
-            LayerMask layerMask = 1 << LayerMask.NameToLayer("background");
+            LayerMask layerMask = 1 << LayerMask.NameToLayer("bg_image");
             RaycastHit2D hit = new RaycastHit2D();
             hit = Physics2D.Raycast(Manager.Instance.current_camera.ScreenPointToRay(Input.mousePosition).origin,
                                 Manager.Instance.current_camera.ScreenPointToRay(Input.mousePosition).direction, 100, layerMask);
@@ -157,6 +182,21 @@ public class BackgroundImageManager : MonoBehaviour
         }
     }
 
+    public float GetScale(int bgid) {
+        var pixel_scale = (Manager.Instance.unit_scale * 10.0f) / 100.0f;
+        var lscale = allbg[bgid].transform.localScale.x;
+        var oriscale = 1.0f/(lscale*pixel_scale);
+        return oriscale;
+    }
+
+    public Vector3 GetPosition(int bgid) {
+        return allbg[bgid].transform.position;
+    }
+
+    public float GetRotation(int bgid) {
+        return allbg[bgid].transform.rotation.eulerAngles.z;
+    }
+
     public void BackgroundImageOnTopToggle(bool value) {
         if (current_bg!=-1) {
              var sr = allbg[current_bg].GetComponent<SpriteRenderer>();
@@ -236,12 +276,18 @@ public class BackgroundImageManager : MonoBehaviour
        }
     }
 
-    public void AddBackgroundSprites(Texture2D SpriteTexture){
-        Sprite NewSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0.5f, 0.5f), 100.0f);
+    public void AddBackgroundSprites(string path, Vector3 position, float scale2d, float rotation){
+        var sprite_name = Path.GetFileName(path);
+        var sprite_path = Path.GetDirectoryName(path);        
+        byte[] current_bytes = File.ReadAllBytes(path);
+        Texture2D backgroundImage = new Texture2D (2,2);
+        backgroundImage.LoadImage(current_bytes);
+        Sprite NewSprite = Sprite.Create(backgroundImage, new Rect(0, 0, backgroundImage.width, backgroundImage.height), new Vector2(0.5f, 0.5f), 100.0f);
         var prefab2d = new GameObject("bg_"+allbg.Count.ToString());
         prefab2d.transform.parent = bg_holder.transform;
-        prefab2d.transform.position = new Vector3(0, 0, 0);
-        prefab2d.layer = LayerMask.NameToLayer("background");
+        prefab2d.transform.position = position;
+        prefab2d.transform.rotation = Quaternion.Euler(0, 0, rotation);
+        prefab2d.layer = LayerMask.NameToLayer("bg_image");
         //prefab.transform.position = cam.ScreenToWorldPoint(new Vector3(screenShot.width, Screen.height / 2.0f, 20));
         SpriteRenderer sp = prefab2d.AddComponent<SpriteRenderer>();
         Material amat = new Material(Manager.Instance.outline_material.shader);
@@ -253,10 +299,11 @@ public class BackgroundImageManager : MonoBehaviour
         //the scale
         var pixel_scale = (Manager.Instance.unit_scale * 10.0f) / 100.0f; // angstrom to pixel
         var unity_scale2d = 1.0f / (Manager.Instance.unit_scale * 10.0f); // unity to pixel
-        var local_scale = 1.0f/(pixel_scale * imageScale);                // local scale if image is different
+        var local_scale = 1.0f/(pixel_scale * scale2d);                // local scale if image is different
         prefab2d.AddComponent<BoxCollider2D>();
         prefab2d.transform.localScale = new Vector3(local_scale, local_scale, local_scale);
-        showBackgroundImageToggle.isOn = true;   
+        //showBackgroundImageToggle.isOn = true;   
+        bg_Images.Add(path);  
     }
 
     public void AddBackgroundImage(Texture2D backgroundImage) {

@@ -47,6 +47,7 @@ public class Manager : MonoBehaviour {
     public bool bucketMode = false;
     public bool bindMode = false;
     private bool group_interact_mode = true;
+    private bool moveWithMode = false;
     //public bool erase_collider_mode = false;
     //public bool pin_collider_mode = false;
     //public bool drag_collider_mode = false;
@@ -63,6 +64,7 @@ public class Manager : MonoBehaviour {
     //private Vector3 lastEndPos;    // last End position of line
 
     private Vector3 lastPos;
+    private Vector3 offsetPos;
     public float delta;
     public float delta_threshold = 5;
     public float sprayModulous;
@@ -92,6 +94,7 @@ public class Manager : MonoBehaviour {
 
     #endregion fiber parameters
     #region UI parameters
+    private Canvas _canvas;
     public RectTransform uiHolder;
     public Text scale_bar_text;
     public Toggle ToggleBrush;
@@ -105,6 +108,7 @@ public class Manager : MonoBehaviour {
     public Image tools_toggle_description_image;  //description panel protein image
     public GameObject Description_Holder;
     public GameObject Description_Holder_HSV;
+    public Toggle show_membrane_bg;
     public Text textCommonName;
     public Text textCompartment;
     public Text textFunctionGroup;
@@ -184,9 +188,12 @@ public class Manager : MonoBehaviour {
     public JSONNode AllIngredients;
     public JSONNode AllRecipes;
     public Dictionary<string, JSONNode> ingredient_node;
-    public List<string> ingredients_names;
+    //public List<string> ingredients_names;
+    public Dictionary<string,int> ingredients_names = new Dictionary<string, int>();
+    public Dictionary<int,string> ingredients_ids = new Dictionary<int, string>();
     public List<string> additional_ingredients_names = new List<string>();
-    public List<string> sprites_names;
+    public List<string> additional_compartments_names = new List<string>();
+    public Dictionary<int,string> sprites_names = new Dictionary<int, string>();
     //public List<GameObject> ingredients_prefab = new List<GameObject>();
     public float zLevel = 0.00f;
     public float colorValue = 1.00f;
@@ -306,10 +313,37 @@ public class Manager : MonoBehaviour {
         return "";
     }
 
+    public void ToggleBackgroundMembrane(bool toggle) {
+        if (all_prefab.ContainsKey(current_name_below))
+        {
+            var p = all_prefab[current_name_below].GetComponent<PrefabProperties>();
+            if (p!=null && p.draw_background){
+                //loop over all fiber parent
+                foreach(var fp in fiber_parents)
+                {
+                    if (fp.name.StartsWith(current_name_below) && fp.name.EndsWith("_Closed")){
+                        var contour = fp.GetComponent<DrawMeshContour>();
+                        if (contour) contour.ToggleDisplay(toggle);
+                    }
+                }
+            }
+        }
+        /*var touse = below;
+        if (below == null) {
+            touse = last_other;
+        };
+        var props = touse.GetComponent<PrefabProperties>();
+        if (props.is_fiber && props.draw_background){
+            var parent = touse.transform.parent;
+            var dmc = parent.GetComponent<DrawMeshContour>();
+            if (dmc) dmc.ToggleDisplay(toggle);
+        }*/
+    }
+
     public void changeDescription(GameObject another, SpriteRenderer otherImage) {
 
         var props = another.GetComponent<PrefabProperties>();
-        Debug.Log("changeDescription "+props.name);
+        Debug.Log("changeDescription props name "+props.name+" "+props.is_fiber.ToString());
         var n = props.name.Replace("_"," ");
         var sn = getDescriptionName(props.name);
         if (sn != "") {
@@ -352,9 +386,18 @@ public class Manager : MonoBehaviour {
             textDescription.text = "<b>DESCRIPTION:</b> " + props.description;
         }
         //Debug.Log("The iname for the prefab find is" + iname);
-        if (props.is_fiber && props.name.Contains("Membrane"))
+        if (props.is_fiber && props.draw_background)
         {
+            //check if membrane
             textDescription.text += "<br>(note: draw clockwise)";
+            if (show_membrane_bg != null) {
+                show_membrane_bg.gameObject.SetActive(true);
+            }
+        }
+        else {
+            if (show_membrane_bg != null) {
+                show_membrane_bg.gameObject.SetActive(false);
+            }            
         }
         if (otherImage) {
             tools_toggle_description_image.sprite = otherImage.sprite;
@@ -536,7 +579,7 @@ public class Manager : MonoBehaviour {
         amat.name = name;
         if (ingredient_node.ContainsKey(name)){
             var node = ingredient_node[name];
-            if (node.HasKey("color")) 
+            if (node!=null && node.HasKey("color")) 
             {
                 amat.color = new Color(  node["color"].AsArray[0].AsFloat,
                                         node["color"].AsArray[1].AsFloat,
@@ -562,8 +605,8 @@ public class Manager : MonoBehaviour {
     {
         string prefab_name = aname;
         string img_name = aname;
-        int inde = ingredients_names.IndexOf(aname);
-        if (inde < sprites_names.Count) img_name = sprites_names[inde];
+        int inde = ingredients_names[aname];// ingredients_names.IndexOf(aname);
+        if (sprites_names.ContainsKey(inde)) img_name = sprites_names[inde];
         var sprite = Resources.Load<Sprite>("Recipie/" + img_name);
         var prefab2d = new GameObject(prefab_name);
         //prefab.transform.position = cam.ScreenToWorldPoint(new Vector3(screenShot.width, Screen.height / 2.0f, 20));
@@ -628,8 +671,8 @@ public class Manager : MonoBehaviour {
     public GameObject Build(string aname = null,string img_name = null) {
         string prefab_name = aname;
         if (img_name == null) img_name = aname;
-        int inde = ingredients_names.IndexOf(aname);
-        if (inde != -1 && inde < sprites_names.Count) {
+        int inde = ingredients_names[aname];
+        if (inde != -1 && sprites_names.ContainsKey(inde)) {
             img_name = sprites_names[inde];
         }
         else
@@ -663,6 +706,7 @@ public class Manager : MonoBehaviour {
 
     public void SwitchPrefabFromName(string name)
     {
+        Manager.Instance.update_texture = true;
         //myPrefab = Resources.Load("Prefabs/" + name) as GameObject;
         if (!all_prefab.ContainsKey(name))
         {
@@ -905,17 +949,17 @@ public class Manager : MonoBehaviour {
             if (pos.z == 0.25f)
             {
                 newObject.layer = LayerMask.NameToLayer("Bottom Layer");
-                newObject.name = newObject.name + " (Bottom)"; 
+                //newObject.name = newObject.name + " (Bottom)"; 
             }
             else if (pos.z == 0.125f)
             {
                 newObject.layer = LayerMask.NameToLayer("Middle Layer");
-                newObject.name = newObject.name + " (Middle)";
+                //newObject.name = newObject.name + " (Middle)";
             }
             else
             {
                 newObject.layer = LayerMask.NameToLayer("Top Layer");
-                newObject.name = newObject.name;// + " (Top)";
+                //newObject.name = newObject.name;// + " (Top)";
             }
 
             Rigidbody2D rb = newObject.GetComponent<Rigidbody2D>();
@@ -1520,6 +1564,7 @@ public class Manager : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
+        _canvas = FindObjectOfType<Canvas>();
         System.IO.Directory.CreateDirectory(PdbLoader.DefaultDataDirectory);
         System.IO.Directory.CreateDirectory(PdbLoader.DefaultDataDirectory+"proteins");
         System.IO.Directory.CreateDirectory(PdbLoader.DefaultDataDirectory+"images");
@@ -1585,6 +1630,10 @@ public class Manager : MonoBehaviour {
 
     void drawInstance() {
         //delta is in pixel
+        if (Input.GetMouseButton(0)){
+            //transform.position
+            if (HitMembrane()) return;
+        }
         var props = current_prefab.GetComponent<PrefabProperties>();
         delta_threshold = props.circle_radius*props.local_scale*2.0f;//m_ext.x/2.0f;//circle_radius;
         if (props.is_Group) {
@@ -2236,27 +2285,33 @@ public class Manager : MonoBehaviour {
         b.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
     }
 
+    bool HitMembrane(){
+        RaycastHit2D hit = raycast();
+        if (hit) {
+            if (hit.collider.gameObject.layer == 13 || 
+                hit.collider.gameObject.layer == 11 || 
+                hit.collider.gameObject.layer == 20 || 
+                hit.collider.gameObject.layer == 24) 
+                {
+                    //Debug.Log("skip "+hit.collider.gameObject.layer.ToString());
+                    return true;
+                }
+            else {
+                return false;
+                //Debug.Log("didnt skip  "+hit.collider.gameObject.layer.ToString());
+            }
+        } else {
+                //Debug.Log("no HIT");
+                return false;
+        }
+    }
+
     void drawInstanceFiber() {
         //did we reach maxNb or maxLength
         bool stop = false;
         if (Input.GetMouseButton(0)){
             //transform.position
-            RaycastHit2D hit = raycast();
-            if (hit) {
-                if (hit.collider.gameObject.layer == 13 || 
-                    hit.collider.gameObject.layer == 11 || 
-                    hit.collider.gameObject.layer == 20 || 
-                    hit.collider.gameObject.layer == 24) 
-                    {
-                        //Debug.Log("skip "+hit.collider.gameObject.layer.ToString());
-                        return;
-                    }
-                else {
-                    //Debug.Log("didnt skip  "+hit.collider.gameObject.layer.ToString());
-                }
-            } else {
-                 //Debug.Log("no HIT");
-            }
+            if (HitMembrane()) return;
         }
         var props = myPrefab.GetComponent<PrefabProperties>();
         if (fiber_init)
@@ -2276,6 +2331,7 @@ public class Manager : MonoBehaviour {
 
         if (Input.GetMouseButtonDown(0))//on click
         {
+            if (mask_ui) return;
             if (fiber_init == false)
             {
                 fiber_init_compartment = GetCurrentCompartmentBelow(mousePositionInViewPort.x,mousePositionInViewPort.y);
@@ -2375,7 +2431,8 @@ public class Manager : MonoBehaviour {
             return;
         }
         else if (Input.GetMouseButton(0))
-        {
+        {   
+            if (mask_ui) return;
             if (fiber_init == false) return;
             if (stop) return;
             fiber_compartment = GetCurrentCompartmentBelow(mousePositionInViewPort.x,mousePositionInViewPort.y);
@@ -2498,10 +2555,10 @@ public class Manager : MonoBehaviour {
     void fillCompartments()
     {
         float delta = Vector3.Distance(prev_mousePos, transform.position);
-        bool input_event = (Input.GetMouseButton(0) && delta > 0.005f) || Input.GetMouseButtonDown(0);
-        int start = everything.Count;
+        bool input_event = Input.GetMouseButtonDown(0);//(Input.GetMouseButton(0) && delta > 0.005f) || Input.GetMouseButtonDown(0);
         if (input_event)
         {
+            //get current compartment
             Texture2D textTure2D = GetRenderTexturePixels(secondRenderTexture);
             int xLocation = Mathf.RoundToInt(mousePositionInViewPort.x * textTure2D.width);
             int yLocation = Mathf.RoundToInt(mousePositionInViewPort.y * textTure2D.height);
@@ -2615,7 +2672,7 @@ public class Manager : MonoBehaviour {
 
     }
 
-    void DestroyHierarchyFamily(string name)
+    public void DestroyHierarchyFamily(string name)
     {
         var family =
                        from o in Manager.Instance.root.transform.GetComponentsInChildren<Transform>()
@@ -2628,11 +2685,62 @@ public class Manager : MonoBehaviour {
         }
     }
 
+    public void DestroyHierarchyPrefabFamily(string name)
+    {
+        var prefab = all_prefab[name];
+        var props = prefab.GetComponent<PrefabProperties>();
+        if (props.is_fiber) {
+            var aname = props.name+"_chain_";
+            var family =
+                       from o in Manager.Instance.root.transform.GetComponentsInChildren<Transform>()
+                       where o.name.StartsWith(aname)
+                       select o;            
+            
+            foreach (var o in family)
+            {
+                //GameObject.Destroy(o.gameObject);
+                DestroyHierarchy(o);
+            }
+        }
+        else if (props.is_Group) {
+            //select everything in the group
+            var family =
+                from o in Manager.Instance.root.transform.GetComponentsInChildren<PrefabGroup>()
+                where o.name == name
+                select o.gameObject;
+            foreach (var o in family)
+            {
+                foreach ( Transform child in o.transform) {
+                    if (fiber_parents.Contains(child.gameObject)) {
+                        DestroyHierarchy(child);
+                    }
+                    else 
+                    {
+                        DestroyInstance(child.gameObject);
+                    }
+                }
+                GameObject.Destroy(o);
+            }            
+        }
+        else {
+            DestroyHierarchyFamily(name);
+        }
+        /*var family =
+                       from o in Manager.Instance.root.transform.GetComponentsInChildren<PrefabProperties>()
+                       where o.name.Replace("(Clone)","") == name
+                       select o;
+        foreach (var o in family)
+        {
+            //GameObject.Destroy(o.gameObject);
+            DestroyInstance(o.gameObject);
+        }*/
+    }
+
     public void highLightHierarchy(Transform parent, bool toggle) {
         if (parent == null) return;
         foreach (Transform ch in parent.transform)
         {
-            if (Manager.Instance.fiber_parents.Contains(ch.gameObject)) {
+            if (fiber_parents.Contains(ch.gameObject)) {
                 highLightHierarchy(ch,toggle);
             }
             PrefabProperties p = ch.GetComponent<PrefabProperties>();
@@ -2842,72 +2950,9 @@ public class Manager : MonoBehaviour {
             }*/
         }
         else {
-            PrefabGroup pgc = hit.collider.gameObject.GetComponentInParent<PrefabGroup>();
-            var collider = hit.collider.gameObject;
-            if (group_interact_mode && pgc != null){
-                collider = pgc.gameObject;
-            }
-            if (other && other != collider) {
-                if (!GroupManager.Get.current_selections.Contains(other))
-                {
-                    if (group_interact_mode) highLightHierarchy(other.transform, false);
-                    else {
-                        var props = other.GetComponent<PrefabProperties>();
-                        if (props ) {
-                            if (props.is_fiber) highLightHierarchy(other.transform.parent, false);
-                            else if (props.is_Group&& group_interact_mode) highLightHierarchy(other.transform, false);
-                            else {
-                                props.outline_width = current_camera.orthographicSize;
-                                props.UpdateOutline(true);
-                            }
-                        }
-                    }
-                }
-            }
-            other = collider;//hit.collider.gameObject;
-            //Debug.Log("hitting something in the update " + other.name);//cube ?
+            OverHighLight(hit.collider.gameObject, false);
             PrefabProperties p = other.GetComponent<PrefabProperties>();
-            PrefabGroup pg = other.GetComponentInParent<PrefabGroup>();
-            if (pg == null && p == null)
-            {
-                p = other.transform.parent.GetComponent<PrefabProperties>();
-                other = other.transform.parent.gameObject;
-                pg = other.GetComponentInParent<PrefabGroup>();
-            }
-            if (pg!=null && group_interact_mode) {
-                other = pg.gameObject;
-                p = other.GetComponent<PrefabProperties>();
-            }
-            if (p == null && pg == null) {
-                CleanOutline();
-                Debug.Log("no PrefabProperties and no PrefabGroup " + other.name);
-                return;
-            }
-            if (p)
-            {
-                p.UpdateOutline(true);
-                if (p.is_fiber) {
-                    highLightHierarchy(other.transform.parent, true);
-                }
-                if (p.is_Group&& group_interact_mode) highLightHierarchy(other.transform, true);
-                if (_shift) {
-                    if (p.is_fiber)
-                    {
-                        //highlight the all chain parent
-                        highLightHierarchy(other.transform.parent,true);
-                    }
-                    else if (pg || p.is_Group){
-                        highLightHierarchy(other.transform, true);
-                    }
-                    else {
-                        //find everyother object of same type
-                        highLightProteinType(p.name,true);
-                    }                    
-                }
-            }
-            if (pg && group_interact_mode ){
-                highLightHierarchy(pg.transform, true);
-            }
+            PrefabGroup pg = other.GetComponentInParent<PrefabGroup>();            
             below = other;
             if (Input.GetMouseButtonDown(0))
             {
@@ -2917,10 +2962,10 @@ public class Manager : MonoBehaviour {
                         if (!GroupManager.Get.current_selections.Contains(other.transform.parent.gameObject))
                             GroupManager.Get.current_selections.Add(other.transform.parent.gameObject);
                     }
-                    else if (pg || p.is_Group){
-                        if (!GroupManager.Get.current_selections.Contains(other))
-                                GroupManager.Get.current_selections.Add(other);                           
-                    }
+                    //else if (pg || p.is_Group){
+                    //    if (!GroupManager.Get.current_selections.Contains(other))
+                    //            GroupManager.Get.current_selections.Add(other);                           
+                    //}
                     else {
                         var family =
                             from o in Manager.Instance.root.transform.GetComponentsInChildren<Transform>()
@@ -2985,6 +3030,27 @@ public class Manager : MonoBehaviour {
         }
         CleanOutline();
         if (hit) {
+            if (other!=null && other.name.StartsWith("ghost_")) {
+                //highlight path
+                other.GetComponent<Ghost>().ToggleHighlight(false);
+            }
+            var ob = hit.collider.gameObject;
+            OverHighLight(ob, true);
+            if (ob.name.StartsWith("ghost_")) {
+                //highlight path
+                ob.GetComponent<Ghost>().ToggleHighlight(true);
+                below = other = ob;
+                if (Input.GetMouseButtonDown(0)){
+                    //this is dangerous.
+                    //need to build mutliple one....
+                    GhostManager.Get.RemoveGhost(ob);
+                    //ghostInstance(other);//toggle off everything 
+                }
+                return;
+            };
+            PrefabProperties p = other.GetComponent<PrefabProperties>();
+            PrefabGroup pg = other.GetComponentInParent<PrefabGroup>();
+            /*
             PrefabGroup pgc = hit.collider.gameObject.GetComponentInParent<PrefabGroup>();
             var collider = hit.collider.gameObject;
             if (group_interact_mode && pgc != null){
@@ -3024,6 +3090,7 @@ public class Manager : MonoBehaviour {
                 }
                 return;
             };
+            
             PrefabProperties p = other.GetComponent<PrefabProperties>();
             PrefabGroup pg = other.GetComponentInParent<PrefabGroup>();
             //Debug.Log("hitting something in the update " + other.name+" "+(pb==null).ToString()+" "+(p==null).ToString());//cube ?
@@ -3070,7 +3137,7 @@ public class Manager : MonoBehaviour {
             }
             if (pg && group_interact_mode ){
                 highLightHierarchy(pg.transform, true);
-            }
+            }*/
             below = other;
             if (Input.GetMouseButtonDown(0))
             {
@@ -3151,6 +3218,77 @@ public class Manager : MonoBehaviour {
         }
         //last_active_current_name_below = current_name_below;
     }
+    void OverHighLight(GameObject object_hit, bool group_interact){
+        //one function for all hit highlight
+        bool _shift = Input.GetKey(KeyCode.LeftShift);
+        CleanOutline();
+        PrefabGroup pg = object_hit.gameObject.GetComponentInParent<PrefabGroup>();
+        if (group_interact && pg != null){
+            object_hit = pg.gameObject;
+        }    
+        if (other && other != object_hit) {
+            if (other.name.StartsWith("ghost_")) {
+                    other.GetComponent<Ghost>().ToggleHighlight(false);
+            }
+            var props = other.GetComponent<PrefabProperties>();
+            var group = other.GetComponentInParent<PrefabGroup>();
+            if (props && props.is_fiber) {
+                group = other.transform.parent.gameObject.GetComponentInParent<PrefabGroup>();
+            }
+            if ( group ) highLightHierarchy(group.transform, false);
+            if ( props ) {
+                if (props.is_fiber) highLightHierarchy(other.transform.parent, false);
+                else if (props.is_Group && group_interact) highLightHierarchy(other.transform, false);
+                else {
+                    props.outline_width = current_camera.orthographicSize;
+                    props.UpdateOutline(false);
+                }
+            }
+        }
+        other = object_hit;
+        var parent = other.transform.parent;
+        PrefabProperties p = other.GetComponent<PrefabProperties>();
+        if (pg == null && p == null && parent != null && group_interact)
+        {
+            p = parent.GetComponent<PrefabProperties>();
+            other = parent.gameObject;
+            pg = other.GetComponentInParent<PrefabGroup>();
+        }
+        if (pg!=null && group_interact) {
+            other = pg.gameObject;
+            p = other.GetComponent<PrefabProperties>();
+        }
+        if (p == null && pg == null) {
+            Debug.Log("no PrefabProperties and no PrefabGroup " + other.name);
+            return;
+        }
+        if (p)
+        {
+            p.UpdateOutline(true);
+            if (p.is_fiber && (group_interact||groupMode)) {
+                highLightHierarchy(other.transform.parent, true);
+            }
+            if (p.is_Group && group_interact) highLightHierarchy(other.transform, true);
+            if (_shift) {
+                if ((group_interact)&&(pg || p.is_Group)){
+                    highLightGroupType(pg, true);
+                }
+                else if (!groupMode && (pg || p.is_Group)){
+                    highLightHierarchy(pg.transform, true);
+                }
+                else if (p.is_fiber)
+                {
+                    //highlight the all chain parent
+                    highLightHierarchy(other.transform.parent,true);
+                }
+                else {
+                    //find everyother object of same type
+                    highLightProteinType(p.name,true);
+                }             
+            }
+        }
+        below = other;
+    }
 
     void pindragInstance() {
         //if (pin_collider_mode) return;
@@ -3158,70 +3296,65 @@ public class Manager : MonoBehaviour {
         //check the shift keyEvent
         //if (Input.GetKeyUp(KeyCode.LeftShift)) CleanOutline();
         bool _shift = Input.GetKey(KeyCode.LeftShift);
-        bool _ctrl = Input.GetKey(KeyCode.LeftControl);
+        group_interact_mode = Input.GetKey(KeyCode.LeftControl);
         //bool _shift_up = Input.GetKeyUp(KeyCode.LeftShift);
-        if (!hit && Input.GetMouseButton(0)) selected_instance = null;
-        if ((!hit) || (Input.GetMouseButtonUp(0))) {
-            CleanOutline();
-            return;
+        if (!hit && Input.GetMouseButton(0)) {
+            selected_instance = null;
+
+        }
+        else if (Input.GetMouseButtonUp(0) && dragMode && (_shift||moveWithMode)) {
+            PrefabProperties p = other.GetComponent<PrefabProperties>();
+            PrefabGroup pg = other.GetComponentInParent<PrefabGroup>();  
+            Transform parent = other.transform.parent;
+            if (_shift) {
+                if ((pg || p.is_Group) && group_interact_mode){
+                    pg.transform.parent = current_objectparent_below.transform;
+                }
+                else if (pg || p.is_Group){
+                    pg.transform.parent = current_objectparent_below.transform;
+                }
+                else if (p.is_fiber)
+                {
+                    parent.transform.parent = current_objectparent_below.transform;
+                }
+                else {
+                    var family =
+                        from o in transform.GetComponentsInChildren<Transform>()
+                        where o.name.Replace("(Clone)","") == other.name
+                        select o;
+                    foreach (var o in family) {
+                        o.transform.parent = current_objectparent_below.transform;
+                    }
+                }
+            }
+            else {
+                if  ((pg || p.is_Group) && group_interact_mode) {
+                    pg.transform.parent = current_objectparent_below.transform;
+                }
+                else {
+                    other.transform.parent = current_objectparent_below.transform;                                
+                }
+            }
+            moveWithMode = false;
         }
         else
         {
-            other = hit.collider.gameObject;
-            if (!other.GetComponent<Rigidbody2D>())
-            {
+            if ((!moveWithMode) && (!hit)) {
                 CleanOutline();
                 return;
             }
-            //Debug.Log(other.name);
-            PrefabProperties p = other.GetComponent<PrefabProperties>();
-            Transform parent = other.transform.parent;
-            if (!Input.GetMouseButton(0))
-            {
-                //mouse over event only
-                CleanOutline();
-                below = other;
+            //if (!hit.collider.gameObject.GetComponent<Rigidbody2D>())
+            //{
+            //    CleanOutline();
+            //    return;
+            //}
+            //this assigne the gameobject other
+            if (hit && !moveWithMode) OverHighLight(hit.collider.gameObject, false);
 
-                p = below.GetComponent<PrefabProperties>();
-                parent = below.transform.parent;
-                if (p)
-                {
-                    p.outline_width = current_camera.orthographicSize;
-                    p.UpdateOutline(true);
-                }
-                else if (parent != null){
-                    //check the parent
-                    p = parent.GetComponent<PrefabProperties>();
-                    if (p != null)
-                    {
-                        p.outline_width = current_camera.orthographicSize;
-                        p.UpdateOutline(true);
-                        parent = parent.transform.parent;
-                    }
-                    else {
-                        below = null;
-                    }
-                }
-                //check if shift, then highligh either every object of the same type or the chain.
-                if (_shift) {
-                    if (p != null) {
-                        if (p.is_fiber)
-                        {
-                            //highlight the all chain parent
-                            highLightHierarchy(parent,true);
-                        }
-                        else {
-                            //find everyother object of same type
-                            highLightProteinType(p.name,true);
-                        }
-                    }
-                }
-                if (other.name == "ghostArea"){
-                    //highlight ghost
-                    ghostHighlight(true);
-                }
-            }
-            if (!Input.GetMouseButtonDown(0)) return;
+            PrefabProperties p = other.GetComponent<PrefabProperties>();
+            PrefabGroup pg = other.GetComponentInParent<PrefabGroup>();  
+            Transform parent = other.transform.parent;
+            
             selected_instance = other;
             last_other = other;
             var props = other.GetComponent<PrefabProperties>();
@@ -3232,6 +3365,7 @@ public class Manager : MonoBehaviour {
             }
             if (infoMode)
             {
+                if (!Input.GetMouseButtonDown(0)) return;
                 if (other == null) return;
                 Description_Holder.SetActive(true);
                 Description_Holder_HSV.SetActive(true);
@@ -3247,51 +3381,86 @@ public class Manager : MonoBehaviour {
             }
             else if (pinMode)
             {
-                //this should be a button so we could select+++
-                if (_ctrl){
-                    if (_shift) {
-                        if (p.is_fiber)
-                        {
-                            //highlight the all chain parent
-                            ghostHierarchy(parent);
-                        }
-                        else {
-                            //find everyother object of same type
-                            ghostProteinType(p.name);
-                        }
+                if (!Input.GetMouseButtonDown(0)) return;
+                if (_shift) {
+                    if ((pg || p.is_Group) && group_interact_mode){
+                        pinGroupType(pg);
                     }
-                    else {
-                        ghostInstance(other);
+                    else if (pg || p.is_Group){
+                        pinHierarchy(pg.transform);
                     }
-                    togglePinOutline(true);
-                    //UpdateGhostArea();                    
-                }
-                else 
-                {
-                    if (_shift) {
-                    if (p.is_fiber)
+                    else if (p.is_fiber)
                     {
-                        //highlight the all chain parent
                         pinHierarchy(parent);
                     }
                     else {
-                        //find everyother object of same type
                         pinProteinType(p.name);
                     }
                 }
-                    else {
-                    pinInstance(other);
+                else {
+                    if  ((pg || p.is_Group) && group_interact_mode) {
+                       pinHierarchy(pg.transform);
+                    }
+                    else pinInstance(other);
                 }
-                    togglePinOutline(true);
-                }
+                togglePinOutline(true);
             }
             else if (bindMode)
             {
                 //select two objects to be attach on click position
             }
-            else if (dragMode) { dragInstance(other, hit.point); togglePinOutline(true); }
+            else if (dragMode) { 
+                if (!_shift) 
+                {
+                    if (Input.GetMouseButtonDown(0)) dragInstance(other, hit.point); 
+                }
+                else 
+                {
+                    if (Input.GetMouseButtonDown(0)){
+                        moveWithMode = true;
+                        //put selection under transform
+                        if (_shift) {
+                            if ((pg || p.is_Group) && group_interact_mode){
+                                current_objectparent_below = pg.transform.parent.gameObject;
+                                pg.transform.parent = transform;
+                            }
+                            else if (pg || p.is_Group){
+                                current_objectparent_below = pg.transform.parent.gameObject;
+                                pg.transform.parent = transform;
+                            }
+                            else if (p.is_fiber)
+                            {
+                                current_objectparent_below = parent.parent.gameObject;
+                                parent.transform.parent = transform;
+                            }
+                            else {
+                                current_objectparent_below = other.transform.parent.gameObject;
+                                var family =
+                                    from o in root.transform.GetComponentsInChildren<Transform>()
+                                    where o.name.Replace("(Clone)","") == other.name
+                                    select o;
+                                foreach (var o in family) {
+                                    o.transform.parent = transform;
+                                }
+                            }
+                        }
+                        else {
+                            if  ((pg || p.is_Group) && group_interact_mode) {
+                                current_objectparent_below = pg.transform.parent.gameObject;
+                                pg.transform.parent = transform;
+                            }
+                            else {
+                                current_objectparent_below = other.transform.parent.gameObject;
+                                other.transform.parent = transform;                                
+                            }
+                        }
+                    }
+                }
+                togglePinOutline(true); 
+            }
             else if (eraseMode)
             {
+                if (!Input.GetMouseButtonDown(0)) return;
                 if (other == gameObject) return;
                 if (props == null) other = other.transform.parent.gameObject;
                 DestroyInstance(other);
@@ -3315,17 +3484,22 @@ public class Manager : MonoBehaviour {
     void pinHierarchy(Transform parent){
         foreach (Transform ch in parent.transform)
         {
-            PrefabProperties p = ch.GetComponent<PrefabProperties>();
-            if (p)
-            {
-                p.ispined = !p.ispined;
-                p.outline_width = current_camera.orthographicSize;
-                if (p.ispined)
-                    {p.RB.bodyType = RigidbodyType2D.Static;
-                    pinned_object.Add(p);}
-                else
-                    {p.RB.bodyType = RigidbodyType2D.Dynamic;
-                    pinned_object.Remove(p);}
+            if (fiber_parents.Contains(ch.gameObject)){
+                pinHierarchy(ch);
+            }
+            else {
+                PrefabProperties p = ch.GetComponent<PrefabProperties>();
+                if (p)
+                {
+                    p.ispined = !p.ispined;
+                    p.outline_width = current_camera.orthographicSize;
+                    if (p.ispined)
+                        {p.RB.bodyType = RigidbodyType2D.Static;
+                        pinned_object.Add(p);}
+                    else
+                        {p.RB.bodyType = RigidbodyType2D.Dynamic;
+                        pinned_object.Remove(p);}
+                }
             }
         }
     }
@@ -3347,6 +3521,32 @@ public class Manager : MonoBehaviour {
                 else
                     {p.RB.bodyType = RigidbodyType2D.Dynamic;
                     pinned_object.Remove(p);}
+            }
+        }
+    }
+
+    void pinGroupType(PrefabGroup pg) {
+        var family =
+            from o in Manager.Instance.root.transform.GetComponentsInChildren<PrefabGroup>()
+            where o.name == pg.name
+            select o.gameObject;
+        foreach (var o in family) {
+            if (fiber_parents.Contains(o)){
+                pinHierarchy(o.transform);
+            }
+            else {
+                PrefabProperties p = o.GetComponent<PrefabProperties>();
+                if (p)
+                {
+                    p.ispined = !p.ispined;
+                    p.outline_width = current_camera.orthographicSize;
+                    if (p.ispined)
+                        {p.RB.bodyType = RigidbodyType2D.Static;
+                        pinned_object.Add(p);}
+                    else
+                        {p.RB.bodyType = RigidbodyType2D.Dynamic;
+                        pinned_object.Remove(p);}
+                }
             }
         }
     }
@@ -3443,7 +3643,7 @@ public class Manager : MonoBehaviour {
         foreach (var o in GroupManager.Get.current_selections)
         {
             //test for attachements
-            if (Manager.Instance.fiber_parents.Contains(o))
+            if (fiber_parents.Contains(o))
             {
                 ghostHierarchy(o.transform);
             }
@@ -3805,7 +4005,7 @@ public class Manager : MonoBehaviour {
                 //pop up warning
                 if (message_panel) {
                     message_panel.SetActive(true);
-                    message_panel.GetComponentInChildren<Text>().text = "Physics was turned off; something went wrong";
+                    message_panel.GetComponentInChildren<Text>().text = "Physics became unstable and was turned off; erase or move the faulty object before turning it back on";
                 }
             }
             //find the toggle ?
@@ -3830,25 +4030,29 @@ public class Manager : MonoBehaviour {
         Vector2 lp;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(uiHolder, Input.mousePosition, null, out lp);
         if (uiHolder.rect.Contains(lp)) return;
-        if (mask_ui) return;
+        //if (mask_ui) return;//problem then it doesnt catch the buttonUp
         if (fiberMode)
         {
             selected_instance = null;
             drawInstanceFiber();
         }
         else if (dragMode || pinMode || infoMode || eraseMode) {
+            if (mask_ui) return;
             pindragInstance();
             UpdateInfo();
             //attached
         }
         else if (groupMode) {
+            if (mask_ui) return;
             SelectAndGroupInstance();
         }
         else if (ghostMode) {
+            if (mask_ui) return;
             SelectAndGhostInstance();
         }
         else if (bindMode)         
         {
+            if (mask_ui) return;
             //HighlightManager.Instance.TogglePinToBond(true);
             //if (!HighlightManager.Instance.pinnedTo_Highlighted) HighlightManager.Instance.HighlightPinnedTo();
             attachTwoObjects();
@@ -3856,20 +4060,26 @@ public class Manager : MonoBehaviour {
         }
         //else if (eraseMode) pindragInstance();// eraseInstance();
         else if (surfaceMode) {
+            if (mask_ui) return;
             selected_instance = null;
             UdateSurfacePrefab();
             drawInstanceSurface();
         }
         else if (boundMode) {
+            if (mask_ui) return;
             selected_instance = null;
             drawInstanceBoundToFiber();
         }
         else if (drawMode)
         {
+            if (mask_ui) return;
             selected_instance = null;
             drawInstance();
         }
-        else if (bucketMode) fillCompartments();
+        else if (bucketMode) {
+            if (mask_ui) return;
+            fillCompartments();
+        }
         else { }
         prev_mousePos = objectPos;
 
@@ -4458,7 +4668,13 @@ public class Manager : MonoBehaviour {
     RaycastHit2D raycast()
     {
         //ignore UI as well
-        LayerMask layerMask = ~(1 << LayerMask.NameToLayer("CameraCollider") | 1 << LayerMask.NameToLayer("FiberPushAway") | 1 << LayerMask.NameToLayer("OnlyMembrane") | 1 << LayerMask.NameToLayer("UI") | 1 << LayerMask.NameToLayer("background")); // ignore both layerX and layerY
+        LayerMask layerMask = ~(  1 << LayerMask.NameToLayer("CameraCollider") 
+                                | 1 << LayerMask.NameToLayer("FiberPushAway") 
+                                | 1 << LayerMask.NameToLayer("OnlyMembrane") 
+                                | 1 << LayerMask.NameToLayer("UI") 
+                                | 1 << LayerMask.NameToLayer("background")
+                                | 1 << LayerMask.NameToLayer("bg_image")
+                                | 1 << LayerMask.NameToLayer("MembraneBot")); // ignore both layerX and layerY
         RaycastHit2D hit = new RaycastHit2D();
         hit = Physics2D.Raycast(current_camera.ScreenPointToRay(Input.mousePosition).origin,
                                 current_camera.ScreenPointToRay(Input.mousePosition).direction, 100, layerMask);
@@ -4469,10 +4685,10 @@ public class Manager : MonoBehaviour {
     {
         if (below && below != attach1)
         {
-            if (below.name == "ghostArea") {
-                ghostHighlight(false);
-                return;
-            }
+            //if (below.name == "ghostArea") {
+            //    ghostHighlight(false);
+            //    return;
+            //}
             var parent = below.transform.parent;
             //if (m_SpringJoint && m_SpringJoint.connectedBody != null)
             //    return;
@@ -4891,13 +5107,15 @@ public class Manager : MonoBehaviour {
     {
         var pixel_scale = (unit_scale * 10.0f) / 100.0f;
         var unity_scale2d = 1.0f / (unit_scale * 10.0f);
-        //scale bar is 124pix for 100angstrom
-        var imageScale =  100.0f/124.0f;
-        var local_scale = 1.0f/(pixel_scale * imageScale);
+        //scale bar is 300pix and it has a width of 128px
+        //var imageScale =  1.0f/300.0f;
+        //var local_scale = 1.0f/(pixel_scale * imageScale);
         var p1 = current_camera.ScreenToWorldPoint(Vector3.zero);
-        var p2 = current_camera.ScreenToWorldPoint(new Vector3(124,0,0));//124px
+        var p2 = current_camera.ScreenToWorldPoint(new Vector3(128.0f,0,0));//300px
         var Distance = Vector3.Magnitude(p2-p1)*unit_scale; // in unity world coordinates
         scale_bar_text.text = Mathf.Round(Distance).ToString()+ "nm";
+        float cscale = 1.0f/_canvas.transform.localScale.x;
+        scale_bar_text.transform.parent.localScale = new Vector3(cscale,cscale,cscale);// 1.0/canvas_scale ?
         /*
         float cameraScale = current_camera.orthographicSize;
         int children = current_camera.transform.childCount;       

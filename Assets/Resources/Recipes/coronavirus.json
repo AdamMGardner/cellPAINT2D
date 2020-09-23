@@ -984,7 +984,7 @@
             "confidence": 0,
             "sprite": {
               "image": "CoronaVirus_Sprite_M.png",
-              "offsety": 15,
+              "offsety": -17,
               "scale2d": 12
             }
           },

@@ -14,9 +14,10 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
     public GameObject label;
     public string prefab_name="";
     public Image protein_sprite;
+    public GameObject delete_panel;
     private Toggle uitoggle;
     //private GameObject uiHolder;
-    private Text label_txt;
+    public Text label_txt;
     private GameObject prefab;
 
     /*public static void AddEventTriggerListener(EventTrigger trigger,
@@ -34,7 +35,7 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
 
         if (!only_ui)
         {
-            label = transform.GetChild(1).gameObject;
+            //label = transform.GetChild(1).gameObject;
             label_txt = label.GetComponent<Text>();
         }
         //if (!uiHolder)
@@ -81,45 +82,61 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
 
     }
 
+    public void DeleteSelf(){
+        //delete in recipe
+        Manager.Instance.recipeUI.RemoveIngredient(prefab_name);
+        delete_panel.SetActive(false);
+    }
+
+    public void CancelDeleteSelf(){
+        delete_panel.SetActive(false);
+    }
+
     public void OnPointerClick(PointerEventData data)
     {
-        Debug.Log("OnPointerClick called.");
-        if (!only_ui) {
+        //Debug.Log("OnPointerClick called.");
+        if (data.button == PointerEventData.InputButton.Right){
+            //pop delete/cancel button window
+            if (!Manager.Instance.additional_ingredients_names.Contains(prefab_name))
+                delete_panel.SetActive(true);
+        }
+        if ((data.button == PointerEventData.InputButton.Left)&&(!only_ui)) {
             togglePrefabManager(data);
         }
     }
 
      public void OnPointerDown (PointerEventData eventData) {
-          Debug.Log("OnPointerDown called.");
-          if (!only_ui) {
-              togglePrefabManager(eventData);
-          }
-          else {
-
-          }
+        //Debug.Log("OnPointerClick called.");
+        if (eventData.button == PointerEventData.InputButton.Right){
+            //pop delete/cancel button window
+            delete_panel.SetActive(true);
+        }
+        if ((eventData.button == PointerEventData.InputButton.Left)&&(!only_ui)) {
+            togglePrefabManager(eventData);
+        }
      }
  
      public void OnPointerUp (PointerEventData eventData) {
-        Debug.Log("OnPointerUp called.");
+        //Debug.Log("OnPointerUp called.");
         if (gameObject.GetComponent<Button>()){
-                  Manager.Instance.mask_ui = false;
+            Manager.Instance.mask_ui = false;
         }
      }
 
      public  void OnPointerEnter(PointerEventData data)
     {
-        Debug.Log("OnPointerEnter called.");
+        //Debug.Log("OnPointerEnter called.");
         Over(data);
     }
 
     public void OnPointerExit(PointerEventData data)
     {
-        Debug.Log("OnPointerExit called.");
+        //Debug.Log("OnPointerExit called.");
         Exit(data);
     }
     public void OnSelect(BaseEventData data)
     {
-        Debug.Log("OnSelect called.");
+        //Debug.Log("OnSelect called.");
     }
 
     public void updateTileCount ()
