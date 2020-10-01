@@ -886,10 +886,10 @@
     }
   },
   "compartments": {
-    "Coronavirus": {
+    "CoronavirusMarch": {
       "geom_type": "mb",
       "geom": "mb",
-      "name": "Coronavirus",
+      "name": "CoronavirusMarch",
       "thickness": 7.5,
       "color":[ 0.9921569,0.7019608,0.9764706],
       "surface": {
@@ -1145,6 +1145,7 @@
             "sprite": {
               "image": "CoronaVirus_Sprite_NC.png",
               "offsety": 0,
+              "lengthy": 40,
               "scale2d": 12
             }
           }
@@ -1161,6 +1162,329 @@
         ]
       }
     },
+    "CoronavirusSept": {
+      "geom_type": "mb",
+      "geom": "mb",
+      "name": "CoronavirusSept",
+      "thickness": 7.5,
+      "surface": {
+          "ingredients": {
+              "M": {
+                  "encapsulatingRadius": 25,
+                  "name": "M",
+                  "source": {
+                      "pdb": "M_dimer.pdb",
+                      "bu": "AU",
+                      "selection": "",
+                      "model": "",
+                      "transform": {
+                          "offset": [
+                              -21,
+                              12,
+                              0
+                          ]
+                      }
+                  },
+                  "nbMol": 0,
+                  "molarity": 0,
+                  "molecularweight": 0,
+                  "meshType": "file",
+                  "principalVector": [
+                      1,
+                      0,
+                      0
+                  ],
+                  "offset": [
+                      -21,
+                      12,
+                      0
+                  ],
+                  "uniprot": "",
+                  "label": "protein_label",
+                  "Type": "MultiSphere",
+                  "positions": [],
+                  "radii": [],
+                  "packingMode": "random",
+                  "comments": "",
+                  "color":[0.9686275,0.3215686,0.7098039],
+                  "confidence": 0,
+                  "sprite": {
+                      "image": "M.png",
+                      "offsety": "-19",
+                      "scale2d": 6,
+                      "lengthy": 0
+                  },
+                  "custom_data": []
+              },
+              "E": {
+                  "encapsulatingRadius": 25,
+                  "name": "E",
+                  "source": {
+                      "pdb": "E_rb.pdb",
+                      "bu": "AU",
+                      "selection": "",
+                      "model": "",
+                      "transform": {
+                          "offset": [
+                              4,
+                              6,
+                              0
+                          ]
+                      }
+                  },
+                  "nbMol": 0,
+                  "molarity": 0,
+                  "molecularweight": 0,
+                  "meshFile": "",
+                  "meshType": "file",
+                  "principalVector": [
+                      -0.4,
+                      0.03,
+                      -0.92
+                  ],
+                  "offset": [
+                      4,
+                      6,
+                      0
+                  ],
+                  "uniprot": "",
+                  "label": "protein_label",
+                  "Type": "MultiSphere",
+                  "positions": [],
+                  "radii": [],
+                  "packingMode": "random",
+                  "comments": "",
+                  "color":[ 0.8705882,0.2235294,0.9568627],
+                  "confidence": 0,
+                  "sprite": {
+                      "image": "E.png",
+                      "offsety": 7.211102550927978,
+                      "scale2d": 6,
+                      "lengthy": 0
+                  },
+                  "custom_data": []
+              },
+              "Spike_open": {
+                  "encapsulatingRadius": 25,
+                  "name": "Spike_open",
+                  "source": {
+                      "pdb": "spike_open_cleaved_p_g_amarolab.pdb",
+                      "bu": "AU",
+                      "selection": "",
+                      "model": "",
+                      "transform": {
+                          "offset": [
+                              10,
+                              -10,
+                              187
+                          ]
+                      }
+                  },
+                  "nbMol": 0,
+                  "molarity": 0,
+                  "molecularweight": 0,
+                  "meshFile": "",
+                  "meshType": "file",
+                  "principalVector": [
+                      0,
+                      0,
+                      1
+                  ],
+                  "offset": [
+                      10,
+                      -10,
+                      187
+                  ],
+                  "uniprot": "",
+                  "label": "protein_label",
+                  "Type": "MultiSphere",
+                  "positions": [],
+                  "radii": [],
+                  "packingMode": "random",
+                  "comments": "",
+                  "color":[ 0.8862745,0.1490196,0.7647059],
+                  "confidence": 0,
+                  "sprite": {
+                      "image": "Spike_open.png",
+                      "offsety": "115",
+                      "scale2d": 6,
+                      "lengthy": 0
+                  },
+                  "custom_data": []
+              },
+              "Spike_closed": {
+                  "encapsulatingRadius": 25,
+                  "name": "Spike_closed",
+                  "source": {
+                      "pdb": "spike_closed_cleaved_p_g_amarolab.pdb",
+                      "bu": "AU",
+                      "selection": "",
+                      "model": "",
+                      "transform": {
+                          "offset": [
+                              0,
+                              0,
+                              189
+                          ]
+                      }
+                  },
+                  "nbMol": 0,
+                  "molarity": 0,
+                  "molecularweight": 0,
+                  "meshFile": "",
+                  "meshType": "file",
+                  "principalVector": [
+                      0,
+                      0,
+                      1
+                  ],
+                  "offset": [
+                      0,
+                      0,
+                      189
+                  ],
+                  "uniprot": "",
+                  "label": "protein_label",
+                  "Type": "MultiSphere",
+                  "positions": [],
+                  "radii": [],
+                  "packingMode": "random",
+                  "comments": "",
+                  "color":[ 0.8862745,0.1490196,0.7647059],
+                  "confidence": 0,
+                  "sprite": {
+                      "image": "Spike_closed.png",
+                      "offsety": "110",
+                      "scale2d": 6,
+                      "lengthy": 0
+                  },
+                  "custom_data": []
+              },
+              "Spike_postfusion": {
+                  "encapsulatingRadius": 25,
+                  "name": "Spike_postfusion",
+                  "source": {
+                      "pdb": "6xra",
+                      "bu": "AU",
+                      "selection": "",
+                      "model": "",
+                      "transform": {
+                          "offset": [
+                              0,
+                              0,
+                              154
+                          ]
+                      }
+                  },
+                  "nbMol": 0,
+                  "molarity": 0,
+                  "molecularweight": 0,
+                  "meshFile": "",
+                  "meshType": "file",
+                  "principalVector": [
+                      0,
+                      0,
+                      1
+                  ],
+                  "offset": [
+                      0,
+                      0,
+                      154
+                  ],
+                  "uniprot": "",
+                  "label": "protein_label",
+                  "Type": "MultiSphere",
+                  "positions": [],
+                  "radii": [],
+                  "packingMode": "random",
+                  "comments": "",
+                  "color":[ 0.8862745,0.1490196,0.7647059],
+                  "confidence": 0,
+                  "sprite": {
+                      "image": "Spike_postfusion.png",
+                      "offsety": "124",
+                      "scale2d": 6,
+                      "lengthy": 0
+                  },
+                  "custom_data": []
+              }
+          }
+      },
+      "interior": {
+          "ingredients": {
+              "Nucleocapsid": {
+                  "color":[ 0.6862,0.49019,1.0],
+                  "encapsulatingRadius": 40,
+                  "name": "Nucleocapsid",
+                  "source": {
+                      "pdb": "N.pdb",
+                      "bu": "AU",
+                      "selection": "",
+                      "model": "",
+                      "transform": {
+                          "offset": [
+                              0,
+                              0,
+                              0
+                          ]
+                      }
+                  },
+                  "nbMol": 0,
+                  "molarity": 0,
+                  "molecularweight": 0,
+                  "meshFile": "sphere",
+                  "meshType": "sphere",
+                  "principalVector": [
+                      0,
+                      0,
+                      1
+                  ],
+                  "offset": [
+                      0,
+                      0,
+                      0
+                  ],
+                  "label": "protein_label",
+                  "Type": "Grow",
+                  "positions": [
+                      {
+                          "coords": [
+                              0,
+                              0,
+                              0
+                          ]
+                      }
+                  ],
+                  "radii": [
+                      {
+                          "radii": [
+                              40
+                          ]
+                      }
+                  ],
+                  "packingMode": "random",
+                  "confidence": 0,
+                  "sprite": {
+                      "image": "COVRNANucleocapsid.png",
+                      "offsety": 0,
+                      "lengthy": 45,
+                      "scale2d": 6
+                  },
+                  "custom_data": []
+              }
+          }
+      },
+      "mb": {
+          "positions": [
+            0,
+            0,
+            0
+          ],
+          "radii": [
+            500
+          ]
+      }
+  },
     "Human_Cell": {
       "geom_type": "None",
       "geom": "",

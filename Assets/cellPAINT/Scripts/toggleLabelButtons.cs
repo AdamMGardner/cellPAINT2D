@@ -144,12 +144,12 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
     {
         if (prefab_name == null) return;
         if (label == null) return;
-
+        var iname = prefab_name.Split('.')[2];
         //var PC = SceneManager.Instance.proteins_count;
 
         if ((Manager.Instance.proteins_count.ContainsKey(prefab_name)))
         {
-            label_txt.text = prefab_name + ": " + "(" + Manager.Instance.proteins_count[prefab_name].ToString() + ")";
+            label_txt.text =  iname + ": " + "(" + Manager.Instance.proteins_count[prefab_name].ToString() + ")";
             count_updated = true;
             if (Manager.Instance.DEBUG)
             {
@@ -158,11 +158,11 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
             }
         }
         else {
-            label_txt.text = prefab_name;
+            label_txt.text = iname;
         }
     }
 
-    void togglePrefabManager(BaseEventData eventData) {
+    public void togglePrefabManager(BaseEventData eventData) {
 
         if (Manager.Instance.bucketMode)
         {

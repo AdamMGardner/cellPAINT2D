@@ -7,6 +7,14 @@
         "file": "",
         "description":"Viral membrane, composed of two layers of lipids."
     },
+    "CoronavirusMarch":{
+      "file": "",
+      "description":"Viral membrane, composed of two layers of lipids."
+  },
+  "CoronavirusSept":{
+    "file": "",
+    "description":"Viral membrane, composed of two layers of lipids."
+},    
     "Human_Cell":{
         "file": "",
         "description":"Human cell membrane, composed of two layers of lipids."
@@ -377,5 +385,34 @@
     "PFK": {
       "file": "",
       "description": "Phosphofructokinase is an enzyme that performs one step in energy metabolism."
-    }
+    },
+    "E":{
+      "file": "",
+      "description": "Envelope (E) protein is a membrane channel involved in the process of viral budding. There are probably only a few copies of E in the membrane.(5x29)"
+    },
+    "M":{
+      "file": "",
+      "description": "Membrane (M) protein is involved in packaging and organizing the viral RNA inside the virion. There are many copies of M in the membrane."
+    },
+    "Nucleocapsid":{
+      "file": "",
+      "description": "Nucleocapsid (N) protein binds to the viral genome and protects it inside the virus. There is one long strand of RNA with many copies of N bound to it.(2cjr, 2ofz)"
+    },
+    "Spike":{
+      "file": "",
+      "description": "Spike (S) protein binds to receptors on cell surfaces. There are many copies on the surface of the virus, giving it its characteristic crown-like shape.(6vxx)"
+    },
+    "Spike_open":{
+      "file": "",
+      "description": "Spike (S) protein binds to receptors on cell surfaces. There are many copies on the surface of the virus, giving it its characteristic crown-like shape.(6vxx)"
+    } ,
+    "Spike_closed":{
+      "file": "",
+      "description": "Spike (S) protein binds to receptors on cell surfaces. There are many copies on the surface of the virus, giving it its characteristic crown-like shape.(6vxx)"
+    },
+    "Spike_postfusion":{
+      "file": "",
+      "description": "Spike (S) protein binds to receptors on cell surfaces. There are many copies on the surface of the virus, giving it its characteristic crown-like shape.(6vxx)"
+    }       
+
   }

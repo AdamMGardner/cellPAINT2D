@@ -104,6 +104,39 @@ public class Ghost : MonoBehaviour
         }
     }
 
+    public void changeParent(Transform new_parent){
+        foreach (var o in locked_item){
+            //test for attachements
+            if (Manager.Instance.fiber_parents.Contains(o))
+            {
+                o.transform.parent = new_parent;
+            }
+            else
+            {
+                var p = o.GetComponent<PrefabProperties>();
+                var pg = o.GetComponentInParent<PrefabGroup>();
+                if (p == null && pg == null)
+                {
+                    p = o.transform.parent.GetComponent<PrefabProperties>();
+                    //o = o.transform.parent.gameObject;
+                    pg = o.transform.parent.gameObject.GetComponentInParent<PrefabGroup>();
+                }
+                if (pg != null) {
+                    p = pg.gameObject.GetComponent<PrefabProperties>();
+                }
+                if (p) {
+                    if (pg || p.is_Group) {
+                        //do allthe group selection
+                        pg.transform.parent = new_parent;
+                    }
+                    else {
+                        p.transform.parent = new_parent;
+                    }
+                }
+            }            
+        }        
+    }
+
     public void SetupFromSelection(List<GameObject> selection){
         Setup();
         locked_item = new List<GameObject>();//selection);
@@ -265,6 +298,7 @@ public class Ghost : MonoBehaviour
             var g = new GameObject("lines_"+i.ToString());
             g.transform.parent = lines_holder.transform;
             line = g.AddComponent<LineRenderer>();
+            line.useWorldSpace = false;
             line.positionCount = path.Length;
             lineRenderers.Add(line);
             line.sharedMaterial = Manager.Instance.lineMat;

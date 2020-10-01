@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
@@ -11,6 +12,7 @@ using OpenQA.Selenium.Support.UI;
 //using OpenQA.Selenium.Firefox;
 using System.Threading;
 using System.Threading.Tasks;
+using SimpleJSON;
 
 //TODO fix the sprites_name for illustrate. use _sprite
 public class Add_ingredient_ui : MonoBehaviour
@@ -26,6 +28,7 @@ public class Add_ingredient_ui : MonoBehaviour
     public InputField Zrotation_field;
     public InputField fiber_length_field;
     public InputField comp_name_field;
+    public Toggle auth_id;
     public Text log_label;
     public Button Load;
     public Button Illustrate;
@@ -65,6 +68,8 @@ public class Add_ingredient_ui : MonoBehaviour
     private Texture2D tmp_texture;
     private Texture2D browser_texture;
     private string webdriverspath;
+    private List<string> chains_ids = new List<string>();
+    private List<string> chains_auth_ids = new List<string>();
     public static Add_ingredient_ui Get
     {
         get
@@ -151,19 +156,27 @@ public class Add_ingredient_ui : MonoBehaviour
     public void setScale(float number){
         input_pixel_ratio_field.text = number.ToString();
         input_pixel_ratio = number;
+        if (surface.isOn) setYoffset_cb();
+        if (fiber.isOn) setFiberLength_cb();
     }
 
     public void setScale(string number){
         input_pixel_ratio = float.Parse (number);
+        //this should also trigger the setYoffset and setFiberLength
+        if (surface.isOn) setYoffset_cb();
+        if (fiber.isOn) setFiberLength_cb();
     }
 
     public void setYoffset(string number){
-        setYoffset_cb(float.Parse (number));
+        input_offset_y = float.Parse (number);
+        setYoffset_cb();
+        
     }
 
     public void setYoffset(float number){
         input_offset_y_field.text = number.ToString();
-        setYoffset_cb(number);
+        input_offset_y = number;
+        setYoffset_cb();
     }
 
     public void setZrot(float number){
@@ -179,24 +192,24 @@ public class Add_ingredient_ui : MonoBehaviour
         if (fiber.isOn) setFiberLength_cb();
     }
 
-    public void setYoffset_cb(float number){
+    public void setYoffset_cb(){
+        //need to take in account the canvas main scale
+        input_offset_y = float.Parse (input_offset_y_field.text);
+        float cscale = Manager.Instance._canvas.transform.localScale.x;
         input_pixel_ratio = float.Parse (input_pixel_ratio_field.text ); 
-        input_offset_y_field.text = number.ToString();
-        input_offset_y = number;
         //update on the sprite
         float w = (float)theSprite.rectTransform.rect.width;
         float h = (float)theSprite.rectTransform.rect.height;
-        Debug.Log(w.ToString()+" "+h.ToString()+" "+theSprite.sprite.texture.width.ToString());
         var canvas_scale = w/theSprite.sprite.texture.width;
-        Debug.Log(canvas_scale);
-        var sc2d = input_pixel_ratio*canvas_scale;//*canvas_scale;
-        Debug.Log(sc2d);
+        var sc2d = input_pixel_ratio*canvas_scale/cscale;//*canvas_scale;
         var offy = input_offset_y*sc2d;//sc2d is angstrom to pixels
-        Debug.Log(offy);
         var p = theSpriteMb.rectTransform.localPosition;
         theSpriteMb.rectTransform.localPosition = new Vector3(p.x,offy,p.z);
-        var thickness = 42.0f*sc2d;//angstrom
+        //membrane thickness is 130px while sprite is 149px. Ang not equal to 42.0
+        var thickness = Manager.Instance.membrane_thickness*sc2d/cscale;//angstrom
+        //theSpriteMb.rectTransform.sizeDelta = new Vector2((int)w,42.0f);
         theSpriteMb.rectTransform.sizeDelta = new Vector2((int)w,thickness);
+        //theSpriteMb.transform.localScale = new Vector3(1.0f,sc2d,1.0f);//1px-1a
         //theSpriteMb.rectTransform.localPosition = new Vector3(p.x,h/2.0f-offy,p.z);
     }
 
@@ -204,7 +217,7 @@ public class Add_ingredient_ui : MonoBehaviour
         //if fiber disable the image
         theSprite.enabled = ! toggle;
     }
-    
+
     public void setFiberLength(float number){
         fiber_length_field.text = number.ToString();
         //theSprite.rectTransform.rotation = Quaternion.Euler(0, 0, number);
@@ -219,12 +232,13 @@ public class Add_ingredient_ui : MonoBehaviour
     }
 
     public void setFiberLength_cb(){
+        float cscale = Manager.Instance._canvas.transform.localScale.x;
         input_pixel_ratio = float.Parse (input_pixel_ratio_field.text ); 
         //update on the sprite
         float w = (float)theSprite.rectTransform.rect.width;
         float h = (float)theSprite.rectTransform.rect.height;
         var canvas_scale = w/theSprite.sprite.texture.width;
-        var sc2d = input_pixel_ratio*canvas_scale;//*canvas_scale;
+        var sc2d = input_pixel_ratio*canvas_scale*cscale;//*canvas_scale;
         var pixel_length = fiber_length*sc2d;//sc2d is angstrom to pixels
         var scaling = pixel_length/154.0f;
         //theSpriteMb.rectTransform.localPosition = new Vector3(p.x,h/2.0f-offy,p.z);
@@ -259,6 +273,7 @@ public class Add_ingredient_ui : MonoBehaviour
             if (input_seletion!="") query += "&selection="+input_seletion;
             if (input_model!="") query += "&model="+input_model;
             query+="&qid="+query_id.ToString();
+            query+="&use_authid="+auth_id.isOn.ToString();//default is false
             StartCoroutine(GetRequest(query));
         }
     }
@@ -478,6 +493,7 @@ public class Add_ingredient_ui : MonoBehaviour
         Manager.Instance.recipeUI.AddOneIngredient(input_name_field.text, sprite_name, input_pixel_ratio, 
                                                     -input_offset_y, fiber_length, surface.isOn, fiber.isOn, "");
         input_name_field.text = "";
+        Manager.Instance.mask_ui = false;
     }
 
     IEnumerator GetRequest(string uri)
@@ -520,35 +536,7 @@ public class Add_ingredient_ui : MonoBehaviour
             }
         }
     }
-
-/*
-    private IEnumerator onResponse(UnityWebRequest req)
-    {
-        yield return req.SendWebRequest();
-        if (req.isNetworkError)
-            Debug.Log("Network error has occured: " + req.GetResponseHeader(""));
-        else{
-            Debug.Log("isDone "+req.isDone );
-            Debug.Log("Success "+req.downloadHandler.text );
-            query_answer = req.downloadHandler.text;
-            if (query_answer.Contains("https://mesoscope.scripps.edu/data/tmp/ILL")){
-                var start = query_answer.IndexOf("https://mesoscope");
-                var end = query_answer.IndexOf(".png");
-                var length = (end+4)-start;
-                Debug.Log(start);
-                Debug.Log(end);
-                query_answer_url = query_answer.Substring(start,length);
-                StartCoroutine(GetRequest(query_answer_url));
-            }
-            else 
-            {
-                query_done = false;
-                redo_query = true;       
-                query_sent = true;         
-            }
-        }
-    }*/
-    
+   
     IEnumerator GetText(string url)
     {
         using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(url))
@@ -584,7 +572,9 @@ public class Add_ingredient_ui : MonoBehaviour
                 var h = 210;//w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
                 var w = h*ratio;
                 theSprite.rectTransform.sizeDelta = new Vector2(w,(int)h);    
-                if (loader) loader.gameObject.SetActive(false);                  
+                if (loader) loader.gameObject.SetActive(false);          
+                setYoffset_cb();
+                setFiberLength_cb();        
                 //driver.Close();     
                 //driver.Quit();      
                 log_label.text = "";     
@@ -595,6 +585,118 @@ public class Add_ingredient_ui : MonoBehaviour
             if (use_webDriver) {
                  driver.Close();
                 driver.Quit();
+            }
+        }
+    }
+
+    IEnumerator GetPDBRestSummary(string uri)
+    {
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
+        {
+            // Request and wait for the desired page.
+            yield return webRequest.SendWebRequest();
+
+            string[] pages = uri.Split('/');
+            int page = pages.Length - 1;
+
+            if (webRequest.isNetworkError || webRequest.isHttpError )
+            {
+                Debug.Log(pages[page] + ": Error: " + webRequest.error);
+                log_label.text = webRequest.error;
+            }
+            else
+            {
+                //feed the BU options
+                var resultData = JSONNode.Parse(webRequest.downloadHandler.text);
+                JSONNode ass = resultData[input_pdb][0]["assemblies"];
+                var auto = input_bu_field.GetComponent<AutocompleteInputField>();
+                auto.options.Clear();
+                auto.options.Add("AU");
+                for (int i = 0; i < ass.Count; i++)
+                {
+                    auto.options.Add(ass[i]["assembly_id"]);
+                }
+                if (resultData[input_pdb][0]["experimental_method"][0].Value.ToLower().Contains("nmr")) {
+                    input_model_field.gameObject.SetActive(true);
+                } else {
+                    input_model_field.gameObject.SetActive(false);
+                }
+                log_label.text = resultData[input_pdb][0]["experimental_method"][0].Value;
+            }
+        }
+    }
+
+    IEnumerator GetPDBRestMolecules(string uri)
+    {
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
+        {
+            // Request and wait for the desired page.
+            yield return webRequest.SendWebRequest();
+
+            string[] pages = uri.Split('/');
+            int page = pages.Length - 1;
+
+            if (webRequest.isNetworkError || webRequest.isHttpError )
+            {
+                Debug.Log(pages[page] + ": Error: " + webRequest.error);
+                log_label.text = webRequest.error;
+            }
+            else
+            {
+                //feed the BU options
+                var resultData = JSONNode.Parse(webRequest.downloadHandler.text);
+                JSONNode entities = resultData[input_pdb];
+                for (int i = 0; i < entities.Count; i++)
+                {
+                    var cids = entities[i]["in_chains"];
+                    var acids = entities[i]["in_struct_asyms"];
+                    for (int j = 0; j < cids.Count; j++){
+                        if (!chains_ids.Contains(cids[j])) {
+                            chains_ids.Add(cids[j]);
+                        }
+                    }
+                    for (int j = 0; j < acids.Count; j++){
+                        if (!chains_auth_ids.Contains(acids[j])) {
+                            chains_auth_ids.Add(acids[j]);
+                        }
+                    }
+                }
+                List<string> touse = ( auth_id.isOn )? chains_auth_ids : chains_ids;
+                var auto = input_seletion_field.GetComponent<AutocompleteInputField>();
+                auto.options.Clear();
+                for (int i = 0; i < touse.Count; i++)
+                {
+                    auto.options.Add(touse[i]);
+                }
+            }
+        }
+    }
+//https://data.rcsb.org/rest/v1/core/entry/2N3Q
+
+    IEnumerator GetModelsNumber(string uri)
+    {
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
+        {
+            // Request and wait for the desired page.
+            yield return webRequest.SendWebRequest();
+
+            string[] pages = uri.Split('/');
+            int page = pages.Length - 1;
+
+            if (webRequest.isNetworkError || webRequest.isHttpError )
+            {
+                Debug.Log(pages[page] + ": Error: " + webRequest.error);
+                log_label.text = webRequest.error;
+            }
+            else
+            {
+                //feed the BU options
+                var resultData = JSONNode.Parse(webRequest.downloadHandler.text);
+                JSONNode nmr_ensemble = resultData["pdbx_nmr_ensemble"]["conformers_submitted_total_number"];
+                var auto = input_model_field.GetComponent<AutocompleteInputField>();
+                auto.options.Clear();
+                auto.options.Add("There is "+nmr_ensemble.Value.ToString()+" conformers");
+                log_label.text = "There is "+nmr_ensemble.Value.ToString()+" conformers";
             }
         }
     }
@@ -618,5 +720,55 @@ public class Add_ingredient_ui : MonoBehaviour
             driver.Close();
             driver.Quit();
         }
+    }
+
+    public void ResetToDefault(){
+
+    }
+
+    public void OnPDBEdit(string input) {
+        if (input.Length != 4) return;
+        log_label.text = "fetching info";
+        chains_ids.Clear();
+        chains_auth_ids.Clear();
+        input_pdb = input;
+        //gather list of BU
+        StartCoroutine(GetPDBRestSummary("https://www.ebi.ac.uk/pdbe/api/pdb/entry/summary/"+input_pdb));
+        //gather list of chain
+        StartCoroutine(GetPDBRestMolecules("https://www.ebi.ac.uk/pdbe/api/pdb/entry/molecules/"+input_pdb));
+        //gather list of model
+        StartCoroutine(GetModelsNumber("https://data.rcsb.org/rest/v1/core/entry/"+input_pdb));
+    }
+
+    /*get some information prior to illustrate to help with the UI
+        https://www.rcsb.org/pdb/rest/describePDB?structureId=2N3Q
+        https://www.rcsb.org/pdb/rest/getEntityInfo?structureId=1hv4
+        https://www.ebi.ac.uk/pdbe/api/pdb/entry/molecules/2N3Q
+        https://www.ebi.ac.uk/pdbe/api/pdb/entry/molecules/1aon
+        https://www.ebi.ac.uk/pdbe/api/pdb/entry/summary/2N3Q
+
+        list of chain
+        and number of asasmbly
+        can we do same for nmr ?
+    */
+
+    public void OnChainSelectChange(string ch){
+        //show the toggle
+        //auth_id.gameObject.SetActive(true);
+    }
+    public void OnChainSelectEnd(string ch){
+        //show the toggle
+        //auth_id.gameObject.SetActive(false);
+    }
+
+    public void ToggleChainAuthors(bool atoggle) {
+        List<string> touse = ( atoggle )? chains_auth_ids : chains_ids;
+        var auto = input_seletion_field.GetComponent<AutocompleteInputField>();
+        auto.options.Clear();
+        for (int i = 0; i < touse.Count; i++)
+        {
+            auto.options.Add(touse[i]);
+        }
+        auto.Reset(input_seletion_field.text);
     }
 }

@@ -17,13 +17,13 @@ using UnityEditor;
 using Accord;
 //TODO:
 //-loading async
-//handle the mouse interaction drawing and instancing
+//-get rid of the sorting order and use -Z with camera rotation. this will normal depth sorting
 //[ExecuteInEditMode]
 public class Manager : MonoBehaviour {
     //need cleanup 
     //all boolean 
     public bool DEBUG = false;
-    public string version = "v1.0";
+    public string version = "v2.0";
     //public bool useECS=false;
     public bool HideInstance = true;
 
@@ -32,6 +32,7 @@ public class Manager : MonoBehaviour {
     public GameObject myPrefab;
     public GameObject root;
     public bool layer_number_draw = true;
+    public int layer_number_options = 3;//three layer 
     public bool boundMode = false;
     public bool surfaceMode = false;//set geT ?
     public bool fiberMode = false;
@@ -42,6 +43,7 @@ public class Manager : MonoBehaviour {
     public bool infoMode = false;
     public bool groupMode = false;
     public bool ghostMode = false;
+    public bool measureMode = false;
     public bool allOff = false;
     public bool continuous = false;
     public bool bucketMode = false;
@@ -75,6 +77,8 @@ public class Manager : MonoBehaviour {
     public Vector2 mousePositionInViewPort;
     #endregion mouse parameters
     #region fiber parameters
+    public float membrane_thickness_delta = 1.0f;
+    public float membrane_thickness = 42.0f;
     public float fiber_length;
     public float fiber_closing_distance;
     //public float fiber_current_distance;
@@ -94,7 +98,8 @@ public class Manager : MonoBehaviour {
 
     #endregion fiber parameters
     #region UI parameters
-    private Canvas _canvas;
+    public Canvas _canvas;
+    public Text version_label;
     public RectTransform uiHolder;
     public Text scale_bar_text;
     public Toggle ToggleBrush;
@@ -126,7 +131,10 @@ public class Manager : MonoBehaviour {
     public Vector3 attachPos1;
     public Vector3 attachPos2;
     #endregion attachemnts
-
+    public float distance_attach = 0.8f;
+    public float frequency_attach = 2.5f;
+    public int type_attach = 0;
+    public bool collision_attach = true;
     public float proteinArea;
     public float screenArea;
     public float percentFilled;
@@ -195,9 +203,7 @@ public class Manager : MonoBehaviour {
     public List<string> additional_compartments_names = new List<string>();
     public Dictionary<int,string> sprites_names = new Dictionary<int, string>();
     //public List<GameObject> ingredients_prefab = new List<GameObject>();
-    public float zLevel = 0.00f;
-    public float colorValue = 1.00f;
-    public int layerDirection;
+
 
     [HideInInspector]
     public List<Rigidbody2D> everything;
@@ -259,6 +265,11 @@ public class Manager : MonoBehaviour {
     public float scaling_fiber=1.0f;
     public float scaling_surface=1.0f;
     public float scaling_soluble=1.0f;
+
+    public float zLevel = 0.00f;
+    public float colorValue = 1.00f;
+    public bool layerDirection;
+    private float lerp_time = 0.0f;
     //public float bicycle_radius = 1.0f;//should be equal the size of the membrane
 
 
@@ -301,15 +312,39 @@ public class Manager : MonoBehaviour {
         if (AllIngredients.GetAllKeys().Contains(iname)) {
             return AllIngredients[iname]["description"];
         }
+        var sname = iname.Split('.');
+        if ( sname.Length != 0) {
+            iname = sname[2];
+            Debug.Log("getDescriptionName Split "+iname);
+            if (AllIngredients.GetAllKeys().Contains(iname)) {
+            if (AllIngredients[iname].GetAllKeys().Contains("description")) return AllIngredients[iname]["description"];
+            }
+        } 
+        if (iname.Contains("_membrane")){
+            iname = sname[0];
+            Debug.Log("getDescriptionName Split "+iname);
+            if (AllIngredients.GetAllKeys().Contains(iname)) {
+            if (AllIngredients[iname].GetAllKeys().Contains("description")) return AllIngredients[iname]["description"];
+            }
+        }
         return "";
     }
 
     public string getDescriptionName(string iname)
     {
+        Debug.Log("getDescriptionName "+iname);
         //return description text given an ingredient name
         if (AllIngredients.GetAllKeys().Contains(iname)) {
             if (AllIngredients[iname].GetAllKeys().Contains("name")) return AllIngredients[iname]["name"];
         }
+        var sname = iname.Split('.');
+        if ( sname.Length != 0) {
+            iname = iname.Split('.')[2];
+            Debug.Log("getDescriptionName Split "+iname);
+            if (AllIngredients.GetAllKeys().Contains(iname)) {
+            if (AllIngredients[iname].GetAllKeys().Contains("name")) return AllIngredients[iname]["name"];
+            }
+        } 
         return "";
     }
 
@@ -385,11 +420,12 @@ public class Manager : MonoBehaviour {
         {
             textDescription.text = "<b>DESCRIPTION:</b> " + props.description;
         }
+
         //Debug.Log("The iname for the prefab find is" + iname);
         if (props.is_fiber && props.draw_background)
         {
             //check if membrane
-            textDescription.text += "<br>(note: draw clockwise)";
+            textDescription.text += " (note: draw clockwise)";
             if (show_membrane_bg != null) {
                 show_membrane_bg.gameObject.SetActive(true);
             }
@@ -405,9 +441,60 @@ public class Manager : MonoBehaviour {
             if (otherImage.sharedMaterial != null) {
                 Description_Holder_HSV.GetComponent<ColorPicker>().Color = otherImage.sharedMaterial.color;
             }
+            var pw = tools_toggle_description_image.transform.GetComponentInParent<RectTransform>().rect.width;
+            var ratio =(float) otherImage.sprite.texture.width/(float)otherImage.sprite.texture.height;
+            //var w = 150;//(snode.data.thumbnail)?snode.data.thumbnail.width:150;
+            var h = 210;//w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
+            var w = h*ratio;
+            //if w > max change the w
+            if (w > pw) {
+                w = pw;
+                h = (int) ((float)w / ratio);
+            }
+            tools_toggle_description_image.rectTransform.sizeDelta = new Vector2(w,(int)h);   
+            float cscale = Manager.Instance._canvas.transform.localScale.x;
+            float scale2d  = props.scale2d;
+            //float w = (float)tools_toggle_description_image.rectTransform.rect.width;
+            //float h = (float)tools_toggle_description_image.rectTransform.rect.height;
+            var canvas_scale = w/tools_toggle_description_image.sprite.texture.width; 
+            var sc2d = scale2d*canvas_scale*cscale;           
+            if (props.is_surface){
+                UI_manager.Get.IngredientSpriteMb.gameObject.SetActive(true);
+                var offy = -props.y_offset*sc2d/cscale;
+                var p = tools_toggle_description_image.rectTransform.localPosition;
+                UI_manager.Get.IngredientSpriteMb.rectTransform.localPosition = new Vector3(p.x,offy,p.z);
+                var thickness = membrane_thickness*sc2d/cscale;//angstrom
+                //theSpriteMb.rectTransform.sizeDelta = new Vector2((int)w,42.0f);
+
+                UI_manager.Get.IngredientSpriteMb.rectTransform.sizeDelta = new Vector2((int)pw,thickness);
+                Debug.Log("props for "+props.name+" "+props.y_offset.ToString()+" "+props.scale2d.ToString());
+            }
+            else {
+                UI_manager.Get.IngredientSpriteMb.gameObject.SetActive(false);
+            }
+            if (props.is_fiber && !props.draw_background){
+                var pixel_length = props.y_length*sc2d;
+                UI_manager.Get.IngredientSpriteFiberLeft.gameObject.SetActive(true);
+                UI_manager.Get.IngredientSpriteFiberRight.gameObject.SetActive(true);
+                var p = tools_toggle_description_image.rectTransform.position;
+                UI_manager.Get.IngredientSpriteFiberLeft.sprite = otherImage.sprite;
+                UI_manager.Get.IngredientSpriteFiberRight.sprite = otherImage.sprite;
+                UI_manager.Get.IngredientSpriteFiberLeft.material = otherImage.sharedMaterial;
+                UI_manager.Get.IngredientSpriteFiberRight.material = otherImage.sharedMaterial;
+                UI_manager.Get.IngredientSpriteFiberLeft.rectTransform.position = new Vector3(p.x-pixel_length/2.0f,p.y,p.z);
+                UI_manager.Get.IngredientSpriteFiberRight.rectTransform.position = new Vector3(p.x+pixel_length/2.0f,p.y,p.z);
+                tools_toggle_description_image.enabled = false;
+                Debug.Log("props for "+props.name+" "+props.y_length.ToString()+" "+props.scale2d.ToString());
+            }
+            else {
+                UI_manager.Get.IngredientSpriteFiberLeft.gameObject.SetActive(false);
+                UI_manager.Get.IngredientSpriteFiberRight.gameObject.SetActive(false);
+                tools_toggle_description_image.enabled = true;
+            }
         } else {
              tools_toggle_description_image.sprite = null;
         }
+
         //this call changeColor
         //this should change the current name below
         
@@ -1003,17 +1090,25 @@ public class Manager : MonoBehaviour {
         var pname = instancePrefab.GetComponent<PrefabProperties>().name;
         Vector3 objectPosMiddle = new Vector3(objectPos.x, objectPos.y, 0.125f);
         Vector3 objectPosBottom = new Vector3(objectPos.x, objectPos.y, 0.250f);
-
+        var layer = LayerMask.NameToLayer("Top Layer");
+        var order = 0;
+        if (layer_number_options == 1) {
+            layer = LayerMask.NameToLayer("Middle Layer");
+        }
+        if (layer_number_options == 2) {
+            layer = LayerMask.NameToLayer("Bottom Layer");
+        }
         float Zangle = UnityEngine.Random.value * Mathf.PI * Mathf.Rad2Deg;
         Quaternion quat = Quaternion.AngleAxis(Zangle, Vector3.forward);
         
         GameObject newObject = Instantiate(instancePrefab, objectPos, quat) as GameObject;
-
+        newObject.GetComponent<SpriteRenderer>().sortingOrder = order;
         /* all the follwoing should be in the prefabProperties start*/
         var Props = newObject.GetComponent<PrefabProperties>();
         newObject.transform.name = Props.name;// + " (Top)";
         newObject.transform.parent = root.transform;
-        newObject.layer = LayerMask.NameToLayer("Top Layer");
+        newObject.layer = layer;
+        SetupLayer(newObject);
         if (Props.is_Group) {
             newObject.layer = 22;//group
             newObject.transform.name = newObject.GetComponent<PrefabGroup>().name;
@@ -1046,7 +1141,7 @@ public class Manager : MonoBehaviour {
         UpdateCountAndLabel(name, newObject);
         if (Props.is_Group) return;
         //This loop creates the other layers from the top layer
-        if (!layer_number_draw) return;
+        if (layer_number_options!=3) return;
         if (Props.layer_number == 2)
         {
             GameObject twoLayerBottom = Instantiate(newObject, objectPosBottom, quat) as GameObject;
@@ -1184,12 +1279,6 @@ public class Manager : MonoBehaviour {
     public GameObject oneInstanceFiber(Vector3 start, Vector3 end, GameObject other = null)
     {
         //Debug.Log(myPrefab.GetComponent<PrefabProperties>().sprite_ordered_switch);
-        PrefabProperties props = myPrefab.GetComponent<PrefabProperties>();
-        if (props.nucleic_acid_depth)
-        {
-            NucleicAcidDepth();
-        }
-
         fiber_init = true;
         Vector3 midPoint = (start + end) / 2;
         Vector3 v2 = (end - start).normalized;
@@ -1293,7 +1382,6 @@ public class Manager : MonoBehaviour {
             hinge.connectedBody = fiber_quadOb.GetComponent<Rigidbody2D>();
         }
 
-        //persitence length with spring
         for (int i = 0; i < fiber_persistence; i++)
         {
             //we go backward
@@ -1308,25 +1396,23 @@ public class Manager : MonoBehaviour {
             spring.distance = fiber_length * (i + 1);// + UnityEngine.Random.Range(0.0f, fiber_length / 10.0f);
             spring.anchor = Vector2.zero;// allc[1].offset;
             spring.connectedAnchor = Vector2.zero;//allc[0].offset;
-
             spring.frequency = (props.persistence_strength != -1.0f)? props.persistence_strength :  10.0f / ((i + 2) / 2.0f);
+            if (i == 0 ) spring.frequency = 50.0f;
             spring.dampingRatio = 0.5f;
         }
-        fiber_quadOb.transform.position = pos;
-            
-        if (props.fiber_Middle)
-        {
-            fiber_quadOb.transform.position = new Vector3 (fiber_quadOb.transform.position.x, fiber_quadOb.transform.position.y, 0.125f);
+        Vector3 objectPos = pos;
+        //var layer = LayerMask.NameToLayer("Top Layer");
+        SetupLayer(fiber_quadOb);
+        if (layer_number_options == 3){
+            fiber_quadOb.transform.position = new Vector3(objectPos.x, objectPos.y, 0.0f);
+            PrefabProperties pr = fiber_quadOb.GetComponent<PrefabProperties>();
+            //if (pr.nucleic_acid_depth)
+            //{
+            if (!props.draw_background) {
+                NucleicAcidDepthLerp(fiber_quadOb);
+                fiber_quadOb.transform.position = new Vector3 (objectPos.x, objectPos.y, zLevel);
+            }
         }
-        else if (props.fiber_Bottom)
-        {
-            fiber_quadOb.transform.position = new Vector3 (fiber_quadOb.transform.position.x, fiber_quadOb.transform.position.y, 0.25f);
-        }
-        else
-        {
-            fiber_quadOb.transform.position = new Vector3 (fiber_quadOb.transform.position.x, fiber_quadOb.transform.position.y, 0.0f);
-        }
-        
         fiber_quadOb.transform.rotation = rotation;
         return fiber_quadOb;
     }
@@ -1481,13 +1567,13 @@ public class Manager : MonoBehaviour {
                     foreach (var jts in toDestroy.transform.parent.GetComponentsInChildren<SpringJoint2D>())
                     {
                         if (jts.connectedBody == toDestroy.GetComponent<Rigidbody2D>())
-                            Destroy(jts);
+                            DestroyImmediate(jts);
                     }
                     fixPersistenseOnRemove(toDestroy.transform.GetSiblingIndex(), toDestroy.transform.parent.gameObject,
                         toDestroy.GetComponent<PrefabProperties>().persistence_length);
                 }
             }
-            Destroy(toDestroy);
+            GameObject.DestroyImmediate(toDestroy);
             return;
         }
         totalNprotein--;
@@ -1503,7 +1589,7 @@ public class Manager : MonoBehaviour {
         //pb.Value = percentFilledInt;
         float perc = (((float)proteins_count[name] * area) / (float)current_camera.GetComponent<buildBoundary>().boundryArea);
         if (proteins_ui_labels[name]) proteins_ui_labels[name].text = name + ": " + perc.ToString("P") + " ( " + proteins_count[name].ToString() + " ) ";
-        Destroy(toDestroy);
+        GameObject.DestroyImmediate(toDestroy);
     }
 
     public int addToArea(GameObject newObject)
@@ -1544,6 +1630,7 @@ public class Manager : MonoBehaviour {
             PlayerPrefs.SetString("UserDirectories",path);
         }
         PlayerPrefs.Save();
+        UI_manager.Get.UpdatePanelUserDirectory();
     }
 
     public void CheckDir(){
@@ -1562,12 +1649,24 @@ public class Manager : MonoBehaviour {
         }
     }
 
+    public void ShowDataDirectory(){
+        //show a panel with all the directory with option to remove and add.
+
+    }
+
+    public void ClearCacheDirectory(){
+        PdbLoader.DataDirectories.Clear();
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.SetString("version",version); 
+        PlayerPrefs.Save();       
+    } 
+
     // Use this for initialization
     void Start() {
         _canvas = FindObjectOfType<Canvas>();
         System.IO.Directory.CreateDirectory(PdbLoader.DefaultDataDirectory);
-        System.IO.Directory.CreateDirectory(PdbLoader.DefaultDataDirectory+"proteins");
-        System.IO.Directory.CreateDirectory(PdbLoader.DefaultDataDirectory+"images");
+        System.IO.Directory.CreateDirectory(Path.Combine(PdbLoader.DefaultDataDirectory,"proteins"));
+        System.IO.Directory.CreateDirectory(Path.Combine(PdbLoader.DefaultDataDirectory,"images"));
         /*image effect check*/
         /*bloomEffect = current_camera.GetComponent<Bloom>();
         if (bloomEffect == null) bloomEffect = current_camera.gameObject.AddComponent<Bloom>();
@@ -1595,8 +1694,9 @@ public class Manager : MonoBehaviour {
         else {
             PlayerPrefs.SetString("version",version);
         }
+        version_label.text = "cellPAINT\n"+version;
         CheckDir();
-        PdbLoader.DataDirectories.Add(Application.dataPath + "/../Data/images/");
+        //PdbLoader.DataDirectories.Add(Application.dataPath + "/../Data/images/");
         UnityEngine.Random.InitState(_Seed);
         selected_prefab = new List<string>();
         selectedobject = new List<GameObject>();
@@ -1736,14 +1836,21 @@ public class Manager : MonoBehaviour {
                         asr.sortingOrder = 1;
                         if (asr.sharedMaterial==null)  asr.sharedMaterial = prefab_materials[prefabName];
                     }
-                    //float surfOffset = newObject.GetComponent<PrefabProperties>().surface_offset;
-                    //float posX = current_prefab.transform.position.x;
-                    //float posY = current_prefab.transform.position.y;
-                    //if (surfOffset != 0) posX = posX +surfOffset * current_prefab.transform.rotation.z;
-                    //if (surfOffset != 0) posY = posY + surfOffset * current_prefab.transform.rotation.z;
-                    //Vector3 newpos = current_prefab.transform.rotation * new Vector3(0, surfOffset, 0);
+                    Vector3 objectPos = current_prefab.transform.position;
+                    Vector3 objectPosMiddle = new Vector3(objectPos.x, objectPos.y, 0.125f);
+                    Vector3 objectPosBottom = new Vector3(objectPos.x, objectPos.y, 0.250f);
+                    //var layer = LayerMask.NameToLayer("Top Layer");
+                    if (layer_number_options == 1) {
+                        objectPos = objectPosMiddle;
+                        //layer = LayerMask.NameToLayer("Middle Layer");
+                    }
+                    if (layer_number_options == 2) {
+                        objectPos = objectPosBottom;
+                        //layer = LayerMask.NameToLayer("Bottom Layer");
+                    }
+
                     newObject.transform.rotation = current_prefab.transform.rotation;
-                    newObject.transform.position = current_prefab.transform.position;// new Vector3(current_prefab.transform.position.x, current_prefab.transform.position.y, 0.0f) + newpos;
+                    newObject.transform.position = objectPos;// new Vector3(current_prefab.transform.position.x, current_prefab.transform.position.y, 0.0f) + newpos;
                     newObject.transform.parent = root.transform;
                     if (HideInstance) newObject.hideFlags = HideFlags.HideInHierarchy;
 
@@ -1763,7 +1870,7 @@ public class Manager : MonoBehaviour {
                     UpdateCountAndLabel(props.name, newObject);
                     surface_objects.Add(newObject);
 
-                    if (layer_number_draw)//props.surface_secondLayer)
+                    if (layer_number_options == 3)//(layer_number_draw)//props.surface_secondLayer)
                     {
                             // create the same instance a layer bellow.
                             GameObject newObject2 = Instantiate(myPrefab, Vector3.zero, Quaternion.identity) as GameObject;
@@ -1797,6 +1904,33 @@ public class Manager : MonoBehaviour {
         }
     }
 
+    void SetupLayer(GameObject o){
+        var p = o.transform.position;
+        var sr = o.GetComponent<SpriteRenderer>();
+        switch (layer_number_options) {
+            case 0:
+                o.transform.position = new Vector3(p.x, p.y, 0.0f);
+                sr.sortingOrder = 0;
+                break;
+            case 1:
+                o.transform.position = new Vector3(p.x, p.y, 0.125f);
+                sr.sortingOrder = -1;
+                break;
+            case 2:
+                o.transform.position = new Vector3(p.x, p.y, 0.250f);
+                sr.sortingOrder = -2;
+                break;
+            case 3://all layer
+                o.transform.position = new Vector3(p.x, p.y, 0.0f);
+                sr.sortingOrder = 0;
+                break;
+            default:
+                o.transform.position = new Vector3(p.x, p.y, 0.0f);
+                sr.sortingOrder = 0; 
+                break;                           
+        }
+    }
+
     void drawInstanceBoundToFiber() {
         if (Input.GetMouseButtonDown(0))
         {
@@ -1814,6 +1948,7 @@ public class Manager : MonoBehaviour {
                     newObject.transform.position = current_prefab.transform.position;
                     newObject.transform.rotation = current_prefab.transform.rotation;
                     newObject.transform.parent = root.transform;
+                    SetupLayer(newObject);
                     if (HideInstance) newObject.hideFlags = HideFlags.HideInHierarchy;
                     //attach to other
                     AttachToPartner(newObject, otherSurf.gameObject);
@@ -1825,11 +1960,26 @@ public class Manager : MonoBehaviour {
 
     public void AttachToPartner(GameObject instance_to_attach, GameObject partner)
     {
+        Debug.Log("AttachToPartner");
         PrefabProperties props = instance_to_attach.GetComponent<PrefabProperties>();
         if (!props.is_bound) return;
         bool is_fiber = partner.GetComponent<PrefabProperties>().is_fiber;
-        if (is_fiber)
-            AttachToPartnerFiber(instance_to_attach, partner);
+        Debug.Log("partner fiber ?"+is_fiber.ToString());
+        AttachToPartnerSimple(instance_to_attach, partner);
+        //if (is_fiber)
+        //    AttachToPartnerFiber(instance_to_attach, partner);
+        //else 
+        //    AttachToPartnerSimple(instance_to_attach, partner);
+    }
+
+    public void AttachToPartnerSimple(GameObject instance_to_attach, GameObject partner)
+    {
+        FixedJoint2D fixedjt = instance_to_attach.AddComponent<FixedJoint2D>();
+        fixedjt.connectedBody = partner.GetComponent<Rigidbody2D>();
+        fixedjt.autoConfigureConnectedAnchor = false;
+        fixedjt.anchor = Vector2.zero;
+        fixedjt.connectedAnchor = Vector2.zero;
+        fixedjt.enableCollision = false;
     }
 
     public void AttachToPartnerFiber(GameObject instance_to_attach, GameObject partner)
@@ -1941,7 +2091,7 @@ public class Manager : MonoBehaviour {
             {
                 if (sjt.connectedBody.transform.GetSiblingIndex() > elemRemoved)
                 {
-                    Destroy(sjt);
+                    DestroyImmediate(sjt);
                 }
             }
         }
@@ -2288,10 +2438,10 @@ public class Manager : MonoBehaviour {
     bool HitMembrane(){
         RaycastHit2D hit = raycast();
         if (hit) {
-            if (hit.collider.gameObject.layer == 13 || 
-                hit.collider.gameObject.layer == 11 || 
-                hit.collider.gameObject.layer == 20 || 
-                hit.collider.gameObject.layer == 24) 
+            if (//hit.collider.gameObject.layer == 13 || //DNA
+                hit.collider.gameObject.layer == 11 || //Membrane
+                hit.collider.gameObject.layer == 20 || //compartment
+                hit.collider.gameObject.layer == 24)   //membraneBot
                 {
                     //Debug.Log("skip "+hit.collider.gameObject.layer.ToString());
                     return true;
@@ -2311,7 +2461,10 @@ public class Manager : MonoBehaviour {
         bool stop = false;
         if (Input.GetMouseButton(0)){
             //transform.position
-            if (HitMembrane()) return;
+            if (HitMembrane()) {
+                //if self pass below or above ?
+                return;
+            }
         }
         var props = myPrefab.GetComponent<PrefabProperties>();
         if (fiber_init)
@@ -2389,6 +2542,7 @@ public class Manager : MonoBehaviour {
             fiber_attachto = null;
             count_removed = 0;
             zLevel = 0.00f;
+            lerp_time = 0.0f;
             colorValue = 1.0f;
             if (fiber_init == false) return;
             fiber_init = false;
@@ -2451,7 +2605,9 @@ public class Manager : MonoBehaviour {
                     var spx = current_camera.WorldToViewportPoint(cEnd);
                     fiber_compartment = GetCurrentCompartmentBelow(spx.x,spx.y);
                     if (fiber_compartment != fiber_init_compartment) continue;
-                    //check again the compartment 
+                    //check for self crossing?
+                    RaycastHit2D hit = raycast_from(cStart);
+                    if (hit && hit.collider.gameObject.transform.parent == fiber_parent && hit.collider.gameObject.tag == "membrane") continue;
                     var fiber = oneInstanceFiber(cStart, cEnd);
                     cStart = cEnd;
                     cEnd = cStart + (endPos - startPos).normalized * fiber_length;
@@ -2676,7 +2832,7 @@ public class Manager : MonoBehaviour {
     {
         var family =
                        from o in Manager.Instance.root.transform.GetComponentsInChildren<Transform>()
-                       where o.name.Replace("(Clone)","") == name
+                       where o!=null && o.name.Replace("(Clone)","") == name
                        select o;
         foreach (var o in family)
         {
@@ -2687,8 +2843,12 @@ public class Manager : MonoBehaviour {
 
     public void DestroyHierarchyPrefabFamily(string name)
     {
+        //need to deal with Ghost
+        if (!all_prefab.ContainsKey(name)) return;
         var prefab = all_prefab[name];
         var props = prefab.GetComponent<PrefabProperties>();
+        //first remove from group ?
+        //and remove from ghost ?
         if (props.is_fiber) {
             var aname = props.name+"_chain_";
             var family =
@@ -2757,7 +2917,7 @@ public class Manager : MonoBehaviour {
         }
     }
 
-    void DestroyHierarchy(Transform parent)
+    public void DestroyHierarchy(Transform parent)
     {
         if (!parent) return;
         //DestroyInstance(other);?
@@ -2773,7 +2933,7 @@ public class Manager : MonoBehaviour {
             fiber_parents.Remove(parent.gameObject);
         }
         //GameObject.Destroy(parent.gameObject);
-        GameObject.Destroy(parent.gameObject);
+        GameObject.DestroyImmediate(parent.gameObject);
     }
 
     void HighLightAttached1(){
@@ -2839,7 +2999,7 @@ public class Manager : MonoBehaviour {
                     p.outline_width = current_camera.orthographicSize;
                     p.UpdateOutline(true);
                 }
-                else
+                else if (parent != null)
                 {
                     //check the parent
                     p = parent.GetComponent<PrefabProperties>();
@@ -2854,6 +3014,9 @@ public class Manager : MonoBehaviour {
                     {
                         below = null;
                     }
+                }
+                else {
+                    below = null;
                 }
                 HighLightAttached1();
             }
@@ -2892,12 +3055,13 @@ public class Manager : MonoBehaviour {
                     SpringJoint2D jt1 = attach1.AddComponent<SpringJoint2D>();
                     jt1.autoConfigureConnectedAnchor = false;
                     jt1.anchor = attachPos1;
-                    jt1.enableCollision = true;
+                    jt1.enableCollision = collision_attach;//if one is a fiber reesult will not work because of the neighboors
                     jt1.connectedBody = rb2;
                     jt1.connectedAnchor = attachPos2;
-                    jt1.frequency = 2.5f;
+                    jt1.frequency = frequency_attach;//2.5
                     jt1.autoConfigureDistance = false;
-                    jt1.distance = 0.8f;
+                    jt1.distance = distance_attach;
+
                     //Do we need this list now?
                     attached.Add(attach1);
                     attached.Add(attach2);
@@ -2928,7 +3092,7 @@ public class Manager : MonoBehaviour {
     {
         RaycastHit2D hit = raycast();
         bool _shift = Input.GetKey(KeyCode.LeftShift);
-        bool _enter = Input.GetKey(KeyCode.Return);
+        bool _enter = Input.GetKeyDown(KeyCode.Return);
         CleanOutline();
         if ((!hit))
         {
@@ -3000,34 +3164,28 @@ public class Manager : MonoBehaviour {
         }
         if (_enter)
         {
-            string gname = GroupManager.Get.CreateGroup();
-
-            //toggle to drawMode and select the new prefab
-            if (gname != "")
-            {
-                ToggleGroup(false);
-                ToggleContinuous(true);
-                SwitchPrefabFromName(gname);
-            }
+            CreateAGroup();
         }
     }
     
+    public void CreateAGroup(){
+        string gname = UI_manager.Get.group_name.text;
+        gname = GroupManager.Get.CreateGroup(gname);
+        //toggle to drawMode and select the new prefab
+        if (gname != "")
+        {
+            ToggleGroup(false);
+            ToggleContinuous(true);
+            SwitchPrefabFromName(gname);
+        }
+    }
+
     void SelectAndGhostInstance()
     {
         RaycastHit2D hit = raycast();
         bool _shift = Input.GetKey(KeyCode.LeftShift);
-        bool _enter = Input.GetKey(KeyCode.Return);
+        bool _enter = Input.GetKeyDown(KeyCode.Return);
 
-        if (!hit) {
-            if (below!=null && below.name.StartsWith("ghost_")) {
-                //highlight path
-                below.GetComponent<Ghost>().ToggleHighlight(false);
-            }
-            if (other!=null && other.name.StartsWith("ghost_")) {
-                //highlight path
-                other.GetComponent<Ghost>().ToggleHighlight(false);
-            }
-        }
         CleanOutline();
         if (hit) {
             if (other!=null && other.name.StartsWith("ghost_")) {
@@ -3218,6 +3376,7 @@ public class Manager : MonoBehaviour {
         }
         //last_active_current_name_below = current_name_below;
     }
+
     void OverHighLight(GameObject object_hit, bool group_interact){
         //one function for all hit highlight
         bool _shift = Input.GetKey(KeyCode.LeftShift);
@@ -3296,6 +3455,7 @@ public class Manager : MonoBehaviour {
         //check the shift keyEvent
         //if (Input.GetKeyUp(KeyCode.LeftShift)) CleanOutline();
         bool _shift = Input.GetKey(KeyCode.LeftShift);
+        bool _ctrl = Input.GetKey(KeyCode.LeftControl);
         group_interact_mode = Input.GetKey(KeyCode.LeftControl);
         //bool _shift_up = Input.GetKeyUp(KeyCode.LeftShift);
         if (!hit && Input.GetMouseButton(0)) {
@@ -3307,7 +3467,12 @@ public class Manager : MonoBehaviour {
             PrefabGroup pg = other.GetComponentInParent<PrefabGroup>();  
             Transform parent = other.transform.parent;
             if (_shift) {
-                if ((pg || p.is_Group) && group_interact_mode){
+                if (other.name.StartsWith("ghost_")) {
+                    //reparent all the ghost object
+                    other.GetComponent<Ghost>().changeParent(root.transform);
+                    other.transform.parent = GhostManager.Get.transform;
+                }
+                else if ((pg || p.is_Group) && group_interact_mode){
                     pg.transform.parent = current_objectparent_below.transform;
                 }
                 else if (pg || p.is_Group){
@@ -3349,7 +3514,16 @@ public class Manager : MonoBehaviour {
             //    return;
             //}
             //this assigne the gameobject other
-            if (hit && !moveWithMode) OverHighLight(hit.collider.gameObject, false);
+            if (hit && !moveWithMode) {
+                OverHighLight(hit.collider.gameObject, false);
+                if (dragMode&&_shift){
+                    if (hit.collider.gameObject.name.StartsWith("ghost_")) {
+                        //highlight path
+                        hit.collider.gameObject.GetComponent<Ghost>().ToggleHighlight(true);
+                        below = other = hit.collider.gameObject;
+                    }
+                }
+            }
 
             PrefabProperties p = other.GetComponent<PrefabProperties>();
             PrefabGroup pg = other.GetComponentInParent<PrefabGroup>();  
@@ -3410,7 +3584,7 @@ public class Manager : MonoBehaviour {
                 //select two objects to be attach on click position
             }
             else if (dragMode) { 
-                if (!_shift) 
+                if (!_shift && !_ctrl) 
                 {
                     if (Input.GetMouseButtonDown(0)) dragInstance(other, hit.point); 
                 }
@@ -3419,7 +3593,14 @@ public class Manager : MonoBehaviour {
                     if (Input.GetMouseButtonDown(0)){
                         moveWithMode = true;
                         //put selection under transform
-                        if (_shift) {
+                        if (other.name.StartsWith("ghost_")) {
+                            //translate all ghost holding object
+                            other.GetComponent<Ghost>().changeParent(transform);
+                            other.transform.parent = transform;
+                            //current_objectparent_below = other.transform.parent.gameObject;
+                            //other.transform.parent = transform;
+                        }
+                        else if (_shift) {
                             if ((pg || p.is_Group) && group_interact_mode){
                                 current_objectparent_below = pg.transform.parent.gameObject;
                                 pg.transform.parent = transform;
@@ -3463,7 +3644,6 @@ public class Manager : MonoBehaviour {
                 if (!Input.GetMouseButtonDown(0)) return;
                 if (other == gameObject) return;
                 if (props == null) other = other.transform.parent.gameObject;
-                DestroyInstance(other);
                 //shift code
                 if (_shift)
                 {
@@ -3477,6 +3657,8 @@ public class Manager : MonoBehaviour {
                         DestroyHierarchyFamily(other.GetComponent<PrefabProperties>().name);
                     }
                 }
+                else DestroyInstance(other);
+
             }
         }
     }
@@ -3999,13 +4181,14 @@ public class Manager : MonoBehaviour {
         dt = Time.deltaTime;
         if (dt > safety_deltaTime) {
             safety_frame ++;
-            if (safety_frame > 3) {
+            if (safety_frame > 2) {
                 if (TogglePhysics) TogglePhysics.isOn = false;
                 Physics2D.autoSimulation = false;
                 //pop up warning
                 if (message_panel) {
                     message_panel.SetActive(true);
                     message_panel.GetComponentInChildren<Text>().text = "Physics became unstable and was turned off; erase or move the faulty object before turning it back on";
+                    UI_manager.Get.ToggleSettings.isOn = true;
                 }
             }
             //find the toggle ?
@@ -4068,6 +4251,7 @@ public class Manager : MonoBehaviour {
         else if (boundMode) {
             if (mask_ui) return;
             selected_instance = null;
+            UdateBoundToPrefab();
             drawInstanceBoundToFiber();
         }
         else if (drawMode)
@@ -4079,6 +4263,9 @@ public class Manager : MonoBehaviour {
         else if (bucketMode) {
             if (mask_ui) return;
             fillCompartments();
+        }
+        else if (measureMode){
+            MeasureManager.Get.DoMeasure();
         }
         else { }
         prev_mousePos = objectPos;
@@ -4540,7 +4727,7 @@ public class Manager : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D other) {
         fiber_attachto = null;
         if (!other) return;
-        //Debug.Log(" enter other is " + other.name);// + " " + other.transform.parent.gameObject.name);
+        Debug.Log(" enter other is " + other.name);// + " " + other.transform.parent.gameObject.name);
         if (surfaceMode)
         {
             //use bound to ?
@@ -4555,6 +4742,9 @@ public class Manager : MonoBehaviour {
         if (boundMode)
         {
             //use bound to ?
+            Debug.Log("current_properties.bound_to "+current_properties.bound_to);
+            Debug.Log(other.name);
+            Debug.Log(other.transform.parent.gameObject.name);
             if (other.transform.parent.gameObject.name.Contains(current_properties.bound_to))
             {
                 otherSurf = other;
@@ -4665,6 +4855,39 @@ public class Manager : MonoBehaviour {
         }
     }
     
+    void UdateBoundToPrefab(){
+        LayerMask layerMask = LayerMask.GetMask("Membrane")|LayerMask.GetMask("DNA");//LayerMask.NameToLayer("Membrane");//LayerMask.GetMask("Wall");
+        RaycastHit2D hit = Physics2D.Raycast(current_camera.ScreenPointToRay(Input.mousePosition).origin,current_camera.ScreenPointToRay(Input.mousePosition).direction, 100, layerMask);  
+        //Physics2D.CircleCast(Vector2 origin, float radius, Vector2 direction, float distance = Mathf.Infinity, int layerMask = DefaultRaycastLayers, float minDepth = -Mathf.Infinity, float maxDepth = Mathf.Infinity);
+        //RaycastHit2D hit = Physics2D.CircleCast(current_camera.ScreenPointToRay(Input.mousePosition).origin,2.0f,current_camera.ScreenPointToRay(Input.mousePosition).direction,100, layerMask);
+        Debug.Log("UdateBoundToPrefab "+layerMask.ToString());
+        Debug.Log("current_properties.bound_to "+current_properties.bound_to);
+        Debug.Log(hit);
+        if (hit){
+            if (hit.collider){
+                Debug.Log("HIT "+hit.collider.gameObject.name);
+                var f = hit.collider.gameObject;
+                if (f.transform.parent.gameObject.name.Contains(current_properties.bound_to))
+                {
+                    otherSurf = hit.collider;
+                    TransormToSurfacePos(f);
+                    if ( prefab_materials.ContainsKey(current_prefab.GetComponent<PrefabProperties>().name)) current_prefab.GetComponent<SpriteRenderer>().sharedMaterial.color = prefab_materials[current_prefab.GetComponent<PrefabProperties>().name].color; //current_properties.Default_Sprite_Color;
+                }                
+            }
+        }
+        else {
+            fiber_attachto = null;
+            otherSurf = null;
+            if (current_prefab)
+            {
+                current_prefab.transform.position = transform.position;
+                current_prefab.transform.rotation = transform.rotation;
+                if (boundMode) current_prefab.GetComponent<SpriteRenderer>().sharedMaterial.color = new Color(0.4f, 0.4f, 0.4f);
+                else current_prefab.GetComponent<SpriteRenderer>().sharedMaterial.color = prefab_materials[current_prefab.GetComponent<PrefabProperties>().name].color;
+            }
+        }
+    }
+
     RaycastHit2D raycast()
     {
         //ignore UI as well
@@ -4681,6 +4904,22 @@ public class Manager : MonoBehaviour {
         return hit;
     }
 
+    RaycastHit2D raycast_from(Vector3 pos)
+    {
+        //ignore UI as well
+        LayerMask layerMask = ~(  1 << LayerMask.NameToLayer("CameraCollider") 
+                                | 1 << LayerMask.NameToLayer("FiberPushAway") 
+                                | 1 << LayerMask.NameToLayer("OnlyMembrane") 
+                                | 1 << LayerMask.NameToLayer("UI") 
+                                | 1 << LayerMask.NameToLayer("background")
+                                | 1 << LayerMask.NameToLayer("bg_image")
+                                | 1 << LayerMask.NameToLayer("MembraneBot")); // ignore both layerX and layerY
+        RaycastHit2D hit = new RaycastHit2D();
+        hit = Physics2D.Raycast(pos,
+                                Vector3.back, 100, layerMask);
+        return hit;
+    }
+
     private void CleanOutline()
     {
         if (below && below != attach1)
@@ -4694,7 +4933,7 @@ public class Manager : MonoBehaviour {
             //    return;
             if (below.GetComponent<PrefabProperties>()!= null)
                 below.GetComponent<PrefabProperties>().UpdateOutline(false);
-            if (below.transform.parent.GetComponent<PrefabProperties>() != null)
+            if (below.transform.parent&&below.transform.parent.GetComponent<PrefabProperties>() != null)
             {
                 below.transform.parent.GetComponent<PrefabProperties>().UpdateOutline(false);
                 parent = below.transform.parent.transform.parent;
@@ -4702,6 +4941,14 @@ public class Manager : MonoBehaviour {
             highLightHierarchy(parent, false);
             if (below.GetComponent<PrefabProperties>()!=null)
                 highLightProteinType(below.GetComponent<PrefabProperties>().name, false);
+            if (below!=null && below.name.StartsWith("ghost_")) {
+                //highlight path
+                below.GetComponent<Ghost>().ToggleHighlight(false);
+            }
+            if (other!=null && other.name.StartsWith("ghost_")) {
+                //highlight path
+                other.GetComponent<Ghost>().ToggleHighlight(false);
+            }
             below = null;
         }
         togglePinOutline(pinMode);
@@ -4728,6 +4975,7 @@ public class Manager : MonoBehaviour {
         bindMode = false;
         groupMode = false;
         ghostMode = false;
+        measureMode = false;
         allOff = true;
     }
 
@@ -4825,6 +5073,21 @@ public class Manager : MonoBehaviour {
             myPrefab.SetActive(!eraseMode);
         }
         pushAway.SetActive(false);
+    }
+
+    public void ToggleMeasure(bool toggle)
+    {
+        allToggleOff();
+        if (toggle) allOff = false;
+        measureMode = toggle;
+        if (current_prefab)
+            current_prefab.SetActive(!measureMode);
+        if (myPrefab)
+        {
+            myPrefab.SetActive(!measureMode);
+        }
+        pushAway.SetActive(false);
+        MeasureManager.Get.ToggleLineAndLAbel(toggle);
     }
 
     public void TogglePin(bool toggle)
@@ -5003,14 +5266,19 @@ public class Manager : MonoBehaviour {
     {
 
     }
+    public void ToggleMembraneMembrane_collision(bool toggle)
+    {
+        //11 and 24
+        Physics2D.IgnoreLayerCollision(11, 11, !toggle);
+        Physics2D.IgnoreLayerCollision(11, 24, !toggle);
+        Physics2D.IgnoreLayerCollision(24, 24, !toggle);
+    }
 
     public void ToggleProtein_Protein_layer1_collision(bool toggle)
     {
         Physics2D.IgnoreLayerCollision(8, 8, !toggle);
         Physics2D.IgnoreLayerCollision(8, 12, !toggle);
         Physics2D.IgnoreLayerCollision(12, 12, !toggle);
-        //membrane as well
-        
     }
     public void ToggleProtein_Protein_layer2_collision(bool toggle)
     {
@@ -5161,23 +5429,25 @@ public class Manager : MonoBehaviour {
         }
     }
 
-    public void NucleicAcidDepth()
+    public void NucleicAcidDepth(GameObject toapplyto=null)
     {
         if (!fiberMode) return;
         //Debug.Log("Nucleic Acid Depth Active");
 
-        //layerDirection decides if the next fiber prefab is going towards or away from the camera or staying at the same level.
-        layerDirection = UnityEngine.Random.Range(0, 3);
+        //layerDirection decides if the next fiber prefab is going towards or away from 
+        //the camera or staying at the same level.
+        var layerDirectionf = UnityEngine.Random.Range(0, 3);
 
-        //This portion of the code gets the color value of the prefab in HSV color space (We only modify the "V" or value in the following code).
+        //This portion of the code gets the color value of the prefab in 
+        //HSV color space (We only modify the "V" or value in the following code).
         //prefabRGB = myPrefab.GetComponent<SpriteRenderer>().color;
         //float hue, S, V;
         //Color.RGBToHSV(prefabRGB, out hue, out S, out V);
 
         //Depending on the integer layerDirection provides this if loop changes the properties of the prefab to reflect the correct color value and layer properties (assuming 30 steps from top layer to bottom layer). 
-        if (layerDirection == 0)
+        if (layerDirectionf == 0)
         {
-            if (zLevel <= 0.25f)
+            if (zLevel <= 0.26f)
             {
                 zLevel = (zLevel + 0.0083f);
             }
@@ -5187,7 +5457,7 @@ public class Manager : MonoBehaviour {
             }*/
         }
 
-        else if (layerDirection == 2)
+        else if (layerDirectionf == 2)
         {
             if (zLevel >= 0.00f)
             {
@@ -5199,7 +5469,9 @@ public class Manager : MonoBehaviour {
             }*/
         }
 
-        else return;
+        else {
+
+        };
 
         //Sets the color of the prefab. We need to go back from the HSV color space to the RGB color space.
         //Adam set RNA material.
@@ -5215,27 +5487,26 @@ public class Manager : MonoBehaviour {
 
         //Sets the the Z-Axis position based on the new position.
         //myPrefab.transform.position= new Vector3 (transform.position.x, transform.position.y, zLevel);
-        if (myPrefab){
-            myPrefab.transform.position= new Vector3 (myPrefab.transform.position.x, myPrefab.transform.position.y, zLevel);
+        if (toapplyto){
             //Sets the new order in layer based on the Z-Axis Position.
             if (zLevel <= 0.0215f)
             {
-                myPrefab.GetComponent<SpriteRenderer>().sortingOrder = 1;
+                toapplyto.GetComponent<SpriteRenderer>().sortingOrder = 1;
             }
             else if (zLevel > 0.0215f && zLevel <= 0.083f)
             {
-                myPrefab.GetComponent<SpriteRenderer>().sortingOrder = 0;
+                toapplyto.GetComponent<SpriteRenderer>().sortingOrder = 0;
             }
             else if (zLevel >  0.083f && zLevel <= 0.16f)
             {
-                myPrefab.GetComponent<SpriteRenderer>().sortingOrder = -1;
+                toapplyto.GetComponent<SpriteRenderer>().sortingOrder = -1;
             }
             else
             {
-                myPrefab.GetComponent<SpriteRenderer>().sortingOrder = -2;
+                toapplyto.GetComponent<SpriteRenderer>().sortingOrder = -2;
             }           
         }
-        if (current_prefab) //use to be myPrefab
+        /*if (current_prefab) //use to be myPrefab
         {
             current_prefab.transform.position= new Vector3 (transform.position.x, transform.position.y, zLevel);
             //Sets the new order in layer based on the Z-Axis Position.
@@ -5255,8 +5526,48 @@ public class Manager : MonoBehaviour {
             {
                 current_prefab.GetComponent<SpriteRenderer>().sortingOrder = -2;
             }
+        }*/
+    }
+
+    public void NucleicAcidDepthLerp(GameObject toapplyto=null)
+    {
+        if (!fiberMode) return;
+        //Debug.Log("Nucleic Acid Depth Active");
+
+        //layerDirection decides if the next fiber prefab is going towards or away from 
+        //the camera or staying at the same level.
+        //roll a dice to change speed of interpolation?
+        if (layerDirection) {
+            zLevel = Mathf.Lerp(0.00f, 0.26f, lerp_time);
+        }
+        else zLevel = Mathf.Lerp(0.26f, 0.00f, lerp_time);
+        lerp_time += 0.5f * Time.deltaTime;
+        if (lerp_time > 1.0f)
+        {
+            lerp_time = 0.0f;
+            layerDirection = !layerDirection;
+        }
+        if (toapplyto){
+            //Sets the new order in layer based on the Z-Axis Position.
+            if (zLevel <= 0.0215f)
+            {
+                toapplyto.GetComponent<SpriteRenderer>().sortingOrder = 1;
+            }
+            else if (zLevel > 0.0215f && zLevel <= 0.083f)
+            {
+                toapplyto.GetComponent<SpriteRenderer>().sortingOrder = 0;
+            }
+            else if (zLevel >  0.083f && zLevel <= 0.16f)
+            {
+                toapplyto.GetComponent<SpriteRenderer>().sortingOrder = -1;
+            }
+            else
+            {
+                toapplyto.GetComponent<SpriteRenderer>().sortingOrder = -2;
+            }           
         }
     }
+
 
     public void change_scale(float val)
     {

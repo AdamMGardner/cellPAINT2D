@@ -383,7 +383,7 @@ public class QuitGame : MonoBehaviour
             var props = prefab.GetComponent<PrefabProperties>();
             var issurf = (props.is_surface)?"1":"0";
             var isfiber = (props.is_fiber)?"1":"0";
-            var fiber_length = props.fiber_length;
+            var fiber_length = props.y_length;
             var comp = props.compartment;//.IndexOf(props.compartment);
             towrite +=name+sep+sprite_name+sep+props.scale2d.ToString()+sep+props.y_offset.ToString()+sep+fiber_length.ToString()+sep; 
             towrite +=issurf+sep+isfiber+sep+comp+ "\r\n";
@@ -1071,5 +1071,17 @@ public class QuitGame : MonoBehaviour
     public void OpenURL(string url){
         Application.OpenURL(url);
     }
+
+    public void SendLogEmail()
+    {
+        //%USERPROFILE%\AppData\LocalLow\CompanyName\ProductName\output_log.txt
+        /*System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + @"\Unity\Editor\Editor.log";
+        string email = "autin@scripps.edu";
+        string subject = "LOGFile";
+        string body = "";//atach the log file
+        Application.OpenURL ("mailto:" + email + "?subject=" + subject + "&body=" + body);
+        //System.Net.Mail.Attachment attachment = new System.Net.Mail.Attachment(attachmentPath);
+        */
+    }  
 }
 //5oxv,6b8h, 1sm1,5jhm

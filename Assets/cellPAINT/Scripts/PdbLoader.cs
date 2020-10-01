@@ -14,7 +14,15 @@ public static class PdbLoader
 {
     public static string cellpack_repo = "https://raw.githubusercontent.com/mesoscope/cellPACK_data/master/cellPACK_database_1.1.0/";
     public static string DefaultPdbDirectory = Application.dataPath + "/../Data/proteins/";
-    public static string DefaultDataDirectory = Application.dataPath + "/../Data/";
+
+    public static string DefaultDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"cellPAINT_data");
+/*
+#if UNITY_STANDALONE_OSX
+    public static string DefaultDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"cellPAINT";//Application.dataPath + "/../Data/";
+#else
+    public static string DefaultDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);//Application.dataPath + "/../Data/";
+#endif  
+*/
     public static List<string> DataDirectories = new List<string>();
 
     public static List<Atom> LoadAtomSet(string fileName)

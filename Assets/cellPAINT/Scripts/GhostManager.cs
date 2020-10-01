@@ -133,4 +133,27 @@ public class GhostManager : MonoBehaviour
         ghosts_ids.Clear();
         _counter = 0;
     }
+
+    public void RemoveIngredientFromGhosts(string ing_name){
+        for(int i=ghosts.Count - 1; i > -1; i--)
+        {
+            Ghost g = ghosts[i];
+            for(int j=g.locked_item.Count - 1; j > -1; j--)
+            {
+                if (g.locked_item[j] == null){
+                    g.locked_item.RemoveAt(j);
+                }
+                else if (g.locked_item[j] != null && g.locked_item[i].name.StartsWith(ing_name)){
+                    g.locked_item.RemoveAt(j);
+                }
+            }
+            //g.locked_item.RemoveAll(elem => (elem.name.StartsWith(ing_name)||elem == null));
+            if (g.locked_item.Count == 0) RemoveGhost(g.gameObject);
+        }
+    }
+
+    public void RemoveIngredientFromGhosts(int ing_id){
+        string ing_name = Manager.Instance.ingredients_ids[ing_id];
+        RemoveIngredientFromGhosts(ing_name);
+    }
 }

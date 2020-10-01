@@ -198,6 +198,7 @@ MonoBehaviour:
   surface_secondLayer: 0
   surface_offset: 0
   y_offset: 0
+  y_length: 0
   scale2d: 1
   local_scale: 1
   pcpAxe: {x: 0, y: 1, z: 0}

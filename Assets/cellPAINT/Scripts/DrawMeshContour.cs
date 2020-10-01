@@ -92,6 +92,7 @@ public class DrawMeshContour : MonoBehaviour {
         }
         mesh.uv = uvs;
         meshFilter.sharedMesh = mesh;
+        mr.material.SetVector("_Center",bounds.center);
         //mesh.Optimize();
     }
 
@@ -156,6 +157,7 @@ public class DrawMeshContour : MonoBehaviour {
                 i++;
             }
             mesh.uv = uvs;
+            mr.material.SetVector("_Center",bounds.center);
             yield return null;
             StartCoroutine(updateBackground());
         }

@@ -7,6 +7,7 @@ public class SecondCameraScript : MonoBehaviour {
     public Camera mainCamera;
     public int down_sample;
     public Dictionary<float,string> mapping = new Dictionary<float, string>();
+    public Shader compartment_shader;
     private Color originalColor;
     private Camera cam;
     private Color[] color_back;
@@ -41,11 +42,34 @@ public class SecondCameraScript : MonoBehaviour {
         compartment_texture = new RenderTexture(Screen.width / down_sample, Screen.height / down_sample,1);
         cam.targetTexture = compartment_texture;
         Manager.Instance.secondRenderTexture = compartment_texture;
+        cam.SetReplacementShader (compartment_shader,"");
     }
 
+    void SetMapping(){
+        float r = 0.0f;
+        int count = 0;
+        membranes = GameObject.FindGameObjectsWithTag("MembraneChain");
+        foreach (GameObject o in membranes) {
+            Renderer ren = o.GetComponent<Renderer>();
+            if (ren != null)
+            {
+                if (!mapping.ContainsKey(r))
+                    mapping.Add(r,o.name);
+                color_back[count] = ren.material.color;
+                ren.material.SetFloat("_distance_mode", r);
+                MaterialPropertyBlock mpb = new MaterialPropertyBlock();
+                ren.GetPropertyBlock(mpb);
+                mpb.SetFloat("_distance_mode", r);
+                ren.SetPropertyBlock(mpb);
+                r += 0.01f;
+                count++;
+            }
+        }
+    }
 
-    void OnPreRender()
+    void myPreRender(Camera camera)
     {
+        if (camera.gameObject.name != "cam_comp") return;
         float r = 0.0f;
         int count = 0;
         membranes = GameObject.FindGameObjectsWithTag("MembraneChain");
@@ -57,14 +81,21 @@ public class SecondCameraScript : MonoBehaviour {
                     mapping.Add(r,o.name);
                 color_back[count] = ren.material.color;
                 ren.material.color = new Color(r, 1, 1, 1);
+                ren.material.SetFloat("_distance_mode", 1.0f);
                 r += 0.01f;
+                Debug.Log("myPreRender "+o.name+" "+r.ToString());
+                MaterialPropertyBlock mpb = new MaterialPropertyBlock();
+                ren.GetPropertyBlock(mpb);
+                mpb.SetFloat("_distance_mode", 1.0f);
+                ren.SetPropertyBlock(mpb);
                 count++;
             }
         }
     }
 
-    void OnPostRender()
+    void myPostRender(Camera camera)
     {
+        if (camera.gameObject.name != "cam_comp") return;
         int count = 0;
         foreach (GameObject o in membranes)
         {
@@ -72,10 +103,30 @@ public class SecondCameraScript : MonoBehaviour {
 
             if (r != null)
             {
+                Debug.Log("myPostRender "+o.name);
                 r.material.color = color_back[count];
+                r.material.SetFloat("_distance_mode", 1.0f);
+                MaterialPropertyBlock mpb = new MaterialPropertyBlock();
+                r.GetPropertyBlock(mpb);
+                mpb.SetFloat("_distance_mode", 0.0f);
+                r.SetPropertyBlock(mpb);
                 count++;
             }
         }
+    }
+    
+    public void OnEnable()
+    {
+        // register the callback when enabling object
+        //Camera.onPreRender += myPreRender;
+        //Camera.onPostRender += myPostRender;
+    }
+
+    public void OnDisable()
+    {
+        // remove the callback when disabling object
+        //Camera.onPreRender -= myPreRender;
+        //Camera.onPostRender -= myPostRender;
     }
     
 	// Update is called once per frame
@@ -84,5 +135,6 @@ public class SecondCameraScript : MonoBehaviour {
         {
             cam.orthographicSize = mainCamera.orthographicSize;
         }
+        SetMapping();
 	}
 }

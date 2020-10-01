@@ -20,7 +20,19 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/cellPAINT/Scenes/newUI_ludo2.unity
     guid: 9d7e7570c72335e4ab7aa012ee53c730
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/newUI_ludo2.unity
     guid: f2dd0a4e0c9194a4d8f0f053f96d7989
+  - enabled: 0
+    path: Assets/cellPAINT/Scenes/cellpaint_bg.unity
+    guid: 73da2cbb2fd04054296df5744abdafed
+  - enabled: 0
+    path: Assets/cellPAINT/Scenes/cellpaint_bg_group.unity
+    guid: b7990a82813f9fd46bf9928a1c821e31
+  - enabled: 1
+    path: Assets/cellPAINT/Scenes/cellpaint.unity
+    guid: abc06306dab6cc841babf553e17b306c
+  - enabled: 0
+    path: Assets/cellPAINT/Scenes/cellpaint2.unity
+    guid: 259eaee68f3687442965a85bb648d0bd
   m_configObjects: {}

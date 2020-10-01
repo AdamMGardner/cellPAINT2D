@@ -1885,9 +1885,12 @@ MonoBehaviour:
   eraseMode: 0
   pinMode: 0
   infoMode: 0
+  groupMode: 0
+  ghostMode: 0
   continuous: 0
   bucketMode: 0
   bindMode: 0
+  group_interact_mode: 0
   erase_collider_mode: 0
   pin_collider_mode: 0
   drag_collider_mode: 0
@@ -1898,6 +1901,7 @@ MonoBehaviour:
   fiber_hingeJoint: 1
   fiber_distance: 0.05
   fiber_persistence: 1
+  fiber_count: 0
   tools_toggle_description_image: {fileID: 1244473173}
   Description_Holder: {fileID: 725481518}
   Description_Holder_HSV: {fileID: 1999405954}
@@ -2008,6 +2012,7 @@ MonoBehaviour:
   - GPD
   - PGK
   - Aldolase
+  additional_ingredients_names: []
   sprites_names: []
   zLevel: 0
   colorValue: 1
@@ -12020,7 +12025,7 @@ MonoBehaviour:
   rbCount: 0
   rbSurfaceCount: 0
   boundedCount: 0
-  MaxRigidBodies: 5000
+  MaxRigidBodies: 50000
   Ninstance: 0
   scale_force: 0
   timeScale: 500
@@ -20083,6 +20088,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 272716086}
   m_CullTransparentMesh: 0
+--- !u!1 &273068269
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 273068271}
+  - component: {fileID: 273068270}
+  m_Layer: 0
+  m_Name: GroupManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &273068270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 273068269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cf4e198031b1734e99699f1af2ae2f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabGroup: {fileID: 2255010716814513417, guid: 82782c00bf5265b47aabc0cb229666e8,
+    type: 3}
+  groupnames: []
+  current_selections: []
+  nGroup: 0
+--- !u!4 &273068271
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 273068269}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 934.916, y: 549.4153, z: -20.146606}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &273820815
 GameObject:
   m_ObjectHideFlags: 0
@@ -32513,7 +32566,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 851464098}
   m_HandleRect: {fileID: 851464097}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -50142,7 +50195,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1236605767
 MonoBehaviour:
   m_ObjectHideFlags: 0

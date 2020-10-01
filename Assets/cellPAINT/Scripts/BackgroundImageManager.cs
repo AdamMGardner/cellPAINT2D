@@ -277,6 +277,7 @@ public class BackgroundImageManager : MonoBehaviour
     }
 
     public void AddBackgroundSprites(string path, Vector3 position, float scale2d, float rotation){
+        if (bg_Images.Contains(path)) return;
         var sprite_name = Path.GetFileName(path);
         var sprite_path = Path.GetDirectoryName(path);        
         byte[] current_bytes = File.ReadAllBytes(path);

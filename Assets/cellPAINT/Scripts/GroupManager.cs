@@ -328,7 +328,7 @@ public class GroupManager : MonoBehaviour
         }
     }
     
-    public string CreateGroup() {
+    public string CreateGroup(string gname = "") {
         //add to ui
         //need to reassing the spring connectedbody!
         if (current_selections.Count == 0) return "";
@@ -341,8 +341,13 @@ public class GroupManager : MonoBehaviour
             nGroup++;
         }
         g.name = "group_" + nGroup.ToString();
+        if (gname != "") {
+            g.name = gname;
+        }
+        var cname = Manager.Instance.recipeUI.GetCurrentCname();
+        g.name = cname+".interior."+g.name;
         g.instance_id = 0;
-        emptyGroup.name = "group_" + nGroup.ToString()+"_0";
+        emptyGroup.name = g.name;//"group_" + nGroup.ToString()+"_0";
         emptyGroup.layer = 22;//midle layer == group
         emptyGroup.transform.position = new Vector3(bb.center.x,bb.center.y,0.0f);
         emptyGroup.transform.parent = Manager.Instance.root.transform;//current_selections[0].transform.parent;//root or compartment
@@ -385,8 +390,9 @@ public class GroupManager : MonoBehaviour
         foreach (var sjt in p.attachements_toskip){
             DestroyImmediate(sjt);
         }
+        newGroup.name = g.name;
         p.attachements_toskip.Clear();
-        p.name = "group_" + nGroup.ToString();
+        p.name = g.name;
         Debug.Log("group name added "+p.name);
         groupnames.Add(p.name);
         Debug.Log("group instance 0 added "+p.name);
@@ -445,6 +451,91 @@ public class GroupManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void RemoveIngredientFromGroups(string ing_name){
+        foreach(var gname in groupnames) {
+            var prefab = Manager.Instance.all_prefab[gname];
+            PrefabGroup pg = prefab.GetComponent<PrefabGroup>();
+            var family =
+                       from o in prefab.transform.GetComponentsInChildren<Transform>()
+                       where (o!=null && o.name.StartsWith(ing_name))
+                       select o;  
+            foreach (var o in family)
+            {
+                if (o.gameObject.CompareTag("MembraneChain")) {
+                    foreach (Transform ch in o)
+                    {
+                        pg.RemoveIngredient(ch.gameObject);
+                    }
+                    Manager.Instance.DestroyHierarchy(o);
+                    //GameObject.Destroy(o.gameObject);
+                }
+                else {
+                    pg.RemoveIngredient(o.gameObject);
+                    GameObject.DestroyImmediate(o.gameObject);
+                }
+            }
+        }
+        /*same for the group instance*/
+        var familyg = Manager.Instance.root.transform.GetComponentsInChildren<PrefabGroup>();
+        //        from o in Manager.Instance.root.transform.GetComponentsInChildren<PrefabGroup>()
+        //        where o.name == name
+        //        select o.gameObject;
+        foreach (var o in familyg)
+        {
+            PrefabGroup pg = o;//.GetComponent<PrefabGroup>();
+            var childfamily =
+                       from oc in o.transform.GetComponentsInChildren<Transform>()
+                       where (oc!=null && oc.name.StartsWith(ing_name))
+                       select oc;  
+            foreach (var oc in childfamily)
+            {
+                if (oc.gameObject.CompareTag("MembraneChain")) {
+                    foreach (Transform ch in oc)
+                    {
+                        pg.RemoveIngredient(ch.gameObject);
+                    }
+                    Manager.Instance.DestroyHierarchy(oc);
+                }
+                else {
+                    pg.RemoveIngredient(oc.gameObject);
+                    Manager.Instance.DestroyInstance(oc.gameObject);
+                }
+            }
+        }               
+        foreach (var o in familyg)
+        {
+            Debug.Log("RemoveIngredientFromGroups "+o.gameObject.name+" "+o.transform.childCount.ToString());
+            if (o.transform.childCount == 0 ) {
+                //remove the group
+                GameObject.DestroyImmediate(o.gameObject);
+            }
+        }
+        for(int i=groupnames.Count - 1; i > -1; i--)
+        {
+            var agname=groupnames[i];
+            Debug.Log(i.ToString()+" "+agname);
+            if (Manager.Instance.all_prefab[agname] == null) {
+                Debug.Log(i.ToString()+" RemoveIngredientFromGroups prefab "+agname+" already deleted ?");
+                Manager.Instance.all_prefab.Remove(agname);
+                groupnames.RemoveAt(i);
+            }
+            else {
+                var prefab = Manager.Instance.all_prefab[agname];
+                Debug.Log(i.ToString()+" RemoveIngredientFromGroups prefab "+agname+" "+prefab.transform.childCount.ToString());
+                if (prefab.transform.childCount == 0 ) {
+                    Manager.Instance.recipeUI.RemoveIngredient(agname,-1,false);
+                    Debug.Log(i.ToString()+" "+agname+" "+groupnames.Count.ToString());
+                    if (groupnames.Contains(agname)) groupnames.RemoveAt(i);
+                }
+            }
+        }
+    }
+
+    public void RemoveIngredientFromGroups(int ing_id){
+        string ing_name = Manager.Instance.ingredients_ids[ing_id];
+        RemoveIngredientFromGroups(ing_name);
     }
 
     public void RestoreOneGroup(string group_name, List<GameObject> selection){

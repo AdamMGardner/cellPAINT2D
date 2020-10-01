@@ -9,6 +9,7 @@ using SimpleJSON;
 public class PrefabProperties : MonoBehaviour
 {
     public string name;
+    public int id;
     public string common_name;
     public string function_group;
     public string compartment;
@@ -361,7 +362,7 @@ public class PrefabProperties : MonoBehaviour
 
     public void TestPcpalAxis() { }
 
-    public float TestPcpalAxis2D_surface(GameObject bicycle)
+    public Bounds TestPcpalAxis2D_surface(GameObject bicycle, Vector2[] pts, bool do_colliders = true)
     {
         var gameotouse = bicycle;
         if ( gameotouse == null) {
@@ -392,7 +393,9 @@ public class PrefabProperties : MonoBehaviour
         if (flip) m_ext = new Vector2(m_ext.y,m_ext.x);
 
         var unity_scale2d = 1.0f / (Manager.Instance.unit_scale * 10.0f);
-        float thickness = (23.0f*2.0f) * unity_scale2d * 1.0f/local_scale;
+        float delta = Manager.Instance.membrane_thickness_delta;
+        float mthickness = Manager.Instance.membrane_thickness;
+        float thickness = (delta*2.0f + mthickness) * unity_scale2d * 1.0f/local_scale;//(23.0f) 
         //surface offset is +/-
         float up_height = 0.0f;
         float down_height = 0.0f;
@@ -413,28 +416,56 @@ public class PrefabProperties : MonoBehaviour
         Vector2 box1 = new Vector2(m_ext.x,Mathf.Abs(up_height));//pos will be thickness + height/2
         Vector2 box2 = new Vector2(m_ext.x,Mathf.Abs(down_height));
         center = mrot * center;
+        Bounds bup = new Bounds(new Vector3(0, surface_offset+thickness+up_height/2.0f,0),
+                              new Vector3(Mathf.Abs(box1.x), up_height,10)  );
+        Bounds bdown = new Bounds(new Vector3(0, surface_offset-thickness-down_height/2.0f,0),
+                              new Vector3(Mathf.Abs(box2.x), down_height,10)  );
+        Bounds bup2 = new Bounds();
+        Bounds bdown2 = new Bounds();
+        Bounds mid = new Bounds();
+        float widthUp = 0.0f;
+        float widthDown = 0.0f;
+        float widthMiddle = 0.0f;
+        foreach (var p in pts) {
+            var dtoce = Mathf.Abs(p.x)*2.0f; 
+            if (bup.Contains(p)){
+                widthUp = Mathf.Max(dtoce,widthUp);
+                bup2.Encapsulate(p);
+            }
+            else if (bdown.Contains(p)){
+                widthDown = Mathf.Max(dtoce,widthDown);
+                bdown2.Encapsulate(p);
+            } else {
+                widthMiddle = Mathf.Max(dtoce,widthMiddle);
+                mid.Encapsulate(p);
+            }
+        }
+
+        if (!do_colliders) return mid;
         if (up_height > 0.1f) {
             if (Mathf.Abs(box1.x - box1.y) < 1.15f) {
+            //if (Mathf.Abs(bup2.extents.x - bup2.extents.y) < 1.15f) {
                 CircleCollider2D Circle = gameotouse.AddComponent<CircleCollider2D>();
-                Circle.radius = box1.x / 2.0f;//((Mathf.Abs(m_ext.x) + Mathf.Abs(m_ext.y)) / 2.0f) / 2.0f;
-                Circle.offset = new Vector2(center.x, surface_offset+thickness+up_height/2.0f);
+                Circle.radius = widthUp / 2.0f;//((Mathf.Abs(m_ext.x) + Mathf.Abs(m_ext.y)) / 2.0f) / 2.0f;
+                Circle.offset = new Vector2(bup2.center.x, surface_offset+thickness+up_height/2.0f);
             }
             else {
                 BoxCollider2D box = gameotouse.AddComponent<BoxCollider2D>();
-                box.size = new Vector2(Mathf.Abs(box1.x), up_height);
-                box.offset = new Vector2(center.x, surface_offset+thickness+up_height/2.0f);
+                box.size = new Vector2(widthUp, up_height);
+                box.offset = new Vector2(bup2.center.x, surface_offset+thickness+up_height/2.0f);
             }
         }
         if (down_height > 0.1f){ 
             if (Mathf.Abs(box2.x - box2.y) < 1.15f) {
+            //if (Mathf.Abs(bdown2.extents.x - bdown2.extents.y) < 1.15f) {
                 CircleCollider2D Circle = gameotouse.AddComponent<CircleCollider2D>();
-                Circle.radius = box2.x / 2.0f;//((Mathf.Abs(m_ext.x) + Mathf.Abs(m_ext.y)) / 2.0f) / 2.0f;
-                Circle.offset = new Vector2(center.x, surface_offset-thickness-down_height/2.0f);
+                Circle.radius = widthDown / 2.0f;//((Mathf.Abs(m_ext.x) + Mathf.Abs(m_ext.y)) / 2.0f) / 2.0f;
+                Circle.offset = new Vector2(bdown2.center.x, surface_offset-thickness-down_height/2.0f);
             }
             else {
                 BoxCollider2D box = gameotouse.AddComponent<BoxCollider2D>();
-                box.size = new Vector2(Mathf.Abs(box2.x), down_height);
-                box.offset = new Vector2(center.x, surface_offset-thickness-down_height/2.0f);
+                box.size = new Vector2(widthDown, down_height);
+                box.offset = new Vector2(bdown2.center.x, surface_offset-thickness-down_height/2.0f);
             }
         }
         if (Mathf.Abs(m_ext.x - m_ext.y) < 1.15f) {
@@ -445,7 +476,7 @@ public class PrefabProperties : MonoBehaviour
             width = Mathf.Abs(m_ext.x)/2.0f;
         }
         circle_radius = width;//(((Mathf.Abs(m_ext.x) + Mathf.Abs(m_ext.y)) / 2.0f) / 2.0f) * (1.0f/local_scale);//unity unit
-        return width;
+        return mid;
     }
 
     public float TestPcpalAxis2D()
@@ -505,103 +536,6 @@ public class PrefabProperties : MonoBehaviour
         }
         circle_radius = width;//(((Mathf.Abs(m_ext.x) + Mathf.Abs(m_ext.y)) / 2.0f) / 2.0f) * (1.0f/local_scale);//unity unit
         return width;
-        //check the extend
-        //GameObject ob;
-        float cutoff = 60.0f;
-        float pcutoff = 0.70f;//30%
-        float radius = (m_ext.y + m_ext.z) / 2.0f;
-        float rmax = Mathf.Max(Mathf.Max(m_ext.x, m_ext.y), m_ext.z);//this is 100%
-        float dx = m_ext.x / rmax;
-        float dy = m_ext.y / rmax;
-        float dz = m_ext.z / rmax;
-        bool isSpherical = false;
-        bool isCapsule = false;
-        Vector3 ascale = Vector3.one;
-        if (rmax == m_ext.x)//check y and z, dx = 1
-        {
-            Debug.Log("X");
-            Debug.Log(Mathf.Abs(Mathf.Min(m_ext.x, m_ext.y) / Mathf.Max(m_ext.x, m_ext.y)));
-            if ((dz >= pcutoff) && (dy >= pcutoff)) isSpherical = true;
-            else if (Mathf.Abs(Mathf.Min(m_ext.z, m_ext.y) / Mathf.Max(m_ext.z, m_ext.y)) >= pcutoff)
-            {
-                ascale = new Vector3(m_ext.y, rmax, m_ext.z);
-                isCapsule = true;
-            }
-        }
-        else if (rmax == m_ext.y)//check y and z,dy = 1
-        {
-            Debug.Log("Y");
-            Debug.Log(Mathf.Abs(Mathf.Min(m_ext.x, m_ext.y) / Mathf.Max(m_ext.x, m_ext.y)));
-            if ((dx >= pcutoff) && (dy >= pcutoff)) isSpherical = true;
-            else if (Mathf.Abs(Mathf.Min(m_ext.y, m_ext.x) / Mathf.Max(m_ext.y, m_ext.x)) >= pcutoff)
-            {
-                ascale = new Vector3(m_ext.y, rmax, m_ext.z);
-                isCapsule = true;
-            }
-        }
-        else if (rmax == m_ext.z)//check y and z,dz = 1
-        {
-            Debug.Log("Z");
-            Debug.Log(Mathf.Abs(Mathf.Min(m_ext.z, m_ext.y) / Mathf.Max(m_ext.z, m_ext.y)));
-            if ((dz >= pcutoff) && (dy >= pcutoff)) isSpherical = true;
-            else if (Mathf.Abs(Mathf.Min(m_ext.z, m_ext.y) / Mathf.Max(m_ext.z, m_ext.y)) >= pcutoff)
-            {
-                ascale = new Vector3(m_ext.z, rmax, m_ext.y);
-                isCapsule = true;
-            }
-        }
-        
-        //float score = (Mathf.Abs(m_ext.x - m_ext.y) + Mathf.Abs(m_ext.x - m_ext.z) + Mathf.Abs(m_ext.z - m_ext.y)) / 3.0f;
-        if (isSpherical)//(Mathf.Abs(m_ext.x - radius) < cutoff) && (Mathf.Abs(m_ext.y - radius) < cutoff) && (Mathf.Abs(m_ext.z - radius) < cutoff) )
-        {
-            //assume a sphere of radius max or min or avg
-            Debug.Log("isSpherical " + radius.ToString());
-            CircleCollider2D Circle = gameObject.AddComponent<CircleCollider2D>();
-            Circle.radius = radius/2.0f;
-            //Circle.offset = new Vector2(center.y, center.z);
-            /*ob = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            ob.transform.parent = transform;
-            ob.transform.localPosition = Vector3.zero;
-            ob.transform.localRotation = Quaternion.identity;
-            ob.transform.localScale = new Vector3(radius, radius, radius) * 0.01f;*/
-        }
-        else if (isCapsule)
-        {
-            Debug.Log("isCapsule " + m_ext.ToString());
-            CapsuleCollider2D Capsule = gameObject.AddComponent<CapsuleCollider2D>();
-            Capsule.direction = CapsuleDirection2D.Horizontal;
-            //Capsule.direction = CapsuleDirection2D.Vertical;
-            Capsule.size = new Vector2(m_ext.z, m_ext.y);
-            //Capsule.offset = new Vector2(center.z, center.y);
-            //Capsule.offset = capsule_offset;
-            //assume a sphere of radius max or min or avg            
-            /*ob = GameObject.CreatePrimitive(PrimitiveType.Capsule);//default direction is Y
-            ob.transform.parent = transform;
-            ob.transform.localPosition = Vector3.zero;// center * 0.01f;
-            ob.transform.localRotation = mrot;
-            ob.transform.localScale = (m_ext) * 0.01f;
-            CapsuleCollider cc = ob.GetComponent<CapsuleCollider>();
-            cc.direction = 2;
-            cc.radius = 0.5f;
-            cc.height = 1.0f;*/
-        }
-        else
-        {
-            Debug.Log("Cube " + m_ext.ToString());
-            BoxCollider2D box2 = gameObject.AddComponent<BoxCollider2D>();
-            box2.size = new Vector2(m_ext.z, m_ext.y);
-            //box.offset = new Vector2(center.z, center.y);
-            /*ob = GameObject.CreatePrimitive(PrimitiveType.Cube); //this create a box collider automatically
-                                                                 //GameObject cube = new GameObject("cube");//empty
-            ob.transform.parent = transform;
-            ob.transform.localPosition = Vector3.zero;//center * 0.01f;// Vector3.zero;//*0.01 ?
-            ob.transform.localRotation = mrot;// Quaternion.Inverse(Quaternion.FromToRotation(Vector3.right, pcp[imax]));
-            ob.transform.localScale = (m_ext) * 0.01f;// Vector3.one;// new Vector3(pcp[order[0]].w, pcp[order[1]].w, pcp[order[2]].w) * 0.01f;
-            */
-        }
-        //if (is_surface)
-        //    ob.layer = 19;//transmb2
-        //ob.GetComponent<MeshRenderer>().enabled = false;
     }
 
     public void UpdateScale2D(float new_value){
@@ -753,31 +687,40 @@ public class PrefabProperties : MonoBehaviour
         //hjdown.frequency = 1.0f;
     }
 
-    public void SetupBicycleNew(){
+
+    public void SetupBicycleNew(Vector2[] pts){
+        float delta = Manager.Instance.membrane_thickness_delta;
+        float mthickness = Manager.Instance.membrane_thickness;
         Vector3 center = (pcp[0] + pcp[1]) * 0.5f;
         var unity_scale2d = 1.0f / (Manager.Instance.unit_scale * 10.0f);
         //instead of 2 circle up and down, try 2 box up and down. bow width == ingredient radius
-        float thickness = (23.0f) * unity_scale2d * 1.0f/local_scale;
-        float width = TestPcpalAxis2D();
-        float bicycle_radius = thickness;
-        bicycleUp = new GameObject("up");
+        float thickness = (delta + mthickness/2.0f) * unity_scale2d * 1.0f/local_scale;//(23.0f) 
+        //the width should come from the extend of the membrane area
+
+        bicycleUp = new GameObject("bicycle");
         bicycleUp.layer = 15;
         bicycleUp.transform.parent = gameObject.transform;
         bicycleUp.transform.localPosition = new Vector3(0,0, 0);
+        
+        Bounds mid = TestPcpalAxis2D_surface(bicycleUp,pts,true);//TestPcpalAxis2D();
+        float width = mid.extents.x/2.0f;
+        float mx = 0;//mid.center.x;
+        float bicycle_radius = thickness;
 
         CircleUp = bicycleUp.AddComponent<CircleCollider2D>();
         CircleUp.radius = thickness;
-        CircleUp.offset = new Vector2(width-thickness,  thickness + thickness + surface_offset);
+        CircleUp.offset = new Vector2(mx+width,  thickness + thickness + surface_offset);//-thickness
         CircleUp2 = bicycleUp.AddComponent<CircleCollider2D>();
         CircleUp2.radius = bicycle_radius;
-        CircleUp2.offset = new Vector2(-width+thickness,thickness + thickness + surface_offset);
+        CircleUp2.offset = new Vector2(mx-width,thickness + thickness + surface_offset);//+thickness
+        
         CircleDown = bicycleUp.AddComponent<CircleCollider2D>();
         CircleDown.radius = bicycle_radius;
-        CircleDown.offset = new Vector2(width-thickness, - thickness - thickness + surface_offset);
+        CircleDown.offset = new Vector2(mx+width, - thickness - thickness + surface_offset);//-thickness
         CircleDown2 = bicycleUp.AddComponent<CircleCollider2D>();
         CircleDown2.radius = bicycle_radius;
-        CircleDown2.offset = new Vector2(-width+thickness, - thickness - thickness + surface_offset);
-        TestPcpalAxis2D_surface(bicycleUp);
+        CircleDown2.offset = new Vector2(mx-width, - thickness - thickness + surface_offset);
+        TestPcpalAxis2D();
     }
 
     public void SetupBoxCycle(){
@@ -907,22 +850,27 @@ public class PrefabProperties : MonoBehaviour
         if (node.HasKey("sprite"))
         {
             scale2d = float.Parse(node["sprite"]["scale2d"]);//1 angstrom in the image is scale2d pixel
-            y_offset = -float.Parse(node["sprite"]["offsety"]) * unity_scale2d;// offset.magnitude / (Manager.Instance.unit_scale * 10.0f);
+            //check if its 0.0
+            if (scale2d == 0.0) scale2d = 1.0f;
+            y_offset = float.Parse(node["sprite"]["offsety"]);// offset.magnitude / (Manager.Instance.unit_scale * 10.0f);
             if (node["sprite"].HasKey("lengthy")) {
                 y_length= float.Parse(node["sprite"]["lengthy"]) ;
                 if (y_length == 0.0f) y_length = -1.0f;
             }
         }
+        surface_offset = -y_offset * unity_scale2d;
         local_scale = 1.0f/(pixel_scale * scale2d);
-        surface_offset=(y_offset/local_scale);
+        surface_offset=(surface_offset/local_scale);
         Vector3 center = (pcp[0] + pcp[1]) * 0.5f;
         Vector3 m_ext = (pcp[0] - pcp[1]);
         Quaternion mrot = new Quaternion(pcp[2].x, pcp[2].y, pcp[2].z, pcp[2].w);
         if (!is_fiber && is_surface)
         {
+            //split the point between up and down
+            //use the split point BB to create the colliders
             //also need to split the collider to not overlap with the membrane.
             gameObject.layer = 12;
-            SetupBicycleNew();//SetupBoxCycleNew();
+            SetupBicycleNew(pts);//SetupBoxCycleNew();
         }
         else if (is_fiber) {
             //persistence length ?
@@ -947,6 +895,7 @@ public class PrefabProperties : MonoBehaviour
                 abox.offset = new Vector2(center.x, center.y);
             }
             float lengthy = (y_length==-1.0f)?Mathf.Abs(m_ext.x):y_length* unity_scale2d/local_scale;
+            if (y_length==-1.0f) y_length = Mathf.Abs(m_ext.x)/(unity_scale2d/local_scale);
             //anchor collider, on X axis.
             CircleCollider2D CircleLeft = gameObject.AddComponent<CircleCollider2D>();
             CircleLeft.radius = radius;
@@ -1004,7 +953,7 @@ public class PrefabProperties : MonoBehaviour
         if (!is_fiber && is_surface)
         {
             gameObject.layer = 12;
-            SetupBicycleNew();//SetupBoxCycleNew();
+            SetupBicycleNew(pts);//SetupBoxCycleNew();
         }
         else if (is_fiber) {
             //persistence length ?
@@ -1095,8 +1044,8 @@ public class PrefabProperties : MonoBehaviour
         if (is_bound)
         {
             Collider2D[] coll = GetComponents<Collider2D>();
-            entry = (coll[3].offset - coll[1].offset).normalized;
-            exit = (coll[0].offset - coll[2].offset).normalized;
+            //entry = (coll[3].offset - coll[1].offset).normalized;
+            //exit = (coll[0].offset - coll[2].offset).normalized;
         }
         if (is_fiber)
         {
@@ -1420,7 +1369,7 @@ public class PrefabProperties : MonoBehaviour
         Destroy(partner);
 
         //reorient start and end to aligne to the binder
-        alignFiber(start, end);
+        //alignFiber(start, end);
 
         HingeJoint2D jt = start.GetComponent<HingeJoint2D>();
         if (!jt)

@@ -1,5 +1,4 @@
 ﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
 Shader "Custom/Outline" {
 	// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 		Properties
@@ -54,7 +53,7 @@ Shader "Custom/Outline" {
 			float4 vertex   : SV_POSITION;
 			fixed4 color : COLOR;
 			float2 texcoord  : TEXCOORD0;
-			float2 z		 : TEXCOORD1;
+			nointerpolation float2 z		 : TEXCOORD1;
 			//float3 worldcoord :FLOAT30;
 		};
 
@@ -64,6 +63,11 @@ Shader "Custom/Outline" {
 		float _Blend;
 		fixed4 _OutlineColor;
 		float _Nucleic;
+
+		float LerpByDepth(float z) {
+			return z*0.75f/0.2504883f;
+			//return clamp(smoothstep(0.0f, 0.2504883f, z),0.0f,0.75f);
+		}
 
 		float getLerPValue(float z) {
 			if ((z <= 0.0004882813f) && (z >= 0.000))
@@ -91,13 +95,13 @@ Shader "Custom/Outline" {
 		v2f vert(appdata_t IN)
 		{
 			v2f OUT;
-			float z = 0;
-			if (_Nucleic==0) z = getLerPValue(mul(unity_ObjectToWorld, IN.vertex).z);//0.0004882813,0.1254883,0.2504883
-			else z = getLerPValueNucleic(mul(unity_ObjectToWorld, IN.vertex).z);
+			float z = mul(unity_ObjectToWorld, IN.vertex).z;
+			//if (_Nucleic==0) z = getLerPValue(z);//0.0004882813,0.1254883,0.2504883
+			//else z = getLerPValueNucleic(z);
 			OUT.vertex = UnityObjectToClipPos(IN.vertex);
 			OUT.texcoord = IN.texcoord;
 			//OUT.worldPos = mul(unity_ObjectToWorld, IN.vertex).xyz;
-			OUT.color = IN.color * lerp(_Color, unity_FogColor, z);
+			OUT.color = IN.color * lerp(_Color, unity_FogColor, LerpByDepth(z));
 //#ifdef PIXELSNAP_ON
 //			OUT.vertex = UnityPixelSnap(OUT.vertex);
 //#endif
@@ -156,9 +160,17 @@ Shader "Custom/Outline" {
 
 		int getKernelSizeNucleic(float z) {
 			int  kernelSize = 1;
-			if (z == 0.0f) { kernelSize = 1; }
-			if ((z > 0.0f) && (z < 0.95f)) { kernelSize = 8; }
-			if (z == 0.95f) { kernelSize = 12; }
+			if (z < 0.125f) { kernelSize = 1; }
+			if ((z >= 0.125f) && (z < 0.250f)) { kernelSize = 8; }
+			if (z >= 0.250f) { kernelSize = 12; }
+			return kernelSize;
+		}
+
+		float KernelLerpByDepth(float z) {
+			int  kernelSize = 1;
+			if ( (z > 0.05f) && z < 0.125f) { kernelSize = (int) (z * 4.0f/0.125f)+1; }
+			if ((z >= 0.125f) && (z < 0.250f)) { kernelSize = (int) ((z-0.125) * 4.0f/0.125f)+4;  }
+			if (z >= 0.250f) { kernelSize = 12; }
 			return kernelSize;
 		}
 
@@ -168,17 +180,13 @@ Shader "Custom/Outline" {
 			int scalep = (int)_Outline;
 			int kernelSize = 1;
 			float z = IN.z.x;
-			if (_Nucleic == 0) kernelSize = getKernelSizeNucleic(z);
-			else kernelSize = getKernelSizeNucleic(z);
-			if (z == 0.0f) { kernelSize = 1; }
-			if (z == 0.375f) { kernelSize = 8; }
-			if (z == 0.75f) { kernelSize = 16; }
+			kernelSize = KernelLerpByDepth(z);
 			//to use the blur 
-			fixed4 c = BlurTexels(IN.texcoord,kernelSize);
-			//fixed4 c = SampleSpriteTexture (IN.texcoord);
+			fixed4 c = tex2D(_MainTex,IN.texcoord);
+			if (kernelSize > 1)
+				c = BlurTexels(IN.texcoord,kernelSize);
 			c.rgb *= (c.a * IN.color);
 			// If outline is enabled and there is a pixel, try to draw an outline.
-
 			if (_Outline > 0 && c.a != 0) {
 				float totalAlpha = 1.0;
 				[unroll(16)]
@@ -200,10 +208,14 @@ Shader "Custom/Outline" {
 				if (totalAlpha < 0.33f) //&&totalAlpha > 0.005f)
 				{
 					c.rgba = fixed4(1, 1, 1, 1) * _OutlineColor;
-					if (_Nucleic == 0) c.a = totalAlpha;
+					//if (_Nucleic == 0) 
+					c.a = totalAlpha;
 				}
 			}
-			c.a *= _Color.a;
+			else {
+				c.a = min(_Color.a,c.a);
+			}
+			//c.a *= _Color.a;
 			//c.rgb *= c.a;
 			//c.a = 1;
 			//c.rgb = fixed4(c.rgb.r, c.rgb.g, c.rgb.b, c.a);
