@@ -16,6 +16,8 @@ public class RecipeUI : MonoBehaviour {
     public TextAsset recipe;
     public TextAsset ingredients_description;
     public GameObject item_prefab;
+    public GameObject item_list_prefab;
+    public bool is_gridView = true; //Grid is the starting state.
     public Dropdown recipe_list;
     public Text current_recipe_label;
     public Text current_compartment_label;
@@ -35,6 +37,7 @@ public class RecipeUI : MonoBehaviour {
     private int last_nbitems;
     private List<Hex> hex_grid;
     private List<GameObject> hex_instance;
+    private List<GameObject> hex_list_instance;
     public List<int> Compartments;
     public Dictionary<int,string> CompartmentsIDS;
     public Dictionary<string,int> CompartmentsNames;
@@ -55,6 +58,7 @@ public class RecipeUI : MonoBehaviour {
         CompartmentsNames = new Dictionary<string, int>();
         CompartmentsIngredients_ids = new Dictionary<int, List<int>>();
         hex_instance = new List<GameObject>();
+        hex_list_instance = new List<GameObject>();
         hex_grid = new List<Hex>();
 
         if (Manager.Instance.AllIngredients == null)
@@ -117,23 +121,44 @@ public class RecipeUI : MonoBehaviour {
         for (int count = 0; count < total_counts; count++)
         {
             var ig_id = CompartmentsIngredients_ids[cid][count];
-            if (Manager.Instance.ingredients_ids.ContainsKey(ig_id))// ig_id < Manager.Instance.ingredients_names.Count)
+            if (is_gridView)
             {
-                string iname = Manager.Instance.ingredients_ids[ig_id];
-                if (count < hex_instance.Count)
+                if (Manager.Instance.ingredients_ids.ContainsKey(ig_id))// ig_id < Manager.Instance.ingredients_names.Count)
                 {
-                    if (Manager.Instance.bucketMode)
-                        hex_instance[count].GetComponent<Toggle>().group = null;
-                    else
-                        hex_instance[count].GetComponent<Toggle>().group = GetComponent<ToggleGroup>();
+                    string iname = Manager.Instance.ingredients_ids[ig_id];
+                    if (count < hex_instance.Count)
+                    {
+                        if (Manager.Instance.bucketMode)
+                            hex_instance[count].GetComponent<Toggle>().group = null;
+                        else
+                            hex_instance[count].GetComponent<Toggle>().group = GetComponent<ToggleGroup>();
 
-                    if (Manager.Instance.selected_prefab.Contains(iname))
-                        hex_instance[count].GetComponent<Toggle>().isOn = true;
-                    else
-                        hex_instance[count].GetComponent<Toggle>().isOn = false;
+                        if (Manager.Instance.selected_prefab.Contains(iname))
+                            hex_instance[count].GetComponent<Toggle>().isOn = true;
+                        else
+                            hex_instance[count].GetComponent<Toggle>().isOn = false;
+                    }
                 }
             }
+            else
+            {
+                if (Manager.Instance.ingredients_ids.ContainsKey(ig_id))// ig_id < Manager.Instance.ingredients_names.Count)
+                {
+                    string iname = Manager.Instance.ingredients_ids[ig_id];
+                    if (count < hex_list_instance.Count)
+                    {
+                        if (Manager.Instance.bucketMode)
+                            hex_list_instance[count].GetComponent<Toggle>().group = null;
+                        else
+                            hex_list_instance[count].GetComponent<Toggle>().group = GetComponent<ToggleGroup>();
 
+                        if (Manager.Instance.selected_prefab.Contains(iname))
+                            hex_list_instance[count].GetComponent<Toggle>().isOn = true;
+                        else
+                            hex_list_instance[count].GetComponent<Toggle>().isOn = false;
+                    }
+                }
+            }
         }
     }
 
@@ -323,7 +348,15 @@ public class RecipeUI : MonoBehaviour {
         Manager.Instance.SwitchPrefabFromName(iname);
         var prefab = Manager.Instance.all_prefab[iname];
         Manager.Instance.changeDescription(prefab, prefab.GetComponent<SpriteRenderer>());
-        hex_instance[0].GetComponent<Toggle>().isOn = true;
+        if (is_gridView)
+        {
+            hex_instance[0].GetComponent<Toggle>().isOn = true;
+        }
+        else
+        {
+            hex_list_instance[0].GetComponent<Toggle>().isOn = true;
+        }
+
     }
     
     public void MergeRecipe(string filename = null) 
@@ -395,7 +428,14 @@ public class RecipeUI : MonoBehaviour {
         Manager.Instance.SwitchPrefabFromName(iname);
         var prefab = Manager.Instance.all_prefab[iname];
         Manager.Instance.changeDescription(prefab, prefab.GetComponent<SpriteRenderer>());
-        hex_instance[0].GetComponent<Toggle>().isOn = true;
+        if (is_gridView)
+        {
+            hex_instance[0].GetComponent<Toggle>().isOn = true;
+        }
+        else
+        {
+            hex_list_instance[0].GetComponent<Toggle>().isOn = true;
+        }
     }
 
     //need the path in the name so we keep info on compartment
@@ -570,10 +610,17 @@ public class RecipeUI : MonoBehaviour {
     public void filterHighlightHexGrid(string filter)
     {
         //highlight the one filtered
+     
         foreach (var item in hex_instance)
         {
             item.SetActive(false);
         }
+      
+        foreach (var item in hex_list_instance)
+        {
+            item.SetActive(false);
+        }
+        
     }
 
     public void displayTileCounts()
@@ -601,7 +648,7 @@ public class RecipeUI : MonoBehaviour {
                 else
                 {
                     label_txt.text = prefab_name;
-                    label.SetActive(false);
+                    if (is_gridView) label.SetActive(false);
                     var colors = child.GetComponent<Toggle>().colors;
                     colors.normalColor = Color.white;
                     child.GetComponent<Toggle>().colors = colors;
@@ -637,17 +684,34 @@ public class RecipeUI : MonoBehaviour {
     private void oneHexInstance(int count, Point p, int ig_id) {
         GameObject instance;
         toggleLabelButtons instance_props;
-
-        if (count >= hex_instance.Count)
+        if(is_gridView)
         {
-            instance = GameObject.Instantiate(item_prefab);//, getPosOnCircle(currentR), Quaternion.AngleAxis(currentR, Vector3.right)) as GameObject;
-            hex_instance.Add(instance);
-            instance.GetComponent<Toggle>().group = GetComponent<ToggleGroup>();
-            instance.SetActive(false);
+            if (count >= hex_instance.Count)
+            {
+                instance = GameObject.Instantiate(item_prefab);
+                hex_instance.Add(instance);
+            }
+            else 
+            {
+                instance = hex_instance[count];
+            }
         }
-        else {
-            instance = hex_instance[count];
+        else
+        {
+            if (count >= hex_list_instance.Count)
+            {
+                instance = GameObject.Instantiate(item_list_prefab);
+                hex_list_instance.Add(instance);
+            }
+            else 
+            {
+                instance = hex_list_instance[count];
+            }
         }
+            //instance = GameObject.Instantiate(item_prefab);//, getPosOnCircle(currentR), Quaternion.AngleAxis(currentR, Vector3.right)) as GameObject;
+            
+        instance.GetComponent<Toggle>().group = GetComponent<ToggleGroup>();
+        instance.SetActive(false);
 
         if (!Manager.Instance.ingredients_ids.ContainsKey(ig_id))//  ig_id >= Manager.Instance.ingredients_names.Count)
         {
@@ -675,7 +739,9 @@ public class RecipeUI : MonoBehaviour {
 
         instance_props = instance.GetComponent<toggleLabelButtons>();
 
-        
+        if (is_gridView) {instance_props.label.SetActive(false);}
+        else {instance_props.label.SetActive(true);}
+
         Debug.Log("iname is hexinstance " + iname+" "+ img_name);
         if (!Manager.Instance.prefab_materials.ContainsKey(iname))
         {
@@ -718,7 +784,16 @@ public class RecipeUI : MonoBehaviour {
             //Debug.Log(iname);
             instance_props.protein_sprite.sprite = sprite;
             float ratio = (float)instance_props.protein_sprite.sprite.texture.width / (float)instance_props.protein_sprite.sprite.texture.height;
-            float s = 80;
+            float s;
+            if (is_gridView)
+            {
+                s = 80.0f;
+            }
+            else
+            {
+                s = 30.0f;
+            }
+            //float s = 80;
             float h = (s / ratio);
             if (h > s) instance_props.protein_sprite.rectTransform.sizeDelta = new Vector2((int)(s / ratio), s);
             else  instance_props.protein_sprite.rectTransform.sizeDelta = new Vector2(s, (int)(s / ratio));
@@ -765,9 +840,17 @@ public class RecipeUI : MonoBehaviour {
         var cid = Compartments[current_cid];
         //clean the prefab or just change the image
         hex_grid.Clear();
-        foreach (var item in hex_instance) {
+        
+        foreach (var item in hex_instance)  
+        {
             item.SetActive(false);
         }
+        
+        foreach (var item in hex_list_instance)  
+        {
+            item.SetActive(false);
+        }
+        
         Layout flat = new Layout(Layout.flat, new Point(55, 55), new Point(0, 0));
         int count = 0;
         //int start_id = (int)CompartmentsIngredients[current_compartments].x;
@@ -801,6 +884,7 @@ public class RecipeUI : MonoBehaviour {
         Debug.Log("populateHexGridFromCenterSpiral "+CompartmentsIngredients_ids[cid].Count.ToString());
         //clean the prefab or just change the image
         hex_grid.Clear();
+      
         foreach (var item in hex_instance)
         {
             item.SetActive(false);
@@ -812,6 +896,19 @@ public class RecipeUI : MonoBehaviour {
             }
             if (item.GetComponent<Text>()) item.SetActive(false);
         }
+        
+        foreach (var item in hex_list_instance)
+        {
+            item.SetActive(false);
+            if (item.GetComponent<Toggle>())
+            {
+                var colors = item.GetComponent<Toggle>().colors;
+                colors.normalColor = Color.white;
+                item.GetComponent<Toggle>().colors = colors;
+            }
+            if (item.GetComponent<Text>()) item.SetActive(false);
+        }
+        
         //layout is the orientation of the hex
         Layout flat = new Layout(Layout.flat, new Point(55, 55), new Point(0, 0));
         
@@ -843,6 +940,7 @@ public class RecipeUI : MonoBehaviour {
         //Debug.Log("populateHexGridFromCenterSpiral "+CompartmentsIngredients_ids[cid].Count.ToString());
         //clean the prefab or just change the image
         hex_grid.Clear();
+
         foreach (var item in hex_instance)
         {
             item.SetActive(false);
@@ -854,6 +952,19 @@ public class RecipeUI : MonoBehaviour {
             }
             if (item.GetComponent<Text>()) item.SetActive(false);
         }
+        
+        foreach (var item in hex_list_instance)
+        {
+            item.SetActive(false);
+            if (item.GetComponent<Toggle>())
+            {
+                var colors = item.GetComponent<Toggle>().colors;
+                colors.normalColor = Color.white;
+                item.GetComponent<Toggle>().colors = colors;
+            }
+            if (item.GetComponent<Text>()) item.SetActive(true);
+        }
+        
         //layout is the orientation of the hex
         Layout flat = new Layout(Layout.flat, new Point(55, 55), new Point(0, 0));
         
@@ -909,6 +1020,7 @@ public class RecipeUI : MonoBehaviour {
         //if (hex_grid == null) return;
         if (hex_grid !=null) {hex_grid.Clear();}
         //if (item_add_prefab_instance != null) { item_add_prefab_instance.SetActive(false); }
+
         foreach (var item in hex_instance)
         {
             item.SetActive(false);
@@ -919,6 +1031,18 @@ public class RecipeUI : MonoBehaviour {
                 item.GetComponent<Toggle>().colors = colors;
             }
             if (item.GetComponent<Text>()) item.SetActive(false);
+        }
+        
+        foreach (var item in hex_list_instance)
+        {
+            item.SetActive(false);
+            if (item.GetComponent<Toggle>())
+            {
+                var colors = item.GetComponent<Toggle>().colors;
+                colors.normalColor = Color.white;
+                item.GetComponent<Toggle>().colors = colors;
+            }
+            if (item.GetComponent<Text>()) item.SetActive(false);      
         }
         //layout is the orientation of the hex
         Layout flat = new Layout(Layout.flat, new Point(55, 55), new Point(0, 0));
@@ -1071,9 +1195,111 @@ public class RecipeUI : MonoBehaviour {
             Manager.Instance.SwitchPrefabFromName(cname+"_membrane");
             var prefab = Manager.Instance.all_prefab[cname+"_membrane"];
             Manager.Instance.changeDescription(prefab, prefab.GetComponent<SpriteRenderer>());
-            hex_instance[0].GetComponent<Toggle>().isOn = true;            
+            if(is_gridView)
+            {
+                hex_instance[0].GetComponent<Toggle>().isOn = true; 
+            }
+            else
+            {
+                hex_list_instance[0].GetComponent<Toggle>().isOn = true;
+            }           
         }
     }
+
+    public void switchToGridView()
+    {
+        if (is_gridView) return;
+        //Switch layout group to grid and set new settings.
+
+        //First Destroy the current layout group
+        is_gridView = true;
+        VerticalLayoutGroup vertLayout = parent.transform.GetComponent<VerticalLayoutGroup>();
+        DestroyImmediate(vertLayout);
+
+        GridLayoutGroup gridLayout = parent.transform.gameObject.AddComponent<GridLayoutGroup>() as GridLayoutGroup;
+
+        gridLayout.cellSize = new Vector2 (95, 95);
+        gridLayout.spacing = new Vector2 (0,0);
+
+        //Now get children and swap them for the grid prefab.
+        var cid = Compartments[current_cid];
+        int ingredientCount = CompartmentsIngredients_ids[cid].Count();
+
+        Layout flat = new Layout(Layout.flat, new Point(55, 55), new Point(0, 0));
+
+        Transform[] items_Container = parent.transform.GetComponentsInChildren<Transform>();
+
+        /*foreach (Transform child in items_Container)
+        {
+
+            child.gameObject.SetActive(false);
+        }*/
+
+        foreach (var item in hex_list_instance)
+        {
+            item.SetActive(false);
+            if (item.GetComponent<Toggle>())
+            {
+                var colors = item.GetComponent<Toggle>().colors;
+                colors.normalColor = Color.white;
+                item.GetComponent<Toggle>().colors = colors;
+            }
+            if (item.GetComponent<Text>()) item.SetActive(false);      
+        }
+
+        for (int i =0; i <= ingredientCount-1;i++)
+        {
+            Point p = Layout.HexToPixel(flat, hex_grid[i]);
+            oneHexInstance(i, p, CompartmentsIngredients_ids[cid][i]);
+        }
+    }
+
+    public void switchToListView()
+    {
+        if (!is_gridView) return;
+        //Switch layout group to vertical and set new settings.
+        is_gridView = false;
+        GridLayoutGroup gridLayout = parent.transform.GetComponent<GridLayoutGroup>();
+        DestroyImmediate(gridLayout);
+
+        VerticalLayoutGroup vertLayout = parent.transform.gameObject.AddComponent<VerticalLayoutGroup>() as VerticalLayoutGroup;
+        vertLayout.spacing = 40.0f;
+        vertLayout.padding = new RectOffset (25,0,25,25);
+
+
+        //Now get children and swap them for the list prefab.
+        var cid = Compartments[current_cid];
+        int ingredientCount = CompartmentsIngredients_ids[cid].Count();
+
+        //Parse over all children objects and check for inactive item prefabs
+        Layout flat = new Layout(Layout.flat, new Point(55, 55), new Point(0, 0));
+
+        Transform[] items_Container = parent.transform.GetComponentsInChildren<Transform>();
+
+        /*foreach (Transform child in items_Container)
+        {
+            child.gameObject.SetActive(false);
+        }*/
+        foreach (var item in hex_instance)
+        {
+            item.SetActive(false);
+            if (item.GetComponent<Toggle>())
+            {
+                var colors = item.GetComponent<Toggle>().colors;
+                colors.normalColor = Color.white;
+                item.GetComponent<Toggle>().colors = colors;
+            }
+            if (item.GetComponent<Text>()) item.SetActive(false);      
+        }
+        
+        for (int i =0; i <= ingredientCount-1;i++)
+        {
+            Point p = Layout.HexToPixel(flat, hex_grid[i]);
+            oneHexInstance(i, p, CompartmentsIngredients_ids[cid][i]);
+        }
+    }
+
+
 
     public void RemoveIngredient(string ing_name,int cid=-1, bool update_ui=true){
 

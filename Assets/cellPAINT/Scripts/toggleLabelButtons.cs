@@ -10,6 +10,7 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
  
 
     public bool only_ui = false;
+    public bool is_ListView = false;
     private bool count_updated = false;
     public GameObject label;
     public string prefab_name="";
@@ -280,7 +281,7 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
     void Exit(BaseEventData eventData) {
         if (!only_ui) {
             Debug.Log("exit " + prefab_name);
-            if (!count_updated) label.SetActive(false);
+            if (!count_updated & !is_ListView) label.SetActive(false);
             if (Manager.Instance.all_prefab.ContainsKey(Manager.Instance.last_active_current_name_below)){
                 Manager.Instance.current_name_below = Manager.Instance.last_active_current_name_below;
                 Manager.Instance.current_objectparent_below = null;

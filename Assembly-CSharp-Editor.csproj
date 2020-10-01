@@ -271,17 +271,35 @@
     <Reference Include="Accord">
         <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Assets/Plugins/Accord/Accord.dll</HintPath>
     </Reference>
+    <Reference Include="Accord.MachineLearning">
+        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Assets/Plugins/Accord/Accord.MachineLearning.dll</HintPath>
+    </Reference>
+    <Reference Include="Accord.MachineLearning.GPL">
+        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Assets/Plugins/Accord/Accord.MachineLearning.GPL.dll</HintPath>
+    </Reference>
     <Reference Include="Accord.Math.Core">
         <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Assets/Plugins/Accord/Accord.Math.Core.dll</HintPath>
     </Reference>
     <Reference Include="Accord.Math">
         <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Assets/Plugins/Accord/Accord.Math.dll</HintPath>
     </Reference>
+    <Reference Include="Accord.Statistics">
+        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Assets/Plugins/Accord/Accord.Statistics.dll</HintPath>
+    </Reference>
     <Reference Include="Ookii.Dialogs">
         <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Assets/Plugins/crosstales/FileBrowser/Native/Windows/Ookii.Dialogs.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms">
         <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Assets/Plugins/crosstales/FileBrowser/Native/Windows/System.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="Selenium.WebDriverBackedSelenium">
+        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Assets/Plugins/selenium/Selenium.WebDriverBackedSelenium.dll</HintPath>
+    </Reference>
+    <Reference Include="WebDriver">
+        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Assets/Plugins/selenium/WebDriver.dll</HintPath>
+    </Reference>
+    <Reference Include="WebDriver.Support">
+        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Assets/Plugins/selenium/WebDriver.Support.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
         <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll</HintPath>
@@ -666,6 +684,9 @@
     </Reference>
     <Reference Include="Unity.Rider.Editor">
         <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.2D.Sprite.Editor">
+        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Library/ScriptAssemblies/Unity.2D.Sprite.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
         <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
