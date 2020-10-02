@@ -29,6 +29,7 @@ public class Add_ingredient_ui : MonoBehaviour
     public InputField fiber_length_field;
     public InputField comp_name_field;
     public Toggle auth_id;
+    public Toggle color_by_chain;
     public Text log_label;
     public Button Load;
     public Button Illustrate;
@@ -273,7 +274,9 @@ public class Add_ingredient_ui : MonoBehaviour
             if (input_seletion!="") query += "&selection="+input_seletion;
             if (input_model!="") query += "&model="+input_model;
             query+="&qid="+query_id.ToString();
-            query+="&use_authid="+auth_id.isOn.ToString();//default is false
+            query+="&use_authid="+auth_id.isOn.ToString().ToLower();//default is false
+            query+="&bychain="+color_by_chain.isOn.ToString().ToLower();
+            Debug.Log(query);
             StartCoroutine(GetRequest(query));
         }
     }
