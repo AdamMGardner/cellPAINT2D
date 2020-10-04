@@ -8,8 +8,8 @@ public class Group
 {
     public string name;
     public Dictionary<int,List<GameObject>> childs ;
-    public Group(string name){
-        name = name;
+    public Group(string aname){
+        name = aname;
         childs = new Dictionary<int,List<GameObject>>();
     }
 }
@@ -104,7 +104,6 @@ public class GroupManager : MonoBehaviour
     public Bounds getBound() {
         Vector3 center = Vector3.zero;
         float r = 0.0f;
-        bool first = true;
         int ntotal = 0;
         foreach (var o in current_selections)
         {

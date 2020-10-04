@@ -56,6 +56,7 @@ public class SecondCameraScript : MonoBehaviour {
                 if (!mapping.ContainsKey(r))
                     mapping.Add(r,o.name);
                 color_back[count] = ren.material.color;
+                ren.material.color = new Color(r, 1, 1, 1);
                 ren.material.SetFloat("_distance_mode", r);
                 MaterialPropertyBlock mpb = new MaterialPropertyBlock();
                 ren.GetPropertyBlock(mpb);
@@ -83,7 +84,7 @@ public class SecondCameraScript : MonoBehaviour {
                 ren.material.color = new Color(r, 1, 1, 1);
                 ren.material.SetFloat("_distance_mode", 1.0f);
                 r += 0.01f;
-                Debug.Log("myPreRender "+o.name+" "+r.ToString());
+                //Debug.Log("myPreRender "+o.name+" "+r.ToString());
                 MaterialPropertyBlock mpb = new MaterialPropertyBlock();
                 ren.GetPropertyBlock(mpb);
                 mpb.SetFloat("_distance_mode", 1.0f);
@@ -103,7 +104,7 @@ public class SecondCameraScript : MonoBehaviour {
 
             if (r != null)
             {
-                Debug.Log("myPostRender "+o.name);
+                //Debug.Log("myPostRender "+o.name);
                 r.material.color = color_back[count];
                 r.material.SetFloat("_distance_mode", 1.0f);
                 MaterialPropertyBlock mpb = new MaterialPropertyBlock();
@@ -118,15 +119,15 @@ public class SecondCameraScript : MonoBehaviour {
     public void OnEnable()
     {
         // register the callback when enabling object
-        //Camera.onPreRender += myPreRender;
-        //Camera.onPostRender += myPostRender;
+        Camera.onPreRender += myPreRender;
+        Camera.onPostRender += myPostRender;
     }
 
     public void OnDisable()
     {
         // remove the callback when disabling object
-        //Camera.onPreRender -= myPreRender;
-        //Camera.onPostRender -= myPostRender;
+        Camera.onPreRender -= myPreRender;
+        Camera.onPostRender -= myPostRender;
     }
     
 	// Update is called once per frame
@@ -135,6 +136,6 @@ public class SecondCameraScript : MonoBehaviour {
         {
             cam.orthographicSize = mainCamera.orthographicSize;
         }
-        SetMapping();
+        //SetMapping();
 	}
 }

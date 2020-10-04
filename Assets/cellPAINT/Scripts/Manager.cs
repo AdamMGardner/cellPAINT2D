@@ -202,8 +202,8 @@ public class Manager : MonoBehaviour {
     public List<string> additional_ingredients_names = new List<string>();
     public List<string> additional_compartments_names = new List<string>();
     public Dictionary<int,string> sprites_names = new Dictionary<int, string>();
+    public Dictionary<string,Texture2D> sprites_textures = new Dictionary<string, Texture2D>();
     //public List<GameObject> ingredients_prefab = new List<GameObject>();
-
 
     [HideInInspector]
     public List<Rigidbody2D> everything;
@@ -268,7 +268,7 @@ public class Manager : MonoBehaviour {
 
     public float zLevel = 0.00f;
     public float colorValue = 1.00f;
-    public bool layerDirection;
+    public bool layerDirection = true;
     private float lerp_time = 0.0f;
     //public float bicycle_radius = 1.0f;//should be equal the size of the membrane
 
@@ -683,7 +683,8 @@ public class Manager : MonoBehaviour {
 #if UNITY_EDITOR
         string aname = P.name;
         P.name = name;
-        PrefabUtility.CreatePrefab(path, P, ReplacePrefabOptions.ReplaceNameBased);
+        PrefabUtility.SaveAsPrefabAsset(P,path);
+        //PrefabUtility.CreatePrefab(path, P, ReplacePrefabOptions.ReplaceNameBased);
         P.name = aname;
 #endif
     }
@@ -746,12 +747,21 @@ public class Manager : MonoBehaviour {
         var sprite = Resources.Load<Sprite>("Recipie/" + Path.GetFileNameWithoutExtension(img_name));
         if (sprite == null)
         {
-            var ext = Path.GetExtension(img_name);
-            var iname = Path.GetFileNameWithoutExtension(img_name);
-            var image_path = PdbLoader.GetAFile(iname, "images", ext);
-            if ( image_path == null ) sprite = Resources.Load<Sprite>("Recipie/error");
-            else sprite = LoadNewSprite(image_path);
+            Debug.Log("GetSprite "+sprites_textures.ContainsKey(img_name));
+            //check in the dictionary
+            if (sprites_textures.ContainsKey(img_name)){
+                var SpriteTexture = sprites_textures[img_name];
+                sprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0.5f, 0.5f), 100.0f);
+            }
+            else {
+                var ext = Path.GetExtension(img_name);
+                var iname = Path.GetFileNameWithoutExtension(img_name);
+                var image_path = PdbLoader.GetAFile(iname, "images", ext);
+                if ( image_path == null ) sprite = Resources.Load<Sprite>("Recipie/error");
+                else sprite = LoadNewSprite(image_path);
+            }
         }
+        Debug.Log("Return Sprite "+sprite.name);
         return sprite;
     }
 
@@ -1337,7 +1347,7 @@ public class Manager : MonoBehaviour {
         fiber_quadOb.transform.parent = fiber_parent.transform;
         fiber_quadOb.transform.SetSiblingIndex(fibers_instances[fiber_parents.Count-1].Count);
         fibers_instances[fiber_parents.Count-1].Add(fiber_quadOb);
-        int st = 0;
+        //int st = 0;
         int indice = 0;
         if (other == null)
         {
@@ -1368,7 +1378,7 @@ public class Manager : MonoBehaviour {
             limits.max = props.hingeJoint_UPPERlimit;
             hinge.limits = limits;
             hinge.useLimits = props.fiber_hingeJoint_limits;
-            st = 1;
+            //st = 1;
 
             /*
             hinge.useMotor = true;
@@ -1458,8 +1468,8 @@ public class Manager : MonoBehaviour {
             first.transform.rotation = last.transform.rotation;
             hinge.connectedBody = first.gameObject.GetComponent<Rigidbody2D>();
         }
+        /*
         int start = 0;
-        int nchild = fiber_parent.transform.childCount;
         if ((fiber_distanceJoint) && (fiber_parent.transform.childCount > 1))
         {
             start = 1;
@@ -1468,6 +1478,8 @@ public class Manager : MonoBehaviour {
         {
             start = 1;
         }
+        */
+        int nchild = fiber_parent.transform.childCount;
         int st = 0;
         int end = nchild - 1;
         bool enableCollision = myPrefab.GetComponent<PrefabProperties>().enableCollision;
@@ -1720,6 +1732,7 @@ public class Manager : MonoBehaviour {
         fiber_parents = new List<GameObject>();
         fibers_instances = new List<List<GameObject>>();
         surface_objects = new List<GameObject>();
+        sprites_textures.Clear();
         //all_prefab = new Dictionary<string, GameObject>();
         secondCamera.SetReplacementShader(secondShader, "RenderType"); ////Replace shader
 
@@ -2819,13 +2832,12 @@ public class Manager : MonoBehaviour {
                 select o;
         foreach (var o in family) {
             PrefabProperties p = o.GetComponent<PrefabProperties>();
-            if (p)
+            if (p && p.ghost_id == -1)
             {
                 p.outline_width = current_camera.orthographicSize;
                 p.UpdateOutline(toggle);
             }
         }
-
     }
 
     public void DestroyHierarchyFamily(string name)
@@ -3121,7 +3133,7 @@ public class Manager : MonoBehaviour {
             if (Input.GetMouseButtonDown(0))
             {
                 if (_shift) {
-                    if (p.is_fiber)
+                    if (p.is_fiber && p.ghost_id == -1)
                     {
                         if (!GroupManager.Get.current_selections.Contains(other.transform.parent.gameObject))
                             GroupManager.Get.current_selections.Add(other.transform.parent.gameObject);
@@ -3143,12 +3155,12 @@ public class Manager : MonoBehaviour {
                 }
                 else {
                 //add to current_selection and keep highlighted
-                    if (p.is_fiber)
+                    if (p.is_fiber&& p.ghost_id == -1)
                     {
                         if (!GroupManager.Get.current_selections.Contains(other.transform.parent.gameObject))
                             GroupManager.Get.current_selections.Add(other.transform.parent.gameObject);
                     }
-                    else if ((pg || p.is_Group)&& group_interact_mode){
+                    else if ((pg || p.is_Group)&& group_interact_mode&& p.ghost_id == -1){
                         if (!GroupManager.Get.current_selections.Contains(other))
                                 GroupManager.Get.current_selections.Add(other);                    
                     }
@@ -3300,12 +3312,12 @@ public class Manager : MonoBehaviour {
             if (Input.GetMouseButtonDown(0))
             {
                 if (_shift) {
-                    if (p.is_fiber)
+                    if (p && p.is_fiber)
                     {
                         if (!GroupManager.Get.current_selections.Contains(other.transform.parent.gameObject))
                             GroupManager.Get.current_selections.Add(other.transform.parent.gameObject);
                     }
-                    else if (pg || p.is_Group){
+                    else if (pg || (p &&p.is_Group)){
                         var family =
                             from o in Manager.Instance.root.transform.GetComponentsInChildren<PrefabGroup>()
                             where o.name == pg.name
@@ -3328,12 +3340,12 @@ public class Manager : MonoBehaviour {
                 }
                 else {
                 //add to current_selection and keep highlighted
-                    if (p.is_fiber)
+                    if (p && p.is_fiber)
                     {
                         if (!GroupManager.Get.current_selections.Contains(other.transform.parent.gameObject))
                             GroupManager.Get.current_selections.Add(other.transform.parent.gameObject);
                     }
-                    else if ((pg || p.is_Group)&& group_interact_mode){
+                    else if ((pg || (p &&p.is_Group))&& group_interact_mode){
                         if (!GroupManager.Get.current_selections.Contains(other))
                                 GroupManager.Get.current_selections.Add(other);                    
                     }
@@ -4265,6 +4277,7 @@ public class Manager : MonoBehaviour {
             fillCompartments();
         }
         else if (measureMode){
+            if (mask_ui) return;
             MeasureManager.Get.DoMeasure();
         }
         else { }
@@ -4307,97 +4320,6 @@ public class Manager : MonoBehaviour {
         //yield return new WaitForEndOfFrame();
         StartCoroutine(jitterCoroutine());
         //yield return null;
-    }
-
-
-    //jitter as a coroutine ?
-    void JitterRB()
-    {
-        return;
-        if ( (count_update %2) == 0)
-        {
-            count_update++;
-            return;
-        }
-        count_update++;
-        if (Input.GetMouseButton(0)) return;
-        even = !even;
-        //even = (count_update % 2)==0;
-
-        //handle the jitter through the arrary of rigid bodies.
-        if (scale_force == 0) return;
-
-        for (int i = 0; i < rbCount; i++)
-        {
-            Rigidbody2D player = everything[i];
-            if (even) {
-                //skip first half
-                if (i < rbCount / 2)
-                {
-                    //player.bodyType = RigidbodyType2D.Static;
-                  // continue;
-                }
-            }
-            else {
-                if (i > rbCount / 2)
-                {
-                    //player.bodyType = RigidbodyType2D.Static;
-                  // continue;
-                }
-            }
-            if (player == null) continue;
-            //player.bodyType = RigidbodyType2D.Dynamic;
-            //player.collisionDetectionMode = CollisionDetectionMode2D.Discrete; //this is slow, put it in the on mouse up!
-            player.AddTorque( UnityEngine.Random.Range(-(timeScale), (timeScale)) * (scale_force / 2), 0);
-            player.AddForce(UnityEngine.Random.insideUnitCircle * scale_force);
-        }
-        for (int i = 0; i < surface_objects.Count; i++)
-        {
-            Rigidbody2D player = surface_objects[i].GetComponent<Rigidbody2D>();
-            if (player == null) continue;
-            //player.bodyType = RigidbodyType2D.Dynamic;
-            //player.collisionDetectionMode = CollisionDetectionMode2D.Discrete; //this is slow, put it in the on mouse up!
-            player.AddTorque( UnityEngine.Random.Range(-(timeScale), (timeScale)) * (scale_force / 2), 0);
-            player.AddForce(UnityEngine.Random.insideUnitCircle * scale_force/10.0f);
-        }
-        for (int i = 0; i < bounded.Length; i++)
-        {
-            Rigidbody2D player = bounded[i];
-            if (player == null) continue;
-            //player.bodyType = RigidbodyType2D.Dynamic;
-            //player.collisionDetectionMode = CollisionDetectionMode2D.Discrete; //this is slow, put it in the on mouse up!
-            player.AddTorque( UnityEngine.Random.Range(-(timeScale), (timeScale)) * (scale_force / 2), 0);
-            player.AddForce(UnityEngine.Random.insideUnitCircle * scale_force);
-        }
-        //fiber?
-    }
-
-    void JitterEverything()
-    {
-        if ((count_update % 2) == 0)
-        {
-            count_update++;
-            return;
-        }
-        count_update++;
-        if (Input.GetMouseButton(0)) return;
-        even = !even;
-        //even = (count_update % 2)==0;
-
-        //handle the jitter through the arrary of rigid bodies.
-        if (scale_force == 0) return;
-        Rigidbody2D[] allrb = root.GetComponentsInChildren<Rigidbody2D>();
-        float reduce = 1.0f;
-        for (int i = 0; i < allrb.Length; i++)
-        {
-            PrefabProperties p = allrb[i].GetComponent<PrefabProperties>();
-            if (p == null) continue;
-            if (p.is_fiber) { reduce = 10.0f; }
-            if (p.is_surface) { reduce = 1.0f / 10.0f; }
-            else reduce = 1.0f;
-            allrb[i].AddTorque( UnityEngine.Random.Range(-(timeScale), (timeScale)) * (scale_force / 2), 0);
-            allrb[i].AddForce(UnityEngine.Random.insideUnitCircle * scale_force * reduce);
-        }
     }
 
     public void SetTimeScale(float value) {
@@ -4623,6 +4545,7 @@ public class Manager : MonoBehaviour {
             Rigidbody2D player = everything[i];
             PrefabProperties p = player.GetComponent<PrefabProperties>();
             if (p.ispined) continue;
+            if (player.bodyType == RigidbodyType2D.Static) continue;
             Vector2 direction_random = UnityEngine.Random.insideUnitCircle;
             if (p == null) continue;
             var R = p.circle_radius * uScale;//nm
@@ -5077,6 +5000,7 @@ public class Manager : MonoBehaviour {
 
     public void ToggleMeasure(bool toggle)
     {
+        Debug.Log("ToggleMeasure");
         allToggleOff();
         if (toggle) allOff = false;
         measureMode = toggle;
@@ -5087,7 +5011,9 @@ public class Manager : MonoBehaviour {
             myPrefab.SetActive(!measureMode);
         }
         pushAway.SetActive(false);
+        Debug.Log("ToggleLineAndLAbel");
         MeasureManager.Get.ToggleLineAndLAbel(toggle);
+        Debug.Log("ToggleLineAndLAbel OK");
     }
 
     public void TogglePin(bool toggle)
@@ -5309,7 +5235,7 @@ public class Manager : MonoBehaviour {
             GameObject.Destroy(child.gameObject);
             //GameObject.Find("Progressbar").GetComponent<Progressbar>().Value = percentFilledInt;
         }
-        int percentFilledInt = 0;
+        //int percentFilledInt = 0;
         proteinArea = 0;
         totalNprotein = 0;        
         //clear the all the count
@@ -5608,9 +5534,9 @@ public class Manager : MonoBehaviour {
 
     public GameObject FindObjectFromIdString(string toFind) {
         var elems = toFind.Split('_');
-        string prefix;
+        //string prefix;
         int id;
-        GameObject ob;
+        //GameObject ob;
         if (elems.Length == 2) {
             //prefix = elems[0].Substring(0,1);
             int fiberparentid = int.Parse(elems[0].Split('F')[1]);

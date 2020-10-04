@@ -8,6 +8,7 @@ TagManager:
   - NA
   - MembraneChain
   - layout
+  - ghost
   layers:
   - Default
   - TransparentFX

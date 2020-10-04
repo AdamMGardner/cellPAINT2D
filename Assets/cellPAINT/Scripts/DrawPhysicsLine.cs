@@ -201,7 +201,7 @@ public class DrawPhysicsLine : MonoBehaviour
 
     }
   
-    private void createLine()
+    /*private void createLine()
     {
         GameObject ob = Instantiate(FiberPrefab, Vector3.zero, Quaternion.identity) as GameObject;
         ob.name = "ob" + nextNameNumber;
@@ -212,7 +212,7 @@ public class DrawPhysicsLine : MonoBehaviour
         line.SetColors(Color.green, Color.green);
         line.useWorldSpace = true;
     }
-    
+    */
     private void closePersistence() {
         int start = 0;
         int nchild = parent.transform.childCount;
@@ -253,7 +253,7 @@ public class DrawPhysicsLine : MonoBehaviour
         Vector3 midPoint = (startPos + endPos) / 2;
         quadOb = Instantiate(FiberPrefab, midPoint, Quaternion.identity) as GameObject;
         quadOb.name = "ob" + nextNameNumber;
-        int count = 0;
+        //int count = 0;
         nextNameNumber++;
         int nchild = parent.transform.childCount;
         quadOb.transform.parent = parent.transform;
@@ -330,7 +330,6 @@ public class DrawPhysicsLine : MonoBehaviour
             RigidbodyAnchor.isKinematic = true;
         }
 
-        int count = 0;
         nextNameNumber++;
         int nchild = parent.transform.childCount;
         quadOb.transform.parent = parent.transform;
@@ -341,7 +340,6 @@ public class DrawPhysicsLine : MonoBehaviour
         //membraneMode = FiberPrefab.GetComponent<PrefabProperties>().sprite_random_switch;
         //Debug.Log("membraneMode is " + membraneMode);
 
-        int st = 0;
         if ((distanceJoint) && (parent.transform.childCount > 1))
         {
             DistanceJoint2D joint = parent.transform.GetChild(nchild - 1).gameObject.AddComponent<DistanceJoint2D>();
@@ -354,7 +352,6 @@ public class DrawPhysicsLine : MonoBehaviour
             CircleCollider2D[] allc = FiberPrefab.GetComponents<CircleCollider2D>();
             joint.anchor = allc[1].offset;
             joint.connectedAnchor = allc[0].offset;
-            st = 1;
         }
         else {
             //quadOb.GetComponent<DistanceJoint2D>().enabled = false;
@@ -376,7 +373,6 @@ public class DrawPhysicsLine : MonoBehaviour
             limits.min = -10.0f;
             limits.max = 10.0f;
             hinge.limits = limits;
-            st = 1;
         }
         else {
            // quadOb.GetComponent<HingeJoint2D>().enabled = false;

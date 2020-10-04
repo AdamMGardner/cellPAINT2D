@@ -18,7 +18,8 @@ namespace UIWidgets
 		{
 			#if UNITY_5_2 || UNITY_5_3
 			#else
-			EventSystem.current.SetSelectedGameObject(EventSystem.current.lastSelectedGameObject);
+			//obsolete
+			//EventSystem.current.SetSelectedGameObject(EventSystem.current.lastSelectedGameObject);
 			#endif
 		}
 	}

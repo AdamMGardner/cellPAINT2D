@@ -124,7 +124,7 @@ Shader "Sprites/LipidGradient"
 			{
 				float2 screenUV = IN.screenPos.xy / IN.screenPos.w * 0.5f + 0.5f;;
 				float d = distance(screenUV,IN.texcoord);
-				int scalep = (int) _Outline;
+				//int scalep = (int) _Outline;
 				fixed4 c = SampleSpriteTexture (IN.texcoord)* IN.color;
 				fixed4 s = tex2D(_GradientTexture, IN.texcoord)* IN.color;
 				c.rgb *= c.a;

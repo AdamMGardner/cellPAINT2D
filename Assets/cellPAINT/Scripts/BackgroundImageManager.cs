@@ -307,6 +307,34 @@ public class BackgroundImageManager : MonoBehaviour
         bg_Images.Add(path);  
     }
 
+    public void AddBackgroundSprites(Texture2D backgroundImage, string path, Vector3 position, float scale2d, float rotation){
+        if (bg_Images.Contains(path)) return;
+        var sprite_name = Path.GetFileName(path);
+        var sprite_path = Path.GetDirectoryName(path);        
+        Sprite NewSprite = Sprite.Create(backgroundImage, new Rect(0, 0, backgroundImage.width, backgroundImage.height), new Vector2(0.5f, 0.5f), 100.0f);
+        var prefab2d = new GameObject("bg_"+allbg.Count.ToString());
+        prefab2d.transform.parent = bg_holder.transform;
+        prefab2d.transform.position = position;
+        prefab2d.transform.rotation = Quaternion.Euler(0, 0, rotation);
+        prefab2d.layer = LayerMask.NameToLayer("bg_image");
+        //prefab.transform.position = cam.ScreenToWorldPoint(new Vector3(screenShot.width, Screen.height / 2.0f, 20));
+        SpriteRenderer sp = prefab2d.AddComponent<SpriteRenderer>();
+        Material amat = new Material(Manager.Instance.outline_material.shader);
+        amat.renderQueue = 0;
+        sp.material = amat;
+        sp.sprite = NewSprite;
+        sp.sortingOrder = 0;
+        allbg.Add(prefab2d);
+        //the scale
+        var pixel_scale = (Manager.Instance.unit_scale * 10.0f) / 100.0f; // angstrom to pixel
+        var unity_scale2d = 1.0f / (Manager.Instance.unit_scale * 10.0f); // unity to pixel
+        var local_scale = 1.0f/(pixel_scale * scale2d);                // local scale if image is different
+        prefab2d.AddComponent<BoxCollider2D>();
+        prefab2d.transform.localScale = new Vector3(local_scale, local_scale, local_scale);
+        //showBackgroundImageToggle.isOn = true;   
+        bg_Images.Add(path);  
+    }
+
     public void AddBackgroundImage(Texture2D backgroundImage) {
         /*.GetComponent<Renderer>().material.mainTexture = backgroundImage;
         backgroundImageOriginalResoution = new Vector2 (backgroundImage.width, backgroundImage.height);

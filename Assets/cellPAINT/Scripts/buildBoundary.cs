@@ -86,7 +86,7 @@ public class buildBoundary : MonoBehaviour
         return;
         //check if aspect ratio change or window size changed 
         //is that what we want ?
-        last_width = Screen.width;//cam.pixelRect.width;
+        /*last_width = Screen.width;//cam.pixelRect.width;
         last_height = Screen.height;//cam.pixelRect.height;
         var top1 = cam.ScreenToWorldPoint(new Vector2((last_width / 2.0f), last_height + (colliderWidthScreen / 2.0f)));
         var bottom1 = cam.ScreenToWorldPoint(new Vector2(last_width / 2.0f, (-colliderWidthScreen / 2.0f)));
@@ -99,7 +99,7 @@ public class buildBoundary : MonoBehaviour
             if ( W >= prev_W || H >= prev_H || cam.orthographicSize == cm.cameraZoomMax ){
                 changeBoundary();
             }
-        }
+        }*/
         /*
         if (cam.orthographicSize - last_size_max > 0)
             changeBoundary();

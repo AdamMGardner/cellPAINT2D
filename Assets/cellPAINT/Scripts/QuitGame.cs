@@ -3,24 +3,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 //using UnityStandardAssets.ImageEffects;
 using System.Runtime.InteropServices;
 using Crosstales.FB;
 using System.Text;
+using SimpleJSON;
 
 
 public class QuitGame : MonoBehaviour
 {
-//#if UNITY_WEBGL
-
-//        [DllImport("__Internal")]
-//        private static extern void getFileFromBrowser(string objectName, string callbackFuncName);
-        
-//#endif
-
-
     string path;
     float lastTime;
     public string lastScreenshot = "";
@@ -44,14 +38,26 @@ public class QuitGame : MonoBehaviour
     private bool screen_grab = false;
     private string m_LabelContent;
     private bool isTransparent = false;
-
+    private string current_loaded_text;
+    private Texture2D current_loaded_texture;
     protected string m_textPath;
     //protected FileBrowser m_fileBrowser;
 
     private byte[] current_bytes;
     private Texture2D current_screenShot;
     private Rect windowRect;// = new Rect(10, 10, 100, 100);
-    
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+    //
+    // WebGL
+    //
+    [DllImport("__Internal")]
+    private static extern void UploadFile(string gameObjectName, string methodName, string filter, bool multiple);
+    [DllImport("__Internal")]
+    private static extern void DownloadFile(string gameObjectName, string methodName, string filename, byte[] byteArray, int byteArraySize);
+
+#endif
+
     [SerializeField]
     protected Texture2D m_directoryImage,
                         m_fileImage;
@@ -74,6 +80,55 @@ public class QuitGame : MonoBehaviour
         GetComponent<GracesGames.SimpleFileBrowser.Scripts.DemoCaller > ().OpenFileBrowser(save_scene, FileSelectedCallback);
     }
 
+    private IEnumerator OutputRoutineText(string url) {
+        var ext = Path.GetExtension(url);
+        var loader = new WWW(url);
+        yield return loader;
+        current_loaded_text = loader.text;
+        Debug.Log(url);
+        Debug.Log(ext);
+        if (ext == ".txt")
+        {
+            var current_name = "";
+            if (Manager.Instance.myPrefab)
+                current_name = Manager.Instance.myPrefab.name;
+            if (!Manager.Instance.recipeUI.merge_upon_loading) Manager.Instance.Clear();
+            Debug.Log("should load from " + url);
+            LoadFromString(current_loaded_text);
+        }
+        else if (ext == ".json")
+        {
+            //load json recipe
+            var resultData = JSONNode.Parse(current_loaded_text);
+            if (Manager.Instance.recipeUI.merge_upon_loading) {
+                Manager.Instance.recipeUI.MergeRecipe_cb(resultData);
+            } else {
+                Manager.Instance.Clear();
+                Manager.Instance.recipeUI.Clear();
+                Manager.Instance.recipeUI.LoadRecipe_cb(resultData);
+            }
+        }
+        else {
+            //not supported
+            Debug.Log("OutputRoutineText not supported "+url);
+            Debug.Log(ext);
+        }
+    }
+
+    private IEnumerator OutputRoutineTexture(string url) {
+        var loader = new WWW(url);
+        yield return loader;
+        current_loaded_texture = loader.texture;
+        BackgroundImageManager.Get.AddBackgroundSprites(current_loaded_texture,url,Vector3.zero,1.0f,0.0f);
+    }
+
+    private IEnumerator OutputRoutineZip(string url) {
+        var loader = new WWW(url);
+        yield return loader;
+        var zipdata = loader.bytes;
+        LoadFromZipData(zipdata);
+    }
+
     protected void FileSelectedCallback(string path)
     {
         Debug.Log("You are in the callback with file path: " + path);
@@ -88,6 +143,16 @@ public class QuitGame : MonoBehaviour
         save_image = false;
        // SceneManager.Instance.mask_ui = false;
     }
+    public void OnFileUpload(string url) {
+        if (load_scene) { StartCoroutine(OutputRoutineZip(url));}
+        if (load_image) { StartCoroutine(OutputRoutineTexture(url));}
+        save_scene = false;
+        load_scene = false;
+        load_image = false;
+        save_image = false;        
+    }
+
+    public void OnFileDownload() {}
 
     void Start() {
         //path = Application.dataPath;
@@ -124,13 +189,16 @@ public class QuitGame : MonoBehaviour
         //if (ui != null) { ui.SetActive(false); }
         if (path == null) return;
         TakeScreenShot();
-        if (current_bytes == null) return;
+        //if (current_bytes == null) return;
         current_bytes = current_screenShot.EncodeToPNG();
+#if UNITY_WEBGL && !UNITY_EDITOR
+#else        
         System.IO.File.WriteAllBytes(path, current_bytes);
         Debug.Log(string.Format("Screenshot saved to: {0}", path));
         //if (ui != null) { ui.SetActive(true); }
         Application.OpenURL(path);//
         //System.Diagnostics.Process.Start(path);
+#endif
     }
     
     public void LoadImage_cb(string path) 
@@ -229,31 +297,145 @@ public class QuitGame : MonoBehaviour
         LoadFromLines(line);
     }
 
+    void LoadFromZipData(byte[] data) {
+        //create a memorystream from the data
+        string recipe_data_string="";
+        string recipe_json_data="";
+        using (var memoryStream = new MemoryStream())
+        {
+            memoryStream.Write(data, 0 , data.Length);
+            // Set the position to the beginning of the stream.
+            memoryStream.Seek(0, SeekOrigin.Begin);
+
+            using (ZipArchive archive = new ZipArchive(memoryStream, ZipArchiveMode.Read)){
+                foreach (ZipArchiveEntry entry in archive.Entries)
+                {
+                    string fname = entry.Name;
+                    if (entry.FullName.EndsWith(".txt", StringComparison.OrdinalIgnoreCase) && entry.Name!="README.txt")
+                    {
+                        //recipe model
+                        using (var stream = entry.Open())
+                                using (var reader = new StreamReader(stream)) {
+                                    recipe_data_string = reader.ReadToEnd();
+                                }                        
+                    }
+                    else if (entry.FullName.EndsWith(".json", StringComparison.OrdinalIgnoreCase)) 
+                    {
+                        //recipe json
+                        using (var stream = entry.Open())
+                                using (var reader = new StreamReader(stream)) {
+                                    recipe_json_data = reader.ReadToEnd();
+                                }                               
+                    }
+                    else {
+                        //sprites images
+                        using (var stream = entry.Open()){
+                            var mem = new MemoryStream();
+                            stream.CopyTo(mem);
+                            byte[] truncated = mem.ToArray();//or .GetBuffer(); for no copy
+                            Texture2D aTexture = new Texture2D (2,2);
+                            aTexture.LoadImage(truncated);
+                            Debug.Log("Adding a texture "+fname);
+                            Debug.Log("Adding a texture exist ? "+Manager.Instance.sprites_textures.ContainsKey(fname).ToString());
+                            if (Manager.Instance.sprites_textures.ContainsKey(fname)){
+                                //update the sprite?
+                                Debug.Log("what is the texture");
+                                Debug.Log(Manager.Instance.sprites_textures[fname]);
+                                //Manager.Instance.sprites_textures[entry.Name] = aTexture;
+                                Debug.Log("OK");
+                            }
+                            else {
+                                Debug.Log("add the texture "+fname);
+                                Debug.Log(Manager.Instance.sprites_textures.Count.ToString());
+                                Manager.Instance.sprites_textures.Add(fname,aTexture);
+                                Debug.Log("OK");
+                            }
+                        }
+                    } 
+                }
+            }
+        }
+        if (recipe_data_string!="") {
+            if (!Manager.Instance.recipeUI.merge_upon_loading) {
+                Manager.Instance.Clear();
+            }
+            Debug.Log("LoadFromString");
+            LoadFromString(recipe_data_string);
+        }
+        else if (recipe_json_data!="") {
+            //load json recipe
+            var resultData = JSONNode.Parse(recipe_json_data);
+            if (Manager.Instance.recipeUI.merge_upon_loading) {
+                Manager.Instance.recipeUI.MergeRecipe_cb(resultData);
+            } else {
+                Manager.Instance.Clear();
+                Manager.Instance.recipeUI.Clear();
+                Manager.Instance.recipeUI.LoadRecipe_cb(resultData);
+            }            
+        }
+    }
+    byte[] SaveAsZipData(){
+        //build the savefile + all the extra PNG files i one Zip
+        var towrite = SaveScene_cb("",false);
+        using (var memoryStream = new MemoryStream())
+        {
+            using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+            {
+                var demoFile = archive.CreateEntry("moel_file.txt");
+                using (var entryStream = demoFile.Open())
+                {
+                    using (var streamWriter = new StreamWriter(entryStream))
+                    {
+                        streamWriter.Write(towrite);
+                    }
+                }
+                //for every additional ingredient add the png file, and the background images ?
+                int extra_ingredient = Manager.Instance.additional_ingredients_names.Count;
+                for (var i=0;i<extra_ingredient;i++){
+                    var name = Manager.Instance.additional_ingredients_names[i];
+                    var ind = Manager.Instance.ingredients_names[name];
+                    var sprite_name = Manager.Instance.sprites_names[ind];
+                    var texture = Manager.Instance.sprites_textures[sprite_name];
+                    var current_bytes = texture.EncodeToPNG();
+                    var imgFile = archive.CreateEntry(sprite_name);
+                    using (var entryStream = imgFile.Open())
+                    {
+                        entryStream.Write(current_bytes,0,current_bytes.Length);
+                    }
+                }
+            }
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            //get the data 
+            byte[] truncated = memoryStream.ToArray();
+            return truncated;
+        }
+    }
 
     public void SaveScene()
     {
+        int extra_ingredient = Manager.Instance.additional_ingredients_names.Count;
         load_scene = false;
         save_image = false;
         load_image = false;
         save_scene = true;
         if (!use_native_browser) OpenFileBrowser();// GetImage.GetImageFromUserAsync(gameObject.name, "LoadFromString");
         else {
-            string filePath = FileBrowser.SaveFile("Save file", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MySaveFile", "txt");
-            FileSelectedCallback(filePath);
-            /*FileBrowser.SaveFilePanel("Save Scene File", "Save file to....", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "File Name", new string[] { "txt" }, null, (bool canceled, string filePath) =>
-            {
-                if (canceled)
-                {
-                    m_LabelContent = "[Save File] Canceled";
-                    Debug.Log("[Save File] Canceled");
-                    return;
-                }
-
-                m_LabelContent = "[Save File] You can now save the file to the path: " + filePath;
-                Debug.Log("[Save File] You can now save the file to the path: " + filePath);
-
+#if UNITY_WEBGL && !UNITY_EDITOR
+            if (extra_ingredient!=0) {
+                var bytes = SaveAsZipData();
+                DownloadFile(gameObject.name, "OnFileDownload", "MySaveArchive.zip", bytes, bytes.Length);
+            }
+#else         
+            if (extra_ingredient!=0) {
+                string filePath = FileBrowser.SaveFile("Save archive", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MySaveArchive", "zip");
+                var bytes = SaveAsZipData();
+                System.IO.File.WriteAllBytes(filePath, bytes);
+            }       
+            else {
+                string filePath = FileBrowser.SaveFile("Save file", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MySaveFile", "txt");
                 FileSelectedCallback(filePath);
-            });*/
+            }
+#endif  
         }
     }
 
@@ -268,20 +450,12 @@ public class QuitGame : MonoBehaviour
         //getFileFromBrowser(gameObject.name, "LoadFromLines");
         //#else
         else {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            UploadFile(gameObject.name, "OnFileUpload", ".png, .jpeg, .jpg, .tiff, .bmp", false);
+#else                      
             string filePath = FileBrowser.OpenSingleFile("Open single file", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "png","jpeg","jpg","tiff","bmp");
-            /*FileBrowser.OpenFilePanel("Open file Title", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), new string[] { "txt","json" }, null, (bool canceled, string filePath) => {
-                if (canceled)
-                {
-                    m_LabelContent = "[Open File] Canceled";
-                    Debug.Log("[Open File] Canceled");
-                    return;
-                }
-
-                m_LabelContent = "[Open File] Selected file: " + filePath;
-                Debug.Log("[Open File] Selected file: " + filePath);
-                FileSelectedCallback(filePath);
-            });*/
             FileSelectedCallback(filePath);
+#endif                
         }
     }
 
@@ -296,20 +470,13 @@ public class QuitGame : MonoBehaviour
         //getFileFromBrowser(gameObject.name, "LoadFromLines");
         //#else
         else {
-            string filePath = FileBrowser.OpenSingleFile("Open single file", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "txt", "json");
-            /*FileBrowser.OpenFilePanel("Open file Title", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), new string[] { "txt","json" }, null, (bool canceled, string filePath) => {
-                if (canceled)
-                {
-                    m_LabelContent = "[Open File] Canceled";
-                    Debug.Log("[Open File] Canceled");
-                    return;
-                }
-
-                m_LabelContent = "[Open File] Selected file: " + filePath;
-                Debug.Log("[Open File] Selected file: " + filePath);
-                FileSelectedCallback(filePath);
-            });*/
+#if UNITY_WEBGL && !UNITY_EDITOR
+            //should only support zip file here, so we can load txt+png or json+png
+            UploadFile(gameObject.name, "OnFileUpload", ".zip", false);
+#else            
+            string filePath = FileBrowser.OpenSingleFile("Open single file", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "txt", "json","zip");
             FileSelectedCallback(filePath);
+#endif            
         }
     }
 
@@ -324,28 +491,21 @@ public class QuitGame : MonoBehaviour
         if (!use_native_browser) OpenFileBrowser();// GetImage.GetImageFromUserAsync(gameObject.name, "LoadFromString");
         //getFileFromBrowser(gameObject.name, "LoadFromLines");
         else {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            SaveImage_cb("");
+            DownloadFile(gameObject.name, "OnFileDownload", "image.png", current_bytes, current_bytes.Length);
+#else    
             string filePath = FileBrowser.SaveFile("Save file", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Image", "png");
             FileSelectedCallback(filePath);
-            /*FileBrowser.SaveFilePanel("Save Screenshot", "Save image to....", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Image Name", new string[] { "png" }, null, (bool canceled, string filePath) =>
-            {
-                if (canceled)
-                {
-                    m_LabelContent = "[Save File] Canceled";
-                    Debug.Log("[Save File] Canceled");
-                    return;
-                }
-
-                m_LabelContent = "[Save File] You can now save the file to the path: " + filePath;
-                Debug.Log("[Save File] You can now save the file to the path: " + filePath);
-                FileSelectedCallback(filePath);
-            });*/
+#endif
         }
     }
-    public void SaveScene_cb(string filename)
+    //should save a zip with additional ing
+    public string SaveScene_cb(string filename, bool write = true)
     {
         string sep = ",";
         Debug.Log("You are in the saveScene_cb with filename: " + filename);
-        if (filename == null) return;
+        if (filename == null) return "";
         string text = "";
         string towrite = "";
         Debug.Log("should save in " + filename);
@@ -385,6 +545,7 @@ public class QuitGame : MonoBehaviour
             var isfiber = (props.is_fiber)?"1":"0";
             var fiber_length = props.y_length;
             var comp = props.compartment;//.IndexOf(props.compartment);
+            name = name.Split('.')[2];
             towrite +=name+sep+sprite_name+sep+props.scale2d.ToString()+sep+props.y_offset.ToString()+sep+fiber_length.ToString()+sep; 
             towrite +=issurf+sep+isfiber+sep+comp+ "\r\n";
         }
@@ -408,7 +569,6 @@ public class QuitGame : MonoBehaviour
         towrite += text;
         /*loop over every instance and save xyz,r,name.*/
         int count = 0;
-        float angle = 0.0F;
         Vector3 axis = Vector3.zero;
         text = "";
         for (int i = 0; i < Manager.Instance.everything.Count; i++)//Manager.Instance.rbCount
@@ -514,7 +674,8 @@ public class QuitGame : MonoBehaviour
             towrite += p1.x.ToString() + sep + p1.y.ToString() + sep + p1.z.ToString() + sep + id1 + sep;
             towrite += p2.x.ToString() + sep + p2.y.ToString() + sep + p2.z.ToString() + sep + id2 + "\r\n";
         }
-        System.IO.File.WriteAllText(filename, towrite);
+        if (write) System.IO.File.WriteAllText(filename, towrite);
+        return towrite;
     }
 
     public void SaveScene_original_cb(string filename)
@@ -546,7 +707,6 @@ public class QuitGame : MonoBehaviour
         towrite += text;
         /*loop over every instance and save xyz,r,name.*/
         int count = 0;
-        float angle = 0.0F;
         Vector3 axis = Vector3.zero;
 
         text = "";
@@ -650,145 +810,6 @@ public class QuitGame : MonoBehaviour
         return elems[0];
     }
 
-    public void LoadFromLines_1(string[] lines) {
-        var current_name = "";
-        if (Manager.Instance.myPrefab)
-            current_name = Manager.Instance.myPrefab.name;
-        int lineCounter = 0;
-        //split with space and get x y r name
-        //first line is nb of material color to overwrote
-        string[] elems = lines[lineCounter].Split(" "[0]);
-        int n_mat = int.Parse(elems[0]);
-        Debug.Log("found n_mat "+n_mat.ToString());
-        lineCounter++;
-        for (int i = lineCounter; i < lineCounter + n_mat; i++)
-        {
-            elems = lines[i].Split(" "[0]);
-            var name = elems[0];
-            if (name == "Draw") {
-                name = "Draw DNA";
-                elems[1] = elems[2];
-                elems[2] = elems[3];
-                elems[3] = elems[4];
-            }
-            var r = float.Parse(elems[1]);
-            var g = float.Parse(elems[2]);
-            var b = float.Parse(elems[3]);
-            if (!Manager.Instance.prefab_materials.ContainsKey(name))
-            {
-                Manager.Instance.prefab_materials.Add(name, Manager.Instance.createNewSpriteMaterial(name));
-            }//else build the material ?
-            Manager.Instance.prefab_materials[name].color = new Color(r, g, b);
-        }
-        lineCounter += n_mat;
-        //first line is nb rb, and nb fiber
-        elems = lines[lineCounter].Split(" "[0]);
-        int nObj = int.Parse(elems[0]);             //nb instances
-        int nFiber = int.Parse(elems[1]);           //nb chains fiber
-        int nSurfaceOfFiber = int.Parse(elems[2]);  //nb surface objects
-        Debug.Log("found nObj " + nObj.ToString() + " " + nFiber.ToString() + " " + nSurfaceOfFiber.ToString());
-        lineCounter++;
-        for (int i = lineCounter; i < lineCounter + nObj; i++)
-        {
-            elems = lines[i].Split(" "[0]);
-            var x = float.Parse(elems[0]);
-            var y = float.Parse(elems[1]);
-            var z = float.Parse(elems[2]);
-            var zangle = float.Parse(elems[3]);
-            var name = elems[4];
-            var order = int.Parse(elems[5]);
-            var kinematic = int.Parse(elems[6]);
-            Manager.Instance.restoreOneInstance(name, new Vector3(x, y, z), zangle, order, false, (kinematic == 1));
-        }
-        //in case of fiber need to do the random choice of sprite id, or save it
-        lineCounter += nObj;
-        GameObject attached = null;
-        GameObject fiber = null;
-        for (int i = 0; i < nFiber; i++)
-        {
-            attached = null;
-            fiber = null;
-            Debug.Log(lines[lineCounter]);
-            elems = lines[lineCounter].Split(" "[0]);
-            lineCounter++;
-            var name = elems[0];
-            int nPoints = int.Parse(elems[1]);
-            var prefabName = checkFiberName(name);
-            if (prefabName == "DrawDNA") prefabName = "Draw DNA";
-            Debug.Log(name + " fiber  ??  " + prefabName);
-            Manager.Instance.AddFiberParent(prefabName);
-            bool closed = name.EndsWith("_Closed");
-            for (int j = 0; j < nPoints; j++)
-            {
-                elems = lines[lineCounter].Split(" "[0]);
-                var x = float.Parse(elems[0]);
-                var y = float.Parse(elems[1]);
-                var z = float.Parse(elems[2]);
-                var zangle = float.Parse(elems[3]);
-                var bounded = elems[4];
-                var kinematic = int.Parse(elems[5]);
-                if (bounded == "0")
-                {
-                    if (attached != null)
-                    {
-                        fiber = Manager.Instance.restoreAttachFiber(new Vector3(x, y, z),
-                            zangle, attached);
-                        attached = null;
-                    }
-                    else
-                    {
-                        //make sure pinned will be at the proper position
-                        fiber = Manager.Instance.oneInstanceFiberPos(new Vector3(x, y, z), zangle);
-                        Quaternion rotation = Quaternion.AngleAxis(zangle, Vector3.forward);
-                        fiber.transform.position = new Vector3(x, y, z);
-                        fiber.transform.rotation = rotation;
-                    }
-
-                    if (kinematic == 1)
-                        Manager.Instance.pin_object(fiber, kinematic == 1); //SceneManager.Instance.pinInstance(fiber);
-                    if ( fiber.tag != "membrane" ) Manager.Instance.changeColorAndOrderFromDepth(z, fiber);
-                    else fiber.GetComponent<SpriteRenderer>().sortingOrder = 0;
-                }
-                else {
-                    attached = Manager.Instance.restoreAttachments(bounded, new Vector3(x, y, z), zangle, fiber);
-                    Debug.Log("attached to fiber " + attached.name + " " + kinematic.ToString());
-                    if (kinematic == 1)
-                        Manager.Instance.pin_object(attached, kinematic == 1); //SceneManager.Instance.pinInstance(attached);
-                }
-                lineCounter++;
-            }
-            if (closed)
-            {
-                Manager.Instance.closePersistence();
-            }
-
-            if (Manager.Instance.myPrefab.GetComponent<PrefabProperties>().light_fiber)
-            {
-                foreach (Transform child in Manager.Instance.fiber_parent.transform)
-                {
-                    Rigidbody2D rb = child.GetComponent<Rigidbody2D>();
-                    rb.mass = 5.0f;
-                    rb.drag = 1.0f;
-                    rb.angularDrag = 0.05f;
-                }
-            }
-        }
-        for (int i = 0; i < nSurfaceOfFiber; i++)
-        {
-            elems = lines[lineCounter].Split(" "[0]);
-            var x = float.Parse(elems[0]);
-            var y = float.Parse(elems[1]);
-            var z = float.Parse(elems[2]);
-            var zangle = float.Parse(elems[3]);
-            var name = elems[4];
-            var kinematic = int.Parse(elems[5]);
-            Manager.Instance.restoreOneInstance(name, new Vector3(x, y, z), zangle, 0, true, (kinematic == 1));
-            lineCounter++;
-        }
-        //reset ui and manager
-        if (current_name!="") Manager.Instance.SwitchPrefabFromName(current_name);
-    }
-
     public void LoadFromLines(string[] lines) {
         string sep = ",";
         var current_name = "";
@@ -799,6 +820,7 @@ public class QuitGame : MonoBehaviour
         //first line is nb of material color to overwrote
         string[] elems = lines[lineCounter].Split(sep[0]);
         int nbg_images =int.Parse(elems[0]);
+        Debug.Log("found nbg_images "+nbg_images.ToString());
         lineCounter++;
         for (int i = lineCounter; i < lineCounter + nbg_images; i++)
         {
@@ -814,6 +836,7 @@ public class QuitGame : MonoBehaviour
         lineCounter += nbg_images;
         elems = lines[lineCounter].Split(sep[0]);
         int extra_compartments = int.Parse(elems[0]);
+        Debug.Log("found extra_compartments "+extra_compartments.ToString());
         lineCounter++;
         for (int i = lineCounter; i < lineCounter + extra_compartments; i++)
         {
@@ -823,6 +846,7 @@ public class QuitGame : MonoBehaviour
         lineCounter += extra_compartments;
         elems = lines[lineCounter].Split(sep[0]);
         int extra_ingredient = int.Parse(elems[0]);
+        Debug.Log("found extra_ingredient "+extra_ingredient.ToString());
         lineCounter++;
         for (int i = lineCounter; i < lineCounter + extra_ingredient; i++)
         {
@@ -836,6 +860,7 @@ public class QuitGame : MonoBehaviour
             var isfiber = (elems[6] == "0")? false : true;
             var comp = elems[7];//int.Parse(elems[6] );
             if (!Manager.Instance.ingredients_names.ContainsKey(name)) {
+                Debug.Log("AddOneIngredient "+name+" "+sprite_name+" "+comp);
                 Manager.Instance.recipeUI.AddOneIngredient(name, sprite_name, scale2d, yoffset, fiber_length, issurf, isfiber, comp);
             }
         }
@@ -1028,6 +1053,7 @@ public class QuitGame : MonoBehaviour
         GhostManager.Get.RestoreGhost();
     }
 
+    //should be able to load a zip
     public void LoadScene_cb(string filename)
     {
         Manager.Instance.CheckDir();
@@ -1051,6 +1077,11 @@ public class QuitGame : MonoBehaviour
 
             if (!Manager.Instance.recipeUI.merge_upon_loading) Manager.Instance.Clear();
             Manager.Instance.recipeUI.LoadRecipe(filename);
+        }
+        else if (ext == ".zip") 
+        {
+            byte[] zipbytes = File.ReadAllBytes(filename);
+            LoadFromZipData(zipbytes);
         }
         else {
             //not supported

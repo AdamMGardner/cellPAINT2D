@@ -130,16 +130,16 @@ Shader "Custom/Outline" {
 		{
 			//Compute new fragment color value : Box Filter
 			float weight = 1.0f;/// 9.0f;
-
+			int kSize = min(kernelSize,16);
 			fixed4 colorSum = fixed4(0.0f, 0.0f, 0.0f, 0.0f);
 			int weightSum = 0;
 
 			int dX, dY;
 			float2 neighborCoord;
 			[unroll(16)]
-			for (dX = -kernelSize; dX <= kernelSize; dX++) {
+			for (dX = -kSize; dX <= kSize; dX++) {
 				[unroll(16)]
-				for (dY = -kernelSize; dY <= kernelSize; dY++) {
+				for (dY = -kSize; dY <= kSize; dY++) {
 					neighborCoord = float2(uv.x + dX*_MainTex_TexelSize.x, uv.y + dY*_MainTex_TexelSize.y);
 					colorSum += tex2D(_MainTex, neighborCoord)*weight;
 					weightSum += weight;
@@ -167,7 +167,7 @@ Shader "Custom/Outline" {
 		}
 
 		float KernelLerpByDepth(float z) {
-			int  kernelSize = 1;
+			int  kernelSize = 1;//(unity_OrthoParams.y >= 15)? 2 : 1;
 			if ( (z > 0.05f) && z < 0.125f) { kernelSize = (int) (z * 4.0f/0.125f)+1; }
 			if ((z >= 0.125f) && (z < 0.250f)) { kernelSize = (int) ((z-0.125) * 4.0f/0.125f)+4;  }
 			if (z >= 0.250f) { kernelSize = 12; }
@@ -176,11 +176,13 @@ Shader "Custom/Outline" {
 
 		fixed4 frag(v2f IN) : SV_Target
 		{
+			//increase the blur based on distance from camera
 			//u_Scale is vec2(0, 1.0/height ) for vertical blur and vec2(1.0/width, 0 ) for horizontal blur. 
 			int scalep = (int)_Outline;
 			int kernelSize = 1;
 			float z = IN.z.x;
 			kernelSize = KernelLerpByDepth(z);
+			
 			//to use the blur 
 			fixed4 c = tex2D(_MainTex,IN.texcoord);
 			if (kernelSize > 1)

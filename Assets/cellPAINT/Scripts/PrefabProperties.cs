@@ -66,9 +66,9 @@ public class PrefabProperties : MonoBehaviour
     public List<Vector4> pcp;
 
     public Color Default_Sprite_Color;
-    [ColorUsage(true, true, 0f, 8f, 0.125f, 3f)]
+    [ColorUsage(true, true)]//, 0f, 8f, 0.125f, 3f)]
     public Color outline_color = Color.yellow;
-    [ColorUsage(true, true, 0f, 8f, 0.125f, 3f)]
+    [ColorUsage(true, true)]//, 0f, 8f, 0.125f, 3f)]
     public Color pin_color = Color.red;
 
     [HideInInspector]

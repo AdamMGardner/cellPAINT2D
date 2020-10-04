@@ -104,12 +104,14 @@ public class UI_manager : MonoBehaviour
         string default_path = Path.Combine(PdbLoader.DefaultDataDirectory,"images");
         var adir = GameObject.Instantiate(prefab_directory);
         adir.GetComponent<Text>().text = default_path;
-        adir.transform.parent = panel_dir.transform;
+        //adir.transform.parent = panel_dir.transform;
+        adir.transform.SetParent(panel_dir.transform,false);
         adir.transform.GetChild(0).gameObject.SetActive(false);
         foreach (var d in PdbLoader.DataDirectories) {
             Debug.Log(d);
             adir = GameObject.Instantiate(prefab_directory);
-            adir.transform.parent = panel_dir.transform;
+            adir.transform.SetParent(panel_dir.transform,false);
+            //adir.transform.parent = panel_dir.transform;
             adir.GetComponent<Text>().text = d;
         }
     }

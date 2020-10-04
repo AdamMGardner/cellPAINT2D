@@ -33,11 +33,11 @@ public class resizeQuad : MonoBehaviour
 
     void Update() {
         return;
-        y = last_size_max * 2.0f; //Orthograpic size is half so it must be multiplied by 2.
+        /*y = last_size_max * 2.0f; //Orthograpic size is half so it must be multiplied by 2.
         x = y * cam.aspect; //multiplies X by the aspect ratio of the screen.
         Background_Quad.transform.localScale = new Vector3(x*2, y*2, 1);
         last_size = cam.orthographicSize;
         if (last_size > last_size_max)
-            last_size_max = last_size;
+            last_size_max = last_size;*/
     }
 }

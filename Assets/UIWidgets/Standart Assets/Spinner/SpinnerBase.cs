@@ -211,7 +211,7 @@ namespace UIWidgets {
 			
 			onValidateInput = SpinnerValidate;
 			
-			base.onValueChange.AddListener(ValueChange);
+			base.onValueChanged.AddListener(ValueChange);
 			base.onEndEdit.AddListener(ValueEndEdit);
 			
 			PlusButton = _plusButton;
@@ -311,7 +311,7 @@ namespace UIWidgets {
 		/// </summary>
 		protected virtual void onDestroy()
 		{
-			base.onValueChange.RemoveListener(ValueChange);
+			base.onValueChanged.RemoveListener(ValueChange);
 			base.onEndEdit.RemoveListener(ValueEndEdit);
 			
 			PlusButton = null;

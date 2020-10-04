@@ -5,6 +5,7 @@ using UnityEngine;
 public class MeasureManager : MonoBehaviour
 {
     public LineRenderer measure_line;
+    public GameObject measure_line_holder;
     public TextMesh measure_label;
     public Vector3 start_position;
     public Vector3 end_position;
@@ -34,11 +35,28 @@ public class MeasureManager : MonoBehaviour
     }
 
     public void ToggleLineAndLAbel(bool value){
-        measure_line.enabled = value;
+        //should create/delete the lineRendere and see if help with the webGL
+        Debug.Log("IN ToggleLineAndLAbel");
+        //measure_line.enabled = value;
+        measure_line_holder.gameObject.SetActive(value);
+        if (value){
+            measure_line = measure_line_holder.AddComponent<LineRenderer>();
+            measure_line.positionCount = 2;
+            measure_line.sharedMaterial = Manager.Instance.lineMat;
+            measure_line.sortingOrder = 5;
+            measure_line.widthMultiplier = 0.6f;
+            measure_line.numCapVertices = 2;
+            measure_line.SetPosition(0, new Vector3(10000,0,0));
+            measure_line.SetPosition(1, new Vector3(10000,0,0));            
+        }
+        else {
+            Destroy(measure_line);
+        }
         measure_label.gameObject.SetActive(value);
-        measure_line.SetPosition(0, new Vector3(10000,0,0));
-        measure_line.SetPosition(1, new Vector3(10000,0,0));
+        //measure_line.SetPosition(0, new Vector3(10000,0,0));
+        //measure_line.SetPosition(1, new Vector3(10000,0,0));
         measure_label.text = "";
+        Debug.Log("KEEP ALIVe ?");
         if (keep_alive) line_holder.SetActive(true);
     }
 

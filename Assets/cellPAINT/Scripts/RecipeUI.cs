@@ -10,6 +10,7 @@ using System.Linq;
 using SimpleJSON;
 using HexGrid;
 using System.Runtime;
+using System.Runtime.InteropServices;
 
 //[ExecuteInEditMode]
 public class RecipeUI : MonoBehaviour {
@@ -207,6 +208,24 @@ public class RecipeUI : MonoBehaviour {
             }
         }
         Manager.Instance.AllIngredients = resultData;
+    }
+
+    public void Clear(){
+        Manager.Instance.Clear();
+        Manager.Instance.ingredient_node.Clear();
+        Compartments.Clear();
+        CompartmentsIDS.Clear();
+        CompartmentsNames.Clear();
+        CompartmentsIngredients_ids.Clear();
+        //Manager.Instance.ingredients_prefab.Clear();
+        Manager.Instance.all_prefab.Clear();
+        Manager.Instance.ingredients_names.Clear();
+        Manager.Instance.ingredients_ids.Clear();
+        Manager.Instance.additional_ingredients_names.Clear();
+        Manager.Instance.additional_compartments_names.Clear();
+        Manager.Instance.sprites_names.Clear();
+        Manager.Instance.sprites_textures.Clear();
+        Manager.Instance.prefab_materials = new Dictionary<string, Material>();             
     }
 
     public void LoadRessourceRecipe(int id){
@@ -750,7 +769,8 @@ public class RecipeUI : MonoBehaviour {
             instance.GetComponent<Toggle>().group = GetComponent<ToggleGroup>();
         }
         //setparent?
-        instance.transform.parent = parent.transform;
+        instance.transform.SetParent(parent.transform,false);
+        //instance.transform.parent = parent.transform;
         instance.transform.localScale = Vector3.one;
         //instance.transform.localPosition = new Vector3((float)p.x, (float)p.y, 0);
 
@@ -765,19 +785,19 @@ public class RecipeUI : MonoBehaviour {
             Manager.Instance.prefab_materials.Add(iname, Manager.Instance.createNewSpriteMaterial(iname));
         }
         Material amat = Manager.Instance.prefab_materials[iname];
-        bool change_color = true;
+        //bool change_color = true;
 
         instance_props.label.GetComponent<Text>().text = iname.Split('.')[2].Replace("_"," ");
         instance_props.prefab_name = iname;
 
         if (iname == "Membrane") {
             iname = "Membrane";
-            change_color = false;
+            //change_color = false;
         }
         if (iname.Contains("DNA") && iname.Contains("Draw")) { 
             iname = "DNA_full_Turn";
             img_name = "DNA_full_Turn";
-            change_color = false;
+            //change_color = false;
         }
         //var prefabProps = myPrefab.GetComponent<PrefabProperties>();
         //Debug.Log(myPrefab + " is item prefab");
@@ -1151,11 +1171,26 @@ public class RecipeUI : MonoBehaviour {
         Manager.Instance.update_texture = true;
         var name = iname;
         if (compname == "") {
+            Debug.Log(current_cid);
+            Debug.Log(Compartments[current_cid]);
+            Debug.Log(CompartmentsIDS[Compartments[current_cid]]);
             compname = CompartmentsIDS[Compartments[current_cid]];//first
         }
-        int comp = CompartmentsNames[compname];
+        int comp = 0;
+        if (CompartmentsNames.ContainsKey(compname)){
+            comp = CompartmentsNames[compname];
+        }
+        else {
+            Debug.Log(compname+" not in the list of compartments");
+            foreach(var KeyValue in CompartmentsNames ){
+                Debug.Log(KeyValue.Key+" "+KeyValue.Value.ToString());
+            }
+            compname = CompartmentsIDS[Compartments[current_cid]];//first
+            comp = CompartmentsNames[compname];
+        }
         string prefix = (is_surface)? "surface" : "interior";
         name = compname+"."+prefix+"."+name;
+        Debug.Log("Add one ingredient "+iname+" "+img_name+" "+compname);
         /*
         var myPrefab = Manager.Instance.GetaPrefab(name, PDBid);
         Build the sprites from PDB and Illustrates

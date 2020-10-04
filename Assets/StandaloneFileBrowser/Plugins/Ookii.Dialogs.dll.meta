@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 9d10ca93b1db420fbf614cddeb70cbb2
-timeCreated: 1505207081
+guid: e60958662eed5413d86143a0a69b731e
+timeCreated: 1491979494
 licenseType: Pro
 PluginImporter:
   serializedVersion: 2
@@ -26,9 +26,7 @@ PluginImporter:
           Exclude WebGL: 1
           Exclude Win: 0
           Exclude Win64: 0
-          Exclude WindowsStoreApps: 1
           Exclude iOS: 1
-          Exclude tvOS: 1
     data:
       first:
         '': Editor
@@ -36,7 +34,7 @@ PluginImporter:
         enabled: 0
         settings:
           CPU: AnyCPU
-          OS: Windows
+          OS: AnyOS
     data:
       first:
         Android: Android
@@ -56,30 +54,21 @@ PluginImporter:
       second:
         enabled: 1
         settings:
-          CPU: AnyCPU
           DefaultValueInitialized: true
-          OS: Windows
     data:
       first:
         Facebook: Win
       second:
-        enabled: 1
+        enabled: 0
         settings:
           CPU: AnyCPU
     data:
       first:
         Facebook: Win64
       second:
-        enabled: 1
-        settings:
-          CPU: AnyCPU
-    data:
-      first:
-        Samsung TV: SamsungTV
-      second:
         enabled: 0
         settings:
-          STV_MODEL: STANDARD_13
+          CPU: AnyCPU
     data:
       first:
         Standalone: Linux
@@ -143,21 +132,9 @@ PluginImporter:
         enabled: 0
         settings:
           CPU: AnyCPU
-          DontProcess: False
-          PlaceholderPath: 
-          SDK: AnySDK
-          ScriptingBackend: AnyScriptingBackend
     data:
       first:
         iPhone: iOS
-      second:
-        enabled: 0
-        settings:
-          CompileFlags: 
-          FrameworkDependencies: 
-    data:
-      first:
-        tvOS: tvOS
       second:
         enabled: 0
         settings:

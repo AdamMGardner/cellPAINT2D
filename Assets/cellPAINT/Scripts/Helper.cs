@@ -16,7 +16,6 @@ using Accord.Statistics;
 using Accord.Statistics.Distributions.Fitting;
 using Accord.Statistics.Distributions.DensityKernels;
 using Accord.Math.Decompositions;
-using Accord.Statistics;
 
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3; // Note: this might be necessary often

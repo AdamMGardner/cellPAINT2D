@@ -118,14 +118,6 @@ public class SSAOPro : MonoBehaviour
         if (!BuildPipeline.isBuildingPlayer)
         {
     #endif
-            // Disable if we don't support image effects
-            if (!SystemInfo.supportsImageEffects)
-            {
-                Debug.LogWarning("Image Effects are not supported on this device.");
-                enabled = false;
-                return;
-            }
-
             // Disable the image effect if the shader is missing
             if (ShaderSSAO == null)
             {

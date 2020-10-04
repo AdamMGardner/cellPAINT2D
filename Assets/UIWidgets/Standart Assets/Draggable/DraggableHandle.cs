@@ -40,17 +40,18 @@ namespace UIWidgets {
 			{
 				throw new MissingComponentException(gameObject.name + " not in Canvas hierarchy.");
 			}
-			Vector2 cur_pos;
-			Vector2 prev_pos;
-			RectTransformUtility.ScreenPointToLocalPointInRectangle(drag, eventData.position, eventData.pressEventCamera, out cur_pos);
-			RectTransformUtility.ScreenPointToLocalPointInRectangle(drag, eventData.position - eventData.delta, eventData.pressEventCamera, out prev_pos);
-
+			Vector3 cur_pos;
+			Vector3 prev_pos;
+			RectTransformUtility.ScreenPointToWorldPointInRectangle(drag, eventData.position, eventData.pressEventCamera, out cur_pos);
+			RectTransformUtility.ScreenPointToWorldPointInRectangle(drag, eventData.position - eventData.delta, eventData.pressEventCamera, out prev_pos);
+			var delta = cur_pos - prev_pos; 
 			var new_pos = new Vector3(
-				drag.localPosition.x + (cur_pos.x - prev_pos.x),
-				drag.localPosition.y + (cur_pos.y - prev_pos.y),
-				drag.localPosition.z);
-
-			drag.localPosition = new_pos;
+				drag.position.x + (cur_pos.x - prev_pos.x),
+				drag.position.y + (cur_pos.y - prev_pos.y),
+				drag.position.z);
+			//parentCanvasOfImageToMove.transform.TransformPoint(pos) 
+			drag.position = new_pos;
+			//drag.position = drag.transform.parent.transform.TransformPoint(new_pos);
 			Manager.Instance.mask_ui = true;
 		}
 

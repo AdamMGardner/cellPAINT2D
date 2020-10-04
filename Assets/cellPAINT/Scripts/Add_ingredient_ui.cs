@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
@@ -13,6 +14,7 @@ using OpenQA.Selenium.Support.UI;
 using System.Threading;
 using System.Threading.Tasks;
 using SimpleJSON;
+
 
 //TODO fix the sprites_name for illustrate. use _sprite
 public class Add_ingredient_ui : MonoBehaviour
@@ -71,6 +73,16 @@ public class Add_ingredient_ui : MonoBehaviour
     private string webdriverspath;
     private List<string> chains_ids = new List<string>();
     private List<string> chains_auth_ids = new List<string>();
+#if UNITY_WEBGL && !UNITY_EDITOR
+    //
+    // WebGL
+    //
+    [DllImport("__Internal")]
+    private static extern void UploadFile(string gameObjectName, string methodName, string filter, bool multiple);
+    [DllImport("__Internal")]
+    private static extern void DownloadFile(string gameObjectName, string methodName, string filename, byte[] byteArray, int byteArraySize);
+
+#endif    
     public static Add_ingredient_ui Get
     {
         get
@@ -260,7 +272,7 @@ public class Add_ingredient_ui : MonoBehaviour
         input_bu = input_bu_field.text;
         input_seletion = input_seletion_field.text;
         input_model = input_model_field.text;
-        input_pixel_ratio_field.text = "6.0";
+        input_pixel_ratio_field.text =  "6.0";
         var q_id = (query_id==-1)? Mathf.CeilToInt(UnityEngine.Random.Range(0.0f, 1.0f)*1000000000.0f) : query_id;
         query_id = q_id;
         illustrated = true;
@@ -276,6 +288,9 @@ public class Add_ingredient_ui : MonoBehaviour
             query+="&qid="+query_id.ToString();
             query+="&use_authid="+auth_id.isOn.ToString().ToLower();//default is false
             query+="&bychain="+color_by_chain.isOn.ToString().ToLower();
+            query+="&psize=6&resize=0.0";
+            //if we use the resize
+            //input_pixel_ratio_field.text = (12.0f*0.50f).ToString(); 
             Debug.Log(query);
             StartCoroutine(GetRequest(query));
         }
@@ -336,12 +351,31 @@ public class Add_ingredient_ui : MonoBehaviour
                 DoCallIllustrate();
             });
     }
-
-    public void LoadASprite(){
+#if UNITY_WEBGL && !UNITY_EDITOR
+    public void OnFileUpload(string url) {
+        StartCoroutine(OutputRoutineTexture(url));
+    }
+    private IEnumerator OutputRoutineTexture(string url) {
+        var loader = new WWW(url);
+        yield return loader;
+        LoadASprite_cb(loader.texture, url);
+    }    
+#endif
+    public void LoadASprite()
+    {
         illustrated = false;
+#if UNITY_WEBGL && !UNITY_EDITOR
+        UploadFile(gameObject.name, "OnFileUpload", ".png, .jpeg, .jpg, .tiff, .bmp", false);
+#else         
         //call fileBrowser and pass it to load sprites
         string filePath = FileBrowser.OpenSingleFile("Open image file", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "png", "jpg");
-        var sprite = Manager.Instance.LoadNewSprite(filePath);
+        Texture2D SpriteTexture = Manager.Instance.LoadTexture(filePath);
+        LoadASprite_cb(SpriteTexture, filePath);
+#endif
+    }
+
+    public void LoadASprite_cb(Texture2D SpriteTexture, string filePath){
+        Sprite sprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0.5f, 0.5f), 100.0f);
         theSprite.sprite = sprite;
         theSpriteFiberLeft.sprite = sprite;
         theSpriteFiberRight.sprite = sprite;
@@ -352,7 +386,7 @@ public class Add_ingredient_ui : MonoBehaviour
         sprite_name = Path.GetFileName(filePath);
         sprite_path = Path.GetDirectoryName(filePath);
         if (input_name_field.text == "") input_name_field.text =  Path.GetFileNameWithoutExtension(filePath);
-        Manager.Instance.AddUserDirectory(sprite_path);
+        Manager.Instance.AddUserDirectory(sprite_path);        
     }
 
     public Texture2D RotateImage(Texture2D image, float angle){
@@ -438,7 +472,6 @@ public class Add_ingredient_ui : MonoBehaviour
     }
 
     public Texture2D RotateImageReverse(Texture2D image, float angle){
-        float pi2 = Mathf.PI / 2.0f;
         int oldWidth = image.width;
         int oldHeight = image.height;
         Vector2 center = new Vector2(oldWidth/2,oldHeight/2);
@@ -490,9 +523,16 @@ public class Add_ingredient_ui : MonoBehaviour
             }
             var current_bytes = theSprite.sprite.texture.EncodeToPNG();
             var filePath = PdbLoader.DefaultDataDirectory + "/" + "images/" + input_name_field.text+"_sprite_ill.png";
+#if UNITY_WEBGL && !UNITY_EDITOR
+#else
             System.IO.File.WriteAllBytes(filePath, current_bytes);
+#endif
             sprite_name = input_name_field.text+"_sprite_ill.png";
         }
+        if (Manager.Instance.sprites_textures.ContainsKey(sprite_name)){
+            Manager.Instance.sprites_textures[sprite_name] = theSprite.sprite.texture;
+        }
+        else Manager.Instance.sprites_textures.Add(sprite_name,theSprite.sprite.texture);
         Manager.Instance.recipeUI.AddOneIngredient(input_name_field.text, sprite_name, input_pixel_ratio, 
                                                     -input_offset_y, fiber_length, surface.isOn, fiber.isOn, "");
         input_name_field.text = "";
