@@ -15,6 +15,7 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
     public GameObject label;
     public string prefab_name="";
     public Image protein_sprite;
+    public Image mb_sprite;
     public GameObject delete_panel;
     private Toggle uitoggle;
     //private GameObject uiHolder;

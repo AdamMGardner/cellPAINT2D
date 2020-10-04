@@ -789,6 +789,15 @@ public class RecipeUI : MonoBehaviour {
 
         instance_props.label.GetComponent<Text>().text = iname.Split('.')[2].Replace("_"," ");
         instance_props.prefab_name = iname;
+        if (Manager.Instance.all_prefab.ContainsKey(iname) && Manager.Instance.all_prefab[iname].GetComponent<PrefabProperties>().is_surface){
+            instance_props.mb_sprite.gameObject.SetActive(true);
+        }else if (Manager.Instance.ingredient_node.ContainsKey(iname) && Manager.Instance.ingredient_node[iname]["surface"].Value == "surface") 
+        {
+            instance_props.mb_sprite.gameObject.SetActive(true);
+        } 
+        else {
+            instance_props.mb_sprite.gameObject.SetActive(false);
+        }
 
         if (iname == "Membrane") {
             iname = "Membrane";

@@ -1801,6 +1801,17 @@ public class Manager : MonoBehaviour {
         }
     }
 
+    void align_to_mouse(GameObject ob){
+        //Vector2 cur_pos;
+        var drag = ob.GetComponent<RectTransform>();
+        //RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvas.transform as RectTransform, Input.mousePosition, _canvas.worldCamera, out cur_pos);
+        //drag.position = _canvas.transform.TransformPoint(cur_pos);       
+        CanvasScaler scaler = _canvas.GetComponentInParent<CanvasScaler>();
+        //drag.anchoredPosition = new Vector2(Input.mousePosition.x * scaler.referenceResolution.x / Screen.width, Input.mousePosition.y * scaler.referenceResolution.y / Screen.height);
+        drag.position = new Vector2( (mousePositionInViewPort.x) * Screen.width  , mousePositionInViewPort.y * Screen.height );
+        //drag.position = mousePositionInViewPort;
+    }
+
     void drawInstanceSurface() {
         //float delta = Vector3.Distance(prev_mousePos, transform.position);
         var props = current_prefab.GetComponent<PrefabProperties>();
@@ -1912,6 +1923,14 @@ public class Manager : MonoBehaviour {
                             surface_objects.Add(newObject2);
                     }
                     startPos = endPos;
+                }
+            }
+            else {
+                if (Input.GetMouseButtonDown(0))
+                {
+                    message_panel.SetActive(true);
+                    align_to_mouse(message_panel);
+                    message_panel.GetComponentInChildren<Text>().text = "Membrane protein can only be drawn on top of a membrane. Draw a membrane first.";
                 }
             }
         }

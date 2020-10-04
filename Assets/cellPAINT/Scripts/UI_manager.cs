@@ -116,6 +116,11 @@ public class UI_manager : MonoBehaviour
         }
     }
 
+    public void CloseMessagePanel(){
+        Manager.Instance.message_panel.SetActive(false);
+        Manager.Instance.mask_ui = false;
+    }
+    
     public void ClearCachDi_cb(){
         Manager.Instance.ClearCacheDirectory();
         UpdatePanelUserDirectory();
