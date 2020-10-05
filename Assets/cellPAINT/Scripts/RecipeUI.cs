@@ -534,7 +534,7 @@ public class RecipeUI : MonoBehaviour {
         string iname = ingredientDictionary["name"].Value;
         string img_name = iname;
         if (iname.Contains("DNA")) {
-            iname = "Draw DNA_"+cid.ToString();
+            iname = "Draw DNA";//_"+cid.ToString();
             img_name = "Draw DNA";
         }
         if (iname.Contains("hu"))
