@@ -97,7 +97,8 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: fa9dcfebccb50fd4ea0d4f2300c5ff0e,
+    type: 2}
   m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
@@ -1352,6 +1353,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &13937437
@@ -13664,6 +13666,7 @@ MonoBehaviour:
   label: {fileID: 1866456367}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &46146955
@@ -13796,6 +13799,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &46564235
@@ -15312,6 +15316,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &85501527
@@ -16277,6 +16282,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &102319742
@@ -16592,10 +16598,10 @@ RectTransform:
   m_Father: {fileID: 1999405955}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 217.74}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 158.5, y: -118.87}
+  m_SizeDelta: {x: 287, y: 217.74}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &108763639
 MonoBehaviour:
@@ -16794,6 +16800,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &112759910
@@ -18437,6 +18444,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &140781053
@@ -20979,6 +20987,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &223043083
@@ -21217,6 +21226,7 @@ MonoBehaviour:
   label: {fileID: 1357477909}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &226072289
@@ -22133,6 +22143,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &258842653
@@ -22471,6 +22482,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &264676758
@@ -22529,6 +22541,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &264676761
@@ -22674,6 +22687,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &268720266
@@ -23036,6 +23050,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &277554055
@@ -23094,6 +23109,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &277554058
@@ -24484,6 +24500,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &323628297
@@ -26382,6 +26399,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &371455452
@@ -27037,6 +27055,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &379978379
@@ -27153,6 +27172,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &380282532
@@ -27362,6 +27382,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &381207652
@@ -27644,6 +27665,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &387538508
@@ -27923,6 +27945,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &389919399
@@ -28429,6 +28452,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &393869835
@@ -28731,6 +28755,7 @@ MonoBehaviour:
   label: {fileID: 459695871}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &405529310
@@ -29015,6 +29040,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &409477624
@@ -30420,6 +30446,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &427045680
@@ -30904,6 +30931,7 @@ MonoBehaviour:
   label: {fileID: 26626820}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &445961089
@@ -31816,6 +31844,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &469858666
@@ -35674,6 +35703,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &558968548
@@ -36344,6 +36374,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &579156463
@@ -36460,6 +36491,7 @@ MonoBehaviour:
   label: {fileID: 1181814969}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &580993743
@@ -37561,6 +37593,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &595590029
@@ -38484,6 +38517,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &620336079
@@ -38877,6 +38911,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &630400900
@@ -39127,7 +39162,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 851464098}
   m_HandleRect: {fileID: 851464097}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -39187,6 +39222,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &645064455
@@ -42403,6 +42439,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &725481521
@@ -43258,6 +43295,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &773008589
@@ -43526,6 +43564,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &775393673
@@ -44575,6 +44614,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &790647428
@@ -45142,6 +45182,7 @@ MonoBehaviour:
   label: {fileID: 1838993522}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &805042409
@@ -45646,6 +45687,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &824147289
@@ -46077,6 +46119,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &838070065
@@ -47492,6 +47535,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &879235045
@@ -47688,6 +47732,7 @@ MonoBehaviour:
   label: {fileID: 95888539}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &882204427
@@ -48555,6 +48600,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &903946055
@@ -53078,6 +53124,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1033631739
@@ -54498,6 +54545,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1056983962
@@ -55781,6 +55829,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1084597119
@@ -56528,6 +56577,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1116475514
@@ -57274,6 +57324,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1132309902
@@ -58924,6 +58975,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1172026416
@@ -59253,6 +59305,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &1181397525
@@ -60545,6 +60598,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &1198090205
@@ -60943,6 +60997,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &1214386467
@@ -61711,6 +61766,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &1242803221
@@ -62193,6 +62249,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1247098741
@@ -62452,6 +62509,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &1253315579
@@ -62510,6 +62568,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1253315582
@@ -62750,6 +62809,7 @@ MonoBehaviour:
   label: {fileID: 135767594}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &1259607135
@@ -64439,6 +64499,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1299655763
@@ -66349,6 +66410,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &1340153876
@@ -67040,6 +67102,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1353379769
@@ -67411,6 +67474,7 @@ MonoBehaviour:
   label: {fileID: 325943547}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1354663104
@@ -68056,6 +68120,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &1360855700
@@ -68382,6 +68447,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1368387717
@@ -70409,6 +70475,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &1441087912
@@ -70729,6 +70796,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &1449155571
@@ -71340,6 +71408,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1454939644
@@ -74763,6 +74832,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &1524981591
@@ -75285,6 +75355,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1536698033
@@ -76902,6 +76973,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1587360863
@@ -77073,6 +77145,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &1590556152
@@ -78061,7 +78134,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 156.64996, y: 0.0012207031}
+  m_AnchoredPosition: {x: 157, y: 0}
   m_SizeDelta: {x: 313.2985, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1615249959
@@ -78118,6 +78191,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &1617969535
@@ -78602,6 +78676,7 @@ MonoBehaviour:
   label: {fileID: 432859697}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1619516066
@@ -78987,7 +79062,7 @@ PrefabInstance:
     - target: {fileID: 1119781372414911595, guid: 7f5a1a78d22a8ef4a9d6f48f3efd71b5,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 216.65
+      value: 216.75
       objectReference: {fileID: 0}
     - target: {fileID: 1119781372414911595, guid: 7f5a1a78d22a8ef4a9d6f48f3efd71b5,
         type: 3}
@@ -79976,6 +80051,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1648737822
@@ -80237,6 +80313,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1651623053
@@ -80591,6 +80668,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1654825627
@@ -81224,6 +81302,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &1686091677
@@ -82197,6 +82276,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1711907996
@@ -82644,6 +82724,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1719354304
@@ -84005,6 +84086,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1751027544
@@ -84454,6 +84536,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &1762537907
@@ -84948,6 +85031,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1765662329
@@ -85482,6 +85566,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &1779253444
@@ -86553,6 +86638,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1804242215
@@ -87825,6 +87911,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1851069472
@@ -90858,7 +90945,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000061035156}
+  m_AnchoredPosition: {x: 0, y: -0.0006713867}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1925938701
@@ -90992,6 +91079,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1926039554
@@ -91780,6 +91868,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1940342846
@@ -92087,6 +92176,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &1952715135
@@ -94040,6 +94130,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &1999405958
@@ -96084,6 +96175,7 @@ MonoBehaviour:
   label: {fileID: 2029491414}
   prefab_name: Serotransferrin
   protein_sprite: {fileID: 1247523222}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &2040830457
@@ -96716,6 +96808,7 @@ MonoBehaviour:
   label: {fileID: 215489179}
   prefab_name: Albumin
   protein_sprite: {fileID: 1008422508}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &2064278087
@@ -97800,7 +97893,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -46.461914, y: 0}
+  m_AnchoredPosition: {x: -46, y: 0}
   m_SizeDelta: {x: 90.74353, y: -0.0024414062}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2096091260
@@ -97857,6 +97950,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &2097567728
@@ -98099,7 +98193,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 995, y: 30.650146}
+  m_AnchoredPosition: {x: 995, y: 30.75}
   m_SizeDelta: {x: 128, y: 48}
   m_Pivot: {x: -0.0000003837049, y: 0.5}
 --- !u!114 &2102892111
@@ -98169,6 +98263,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &2111894610
@@ -98227,6 +98322,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &2111894613
@@ -98728,6 +98824,7 @@ MonoBehaviour:
   label: {fileID: 1861216854}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!1 &2130002221
@@ -99180,6 +99277,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &2139432464
@@ -99450,6 +99548,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &7988924700144403181
@@ -99945,6 +100044,7 @@ MonoBehaviour:
   label: {fileID: 0}
   prefab_name: 
   protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
   delete_panel: {fileID: 0}
   label_txt: {fileID: 0}
 --- !u!114 &7988924701338748582
