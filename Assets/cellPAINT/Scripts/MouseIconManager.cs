@@ -68,7 +68,7 @@ public class MouseIconManager : MonoBehaviour
         if (InstanceNumberSlider.value > 1 & drawMode == true)
         {
             radiusCursor.SetActive(true);
-            radiusCursor.transform.localScale = new Vector3 (radiusSlider.value,radiusSlider.value,radiusSlider.value);
+            radiusCursor.transform.localScale = new Vector3 (Manager.Instance.radiusPerClick/4 , Manager.Instance.radiusPerClick/4, Manager.Instance.radiusPerClick/4);
         }       
     }
     public void ClearCursor()
