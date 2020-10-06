@@ -4078,7 +4078,7 @@ public class Manager : MonoBehaviour {
                                       //Debug.Log(mousePos);
             m_SpringJoint.transform.position = mainCamera.ScreenToWorldPoint(mousePos);// ray.GetPoint(distance);
             //Debug.DrawLine(m_SpringJoint.connectedBody.transform.position,m_SpringJoint.transform.position, Color.yellow);
-            DrawLine(m_SpringJoint.connectedBody.transform.position, m_SpringJoint.transform.position);//,0.25f,20.0f,1,false);
+            DrawLine(m_SpringJoint.connectedBody.gameObject.transform.TransformPoint(m_SpringJoint.connectedAnchor), m_SpringJoint.transform.position);//,0.25f,20.0f,1,false);
             //if fiber should check for closing
             if (fmode && closing) {
                 drawFiberToCloseOther(m_SpringJoint.connectedBody.gameObject);
@@ -4111,9 +4111,11 @@ public class Manager : MonoBehaviour {
             body.bodyType = RigidbodyType2D.Static;
         }
         //Debug.Log(m_SpringJoint);
-        m_SpringJoint.transform.position = point;
-        m_SpringJoint.anchor = Vector3.zero;
+        //m_SpringJoint.transform.position = point;
         m_SpringJoint.autoConfigureDistance = false;
+        m_SpringJoint.anchor = Vector3.zero;
+        m_SpringJoint.connectedAnchor = other.transform.InverseTransformPoint(point);
+        
         //m_SpringJoint.spring = k_Spring;
         //m_SpringJoint.damper = k_Damper;
         //m_SpringJoint.maxDistance = k_Distance;
