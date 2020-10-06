@@ -245,7 +245,7 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
                 foreach (var k in keyList) { Debug.Log("keys is "+k); }
                 //do nothing 
                 Debug.Log("Over "+ prefab_name + " not found in all_prefab");
-                prefab = Resources.Load("Prefabs/" + prefab_name) as GameObject;
+                prefab = Resources.Load("Prefabs/" + prefab_name.Split('.')[2]) as GameObject;
                 if (prefab == null)
                     prefab = Manager.Instance.Build(prefab_name);
                 if (prefab != null){

@@ -534,7 +534,7 @@ public class RecipeUI : MonoBehaviour {
         string iname = ingredientDictionary["name"].Value;
         string img_name = iname;
         if (iname.Contains("DNA")) {
-            iname = "Draw DNA_"+cid.ToString();
+            iname = "Draw DNA";//_"+cid.ToString();
             img_name = "Draw DNA";
         }
         if (iname.Contains("hu"))
@@ -791,7 +791,10 @@ public class RecipeUI : MonoBehaviour {
         instance_props.prefab_name = iname;
         if (Manager.Instance.all_prefab.ContainsKey(iname) && Manager.Instance.all_prefab[iname].GetComponent<PrefabProperties>().is_surface){
             instance_props.mb_sprite.gameObject.SetActive(true);
-        }else if (Manager.Instance.ingredient_node.ContainsKey(iname) && Manager.Instance.ingredient_node[iname]["surface"].Value == "surface") 
+        }else if (Manager.Instance.ingredient_node.ContainsKey(iname) && 
+                    Manager.Instance.ingredient_node[iname]!= null && 
+                    Manager.Instance.ingredient_node[iname].HasKey("surface") && 
+                    Manager.Instance.ingredient_node[iname]["surface"].Value == "surface") 
         {
             instance_props.mb_sprite.gameObject.SetActive(true);
         } 

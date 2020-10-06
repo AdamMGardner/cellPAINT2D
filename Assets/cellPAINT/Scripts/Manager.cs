@@ -313,13 +313,15 @@ public class Manager : MonoBehaviour {
             return AllIngredients[iname]["description"];
         }
         var sname = iname.Split('.');
-        if ( sname.Length != 0) {
+        if ( sname.Length > 1) {
             iname = sname[2];
             Debug.Log("getDescriptionName Split "+iname);
             if (AllIngredients.GetAllKeys().Contains(iname)) {
             if (AllIngredients[iname].GetAllKeys().Contains("description")) return AllIngredients[iname]["description"];
             }
-        } 
+        } else {
+             Debug.Log("getDescriptionName Split "+iname+" "+sname.ToString());
+        }
         if (iname.Contains("_membrane")){
             iname = sname[0];
             Debug.Log("getDescriptionName Split "+iname);
@@ -338,7 +340,7 @@ public class Manager : MonoBehaviour {
             if (AllIngredients[iname].GetAllKeys().Contains("name")) return AllIngredients[iname]["name"];
         }
         var sname = iname.Split('.');
-        if ( sname.Length != 0) {
+        if ( sname.Length > 1) {
             iname = iname.Split('.')[2];
             Debug.Log("getDescriptionName Split "+iname);
             if (AllIngredients.GetAllKeys().Contains(iname)) {
@@ -559,6 +561,7 @@ public class Manager : MonoBehaviour {
             if (!prefab_materials.ContainsKey(name)) {
                 prefab_materials.Add(name, createNewSpriteMaterial(name));
             }
+            Debug.Log(name+ " material "+ prefab_materials[name].ToString() );
             sr.sharedMaterial = prefab_materials[name];
             if (!toCheck.activeInHierarchy) toCheck.SetActive(true);
         }
@@ -804,18 +807,27 @@ public class Manager : MonoBehaviour {
     public void SwitchPrefabFromName(string name)
     {
         Manager.Instance.update_texture = true;
+        var pref_name = name;
         //myPrefab = Resources.Load("Prefabs/" + name) as GameObject;
         if (!all_prefab.ContainsKey(name))
         {
-            Debug.Log(name + " not found in all_prefab");
-            myPrefab = Resources.Load("Prefabs/" + name) as GameObject;
-            if (myPrefab==null)
+            Debug.Log(name + " not found in all_prefab "+name.Split('.')[2]);
+            myPrefab = Resources.Load("Prefabs/" + name.Split('.')[2]) as GameObject;
+            if (myPrefab==null){
                 myPrefab = Build(name);
+                Debug.Log(name + " Build "+name.Split('.')[2]);
+            }
+            else {
+                myPrefab.name = name;
+                myPrefab.GetComponent<PrefabProperties>().name = name;
+            }
             myPrefab.SetActive(true);
             all_prefab.Add(name, myPrefab);
         }
         else
+        {
             myPrefab = all_prefab[name];
+        }
         //myPrefab = Instantiate(Resources.Load("Prefabs/" + name, typeof(GameObject))) as GameObject;
         //myPrefab.hideFlags = HideFlags.HideInHierarchy;
 
@@ -1005,7 +1017,7 @@ public class Manager : MonoBehaviour {
         if (!all_prefab.ContainsKey(name))
         {
             Debug.Log(name + " not found in all_prefab");
-            Prefab = Resources.Load("Prefabs/" + name) as GameObject;
+            Prefab = Resources.Load("Prefabs/" + name.Split('.')[2]) as GameObject;
             if (Prefab == null)
                 Prefab = Build(name);
             Prefab.SetActive(true);
@@ -1302,6 +1314,7 @@ public class Manager : MonoBehaviour {
     {
         if (aprefab == null) aprefab = myPrefab;
         PrefabProperties props = aprefab.GetComponent<PrefabProperties>();
+        string prefabName = aprefab.GetComponent<PrefabProperties>().name;
         if (props.sprite_random_switch)
         {
             props.switchSpriteRandomly();
@@ -1316,8 +1329,11 @@ public class Manager : MonoBehaviour {
         {
             int prefab_id = UnityEngine.Random.Range(0, props.prefab_asset.Count);
             aprefab = props.prefab_asset[prefab_id];
-            string prefabName = aprefab.GetComponent<PrefabProperties>().name;
+            aprefab.GetComponent<PrefabProperties>().name = prefabName;
             SpriteRenderer sr = aprefab.GetComponent<SpriteRenderer>();
+            if (!prefab_materials.ContainsKey(prefabName)) {
+                Debug.Log("NO MATERIAL FOR "+prefabName+" go "+aprefab.name);
+            }
             sr.sharedMaterial = prefab_materials[prefabName];
         }
         Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);

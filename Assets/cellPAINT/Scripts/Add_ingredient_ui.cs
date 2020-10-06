@@ -25,11 +25,15 @@ public class Add_ingredient_ui : MonoBehaviour
     public InputField input_seletion_field;
     public InputField input_bu_field;
     public InputField input_model_field;
-    public InputField input_pixel_ratio_field;
+    public InputField input_pixel_ratio_field;   
     public InputField input_offset_y_field;
     public InputField Zrotation_field;
     public InputField fiber_length_field;
     public InputField comp_name_field;
+    public Slider input_pixel_ratio_slider;
+    public Slider input_offset_y_slider;
+    public Slider Zrotation_slider;
+    public Slider fiber_length_slider;
     public Toggle auth_id;
     public Toggle color_by_chain;
     public Text log_label;
@@ -42,6 +46,7 @@ public class Add_ingredient_ui : MonoBehaviour
     public Image theSpriteAxis;
     public Image theSpriteFiberLeft;
     public Image theSpriteFiberRight;
+    public Toggle soluble;
     public Toggle surface;
     public Toggle fiber;
     public Image loader;
@@ -175,6 +180,7 @@ public class Add_ingredient_ui : MonoBehaviour
 
     public void setScale(string number){
         input_pixel_ratio = float.Parse (number);
+        input_pixel_ratio_slider.value = input_pixel_ratio;        
         //this should also trigger the setYoffset and setFiberLength
         if (surface.isOn) setYoffset_cb();
         if (fiber.isOn) setFiberLength_cb();
@@ -182,6 +188,7 @@ public class Add_ingredient_ui : MonoBehaviour
 
     public void setYoffset(string number){
         input_offset_y = float.Parse (number);
+        input_offset_y_slider.value = input_offset_y;
         setYoffset_cb();
         
     }
@@ -202,6 +209,7 @@ public class Add_ingredient_ui : MonoBehaviour
     public void setZrot(string number){
         theSprite.rectTransform.rotation = Quaternion.Euler(0, 0, float.Parse (number));
         Zrotation = float.Parse (number); 
+        Zrotation_slider.value = Zrotation;
         if (fiber.isOn) setFiberLength_cb();
     }
 
@@ -214,8 +222,9 @@ public class Add_ingredient_ui : MonoBehaviour
         float w = (float)theSprite.rectTransform.rect.width;
         float h = (float)theSprite.rectTransform.rect.height;
         var canvas_scale = w/theSprite.sprite.texture.width;
-        var sc2d = input_pixel_ratio*canvas_scale/cscale;//*canvas_scale;
-        var offy = input_offset_y*sc2d;//sc2d is angstrom to pixels
+        Debug.Log(cscale.ToString()+" "+canvas_scale.ToString()+" "+input_pixel_ratio.ToString());
+        var sc2d = input_pixel_ratio*canvas_scale*cscale;//*canvas_scale;
+        var offy = input_offset_y*sc2d/cscale;//sc2d is angstrom to pixels
         var p = theSpriteMb.rectTransform.localPosition;
         theSpriteMb.rectTransform.localPosition = new Vector3(p.x,offy,p.z);
         //membrane thickness is 130px while sprite is 149px. Ang not equal to 42.0
@@ -241,6 +250,7 @@ public class Add_ingredient_ui : MonoBehaviour
     public void setFiberLength(string number){
         //theSprite.rectTransform.rotation = Quaternion.Euler(0, 0, float.Parse (number));
         fiber_length = float.Parse (number);
+        fiber_length_slider.value = fiber_length;
         setFiberLength_cb(); 
     }
 
@@ -537,6 +547,8 @@ public class Add_ingredient_ui : MonoBehaviour
                                                     -input_offset_y, fiber_length, surface.isOn, fiber.isOn, "");
         input_name_field.text = "";
         Manager.Instance.mask_ui = false;
+        //reset to default values
+        ResetToDefault();
     }
 
     IEnumerator GetRequest(string uri)
@@ -765,8 +777,27 @@ public class Add_ingredient_ui : MonoBehaviour
         }
     }
 
-    public void ResetToDefault(){
-
+    public void ResetToDefault()
+    {
+        input_name_field.text="";
+        input_model_field.text="";
+        input_pdb_field.text="";
+        input_seletion_field.text="";
+        input_bu_field.text="";
+        input_offset_y_field.text="0.0";
+        input_offset_y_slider.value = 0;
+        input_pixel_ratio_field.text="6.0";
+        input_pixel_ratio_slider.value = 6;
+        Zrotation_field.text="0.0";
+        Zrotation_slider.value = 0;
+        fiber_length_field.text="0.0";
+        fiber_length_slider.value = 0;              
+        comp_name_field.text = "";  
+        log_label.text = "";
+        theSprite.sprite = null;
+        theSprite.rectTransform.rotation = Quaternion.identity;
+        var p = theSpriteMb.rectTransform.localPosition;
+        theSpriteMb.rectTransform.localPosition = new Vector3(p.x,p.y,p.z);
     }
 
     public void OnPDBEdit(string input) {
