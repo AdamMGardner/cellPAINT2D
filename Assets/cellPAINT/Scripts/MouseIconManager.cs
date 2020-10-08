@@ -6,9 +6,9 @@ using UnityEngine.UI;
 public class MouseIconManager : MonoBehaviour
 {
     public Camera Camera;
-    public Texture2D eraseMouseIcon;
-    public Texture2D drawMouseIcon;
-    public Texture2D pinMouseIcon;
+    //public Texture2D eraseMouseIcon;
+    //public Texture2D drawMouseIcon;
+    //public Texture2D pinMouseIcon;
 
     public Slider radiusSlider;
     public Slider InstanceNumberSlider;
@@ -17,7 +17,8 @@ public class MouseIconManager : MonoBehaviour
 
     public bool defaultMouseActive = true;
 
-    private bool drawMode = true;
+    public bool drawMode = true;
+    public bool cursorsLoaded;
     private GameObject radiusCursor;
     private GameObject pinCursor;
     private GameObject pinToCursor;
@@ -31,6 +32,7 @@ public class MouseIconManager : MonoBehaviour
     void Start()
     {
         Cursor.visible = false;
+        drawMode = true;
 
         radiusCursor = mouseCursor.transform.Find("mouseCursorRadius").gameObject;
         pinCursor = mouseCursor.transform.Find("Pin_Icon").gameObject;
@@ -40,6 +42,7 @@ public class MouseIconManager : MonoBehaviour
         measureCursor = mouseCursor.transform.Find("Measure_Icon").gameObject;
         eraseCursor = mouseCursor.transform.Find("Erase_Icon").gameObject;
         dragCursor = mouseCursor.transform.Find("Drag_Icon").gameObject;
+        cursorsLoaded = true;
     }
 
     // Update is called once per frame
@@ -73,6 +76,7 @@ public class MouseIconManager : MonoBehaviour
     }
     public void ClearCursor()
     {
+        if (!cursorsLoaded) Start();
         drawMode = false;
         radiusCursor.SetActive(false);
         pinCursor.SetActive(false);

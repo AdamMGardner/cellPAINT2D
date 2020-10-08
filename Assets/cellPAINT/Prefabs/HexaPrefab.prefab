@@ -268,7 +268,7 @@ MonoBehaviour:
   protein_sprite: {fileID: 114000012403301560}
   mb_sprite: {fileID: 8887637269061036687}
   delete_panel: {fileID: 4282148002113308776}
-  label_txt: {fileID: 0}
+  label_txt: {fileID: 114000012457303368}
 --- !u!1 &1000013702741638
 GameObject:
   m_ObjectHideFlags: 0

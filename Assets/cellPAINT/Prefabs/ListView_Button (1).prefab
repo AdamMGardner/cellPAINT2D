@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5543549299506191947}
   - component: {fileID: 5543549299506191944}
   - component: {fileID: 5543549299506191945}
+  - component: {fileID: 3160322411353531534}
   m_Layer: 5
   m_Name: ListView_Button (1)
   m_TagString: Untagged
@@ -130,6 +131,26 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &3160322411353531534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5543549299506191951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ee18823fb5e45b48be862ead6387fbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  only_ui: 1
+  is_ListView: 0
+  label: {fileID: 0}
+  prefab_name: 
+  protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
+  delete_panel: {fileID: 0}
+  label_txt: {fileID: 0}
 --- !u!1 &5543549300002503850
 GameObject:
   m_ObjectHideFlags: 0

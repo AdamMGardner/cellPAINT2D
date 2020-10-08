@@ -128,14 +128,15 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
      public  void OnPointerEnter(PointerEventData data)
     {
         //Debug.Log("OnPointerEnter called.");
-        Cursor.visible = true;
+        
+        if (only_ui) Cursor.visible = true;
         Over(data);
     }
 
     public void OnPointerExit(PointerEventData data)
     {
         //Debug.Log("OnPointerExit called.");
-        Cursor.visible = false;
+        if (only_ui) Cursor.visible = false;
         Exit(data);
     }
     public void OnSelect(BaseEventData data)

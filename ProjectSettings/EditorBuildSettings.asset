@@ -29,10 +29,13 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/cellPAINT/Scenes/cellpaint_bg_group.unity
     guid: b7990a82813f9fd46bf9928a1c821e31
-  - enabled: 1
+  - enabled: 0
     path: Assets/cellPAINT/Scenes/cellpaint.unity
     guid: abc06306dab6cc841babf553e17b306c
   - enabled: 0
-    path: Assets/cellPAINT/Scenes/cellpaint2.unity
-    guid: 259eaee68f3687442965a85bb648d0bd
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/cellPAINT/Scenes/cellpaint_AdamGFXmods.unity
+    guid: d9d2ff330b1ba66429fec84744b80d0f
   m_configObjects: {}
