@@ -127,16 +127,21 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
 
      public  void OnPointerEnter(PointerEventData data)
     {
-        //Debug.Log("OnPointerEnter called.");
+        Debug.Log("OnPointerEnter called.");
         
-        if (only_ui) Cursor.visible = true;
+        if (only_ui) 
+        {
+            MouseIconManager.Get.ToggleMouseCursorCustomUI(false);
+        }
         Over(data);
     }
 
     public void OnPointerExit(PointerEventData data)
     {
-        //Debug.Log("OnPointerExit called.");
-        if (only_ui) Cursor.visible = false;
+        Debug.Log("OnPointerExit called.");
+        if (only_ui) {
+            MouseIconManager.Get.ToggleMouseCursorCustomUI(true);
+        }
         Exit(data);
     }
     public void OnSelect(BaseEventData data)
@@ -222,6 +227,7 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
 
         }
         Manager.Instance.recipeUI.updateHexInstance();
+        MouseIconManager.Get.ChangeMouseCursor(true);
     }
 
     void Over(BaseEventData eventData) {

@@ -23,7 +23,11 @@ public class UI_manager : MonoBehaviour
     public Image IngredientSpriteFiberLeft;
     public Image IngredientSpriteFiberRight;
     public InputField group_name;
-    
+    public GameObject PanelPhysics;
+    public GameObject ToolTipsPanelPhysics;
+    public Toggle TogglePanelPhysics;
+    public Slider drag_frequency;
+    public InputField drag_frequency_field;
     private static UI_manager _instance = null;
     public static UI_manager Get
     {
@@ -49,6 +53,13 @@ public class UI_manager : MonoBehaviour
     public void Start(){
         UpdatePanelUserDirectory();
     }
+
+    void Update()
+    {
+
+    }
+
+
 
     public void SetNinstance(float number) {
         Manager.Instance.nbInstancePerClick = (int) number;
@@ -125,4 +136,23 @@ public class UI_manager : MonoBehaviour
         Manager.Instance.ClearCacheDirectory();
         UpdatePanelUserDirectory();
     }
+
+    public void TogglePhysicsSetting_Tips(bool value) {
+        if (PanelPhysics){
+            PanelPhysics.SetActive(value);
+            ToolTipsPanelPhysics.SetActive(value);
+            TogglePanelPhysics.isOn = value;
+        }
+    }
+
+    public void SetDragFrequency(float number) {
+        Manager.Instance.frequency = number;
+        drag_frequency_field.text = number.ToString();
+    }   
+    public void SetDragFrequency(string number) {
+        Manager.Instance.frequency = float.Parse(number);
+        drag_frequency.value = float.Parse(number);
+    }   
+
+
 }

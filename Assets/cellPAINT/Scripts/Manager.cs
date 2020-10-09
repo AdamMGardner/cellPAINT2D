@@ -48,6 +48,7 @@ public class Manager : MonoBehaviour {
     public bool continuous = false;
     public bool bucketMode = false;
     public bool bindMode = false;
+    public string current_mode = "";
     private bool group_interact_mode = true;
     private bool moveWithMode = false;
     //public bool erase_collider_mode = false;
@@ -3227,6 +3228,13 @@ public class Manager : MonoBehaviour {
         }
     }
 
+    public void CreateALock(){
+        GhostManager.Get.AddGhost(GroupManager.Get.current_selections);
+        togglePinOutline(true);
+        GroupManager.Get.current_selections.Clear();
+        highLightHierarchy(root.transform, false);        
+    }
+
     void SelectAndGhostInstance()
     {
         RaycastHit2D hit = raycast();
@@ -4937,6 +4945,31 @@ public class Manager : MonoBehaviour {
         ghostMode = false;
         measureMode = false;
         allOff = true;
+        UI_manager.Get.TogglePhysicsSetting_Tips(false);
+    }
+
+    public string GetCurrentMode(){
+        if (boundMode) return "boundMode";
+        if (drawMode) {
+            if (surfaceMode) return "surfaceMode";
+            return "drawMode";
+        }
+        if (dragMode) return "dragMode";
+        if (eraseMode) return "eraseMode";
+        if (pinMode) return "pinMode";
+        if (continuous){
+            if (surfaceMode) return "surfaceMode";
+            return "drawMode";
+        }
+        if (infoMode) return "infoMode";
+        if (bindMode) return "bindMode";
+        if (groupMode) return "groupMode";
+        if (ghostMode) return "ghostMode";
+        if (measureMode) return "measureMode";
+        if (fiberMode) return "drawMode";//"fiberMode";
+        if (surfaceMode) return "surfaceMode";
+        if (allOff) return "allOff";              
+        return "allOff";
     }
 
     public void ToggleContinuous(bool toggle)

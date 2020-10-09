@@ -125,6 +125,7 @@ public class Add_ingredient_ui : MonoBehaviour
 #else 
         webdriverspath = UnityEngine.Application.dataPath + "/../Data/webdrivers/win/";
 #endif        
+
     }
 
     // Update is called once per frame
@@ -523,6 +524,7 @@ public class Add_ingredient_ui : MonoBehaviour
 
     public void AddTheIngredient(){
         //make sure we have the values
+        var ig_name = input_name_field.text.Replace("\n", "").Replace("\r", "");
         input_pixel_ratio = float.Parse (input_pixel_ratio_field.text );
         if (illustrated || Zrotation!= 0.0f) {
             if (Zrotation!= 0.0f) {
@@ -532,18 +534,18 @@ public class Add_ingredient_ui : MonoBehaviour
                  Zrotation = 0.0f;
             }
             var current_bytes = theSprite.sprite.texture.EncodeToPNG();
-            var filePath = PdbLoader.DefaultDataDirectory + "/" + "images/" + input_name_field.text+"_sprite_ill.png";
+            var filePath = PdbLoader.DefaultDataDirectory + "/" + "images/" + ig_name+"_sprite_ill.png";
 #if UNITY_WEBGL && !UNITY_EDITOR
 #else
             System.IO.File.WriteAllBytes(filePath, current_bytes);
 #endif
-            sprite_name = input_name_field.text+"_sprite_ill.png";
+            sprite_name = ig_name+"_sprite_ill.png";
         }
         if (Manager.Instance.sprites_textures.ContainsKey(sprite_name)){
             Manager.Instance.sprites_textures[sprite_name] = theSprite.sprite.texture;
         }
         else Manager.Instance.sprites_textures.Add(sprite_name,theSprite.sprite.texture);
-        Manager.Instance.recipeUI.AddOneIngredient(input_name_field.text, sprite_name, input_pixel_ratio, 
+        Manager.Instance.recipeUI.AddOneIngredient(ig_name, sprite_name, input_pixel_ratio, 
                                                     -input_offset_y, fiber_length, surface.isOn, fiber.isOn, "");
         input_name_field.text = "";
         Manager.Instance.mask_ui = false;
@@ -759,7 +761,7 @@ public class Add_ingredient_ui : MonoBehaviour
     public void AddCompartment(){
         //when creating a compartment give a name and create the membrane prefab for it.
         //check if name exist already
-        var cname = comp_name_field.text;
+        var cname = comp_name_field.text.Replace("\n", "").Replace("\r", "");;
         if (Manager.Instance.recipeUI.CompartmentsNames.ContainsKey(cname)) {
             log_label.text = cname+" already exist in the list of compartment. Choose a different name.";
             return;
