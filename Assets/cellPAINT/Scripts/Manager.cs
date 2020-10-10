@@ -899,6 +899,7 @@ public class Manager : MonoBehaviour {
         boundMode = props.is_bound;
         surfaceMode = props.is_surface;
         fiberMode = props.is_fiber;
+        allOff = false;
         //should use a prefab property about closing availability
         clockwise.SetActive(((props.name.Contains("Membrane")|| props.name.Contains("Capsid"))));
         if (sr)
