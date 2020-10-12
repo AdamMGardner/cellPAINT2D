@@ -28,6 +28,9 @@ public class UI_manager : MonoBehaviour
     public Toggle TogglePanelPhysics;
     public Slider drag_frequency;
     public InputField drag_frequency_field;
+    public GameObject progress_bar_holder;
+    public Slider progress_bar;
+    public Text progress_label;
     private static UI_manager _instance = null;
     public static UI_manager Get
     {
@@ -60,7 +63,11 @@ public class UI_manager : MonoBehaviour
     }
 
 
-
+    public void UpdatePB(float value, string label) {
+        progress_bar.value = value;
+        progress_label.text = label;        
+    }
+    
     public void SetNinstance(float number) {
         Manager.Instance.nbInstancePerClick = (int) number;
         ninstance_click_field.text = number.ToString();

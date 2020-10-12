@@ -227,7 +227,7 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
 
         }
         Manager.Instance.recipeUI.updateHexInstance();
-        MouseIconManager.Get.ChangeMouseCursor(true);
+        MouseIconManager.Get.UpdateMouseCursor();
         //BackgroundImageManager.Get.ToggleInteractingMode(false);
     }
 
