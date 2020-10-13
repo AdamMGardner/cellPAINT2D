@@ -3,6 +3,7 @@ using System.Collections;
 
 public class CameraMove : MonoBehaviour {
     public bool use_Viewport;
+    public bool zoomToMouse;
     public float dragSpeed = 1;
     public float zoomDragSpeed = 0.15f;
     private Vector3 dragOrigin;
@@ -156,18 +157,55 @@ public class CameraMove : MonoBehaviour {
             pmousePosWorld = current_mouse_world;
         }
         //MoveOutOfBounds();
-        if (Manager.Instance.selected_instance!=null){
-            current_mouse_world = Manager.Instance.selected_instance.transform.position;
+
+        if (!zoomToMouse)
+        {
+            if (Manager.Instance.selected_instance!=null)
+            {
+                current_mouse_world = Manager.Instance.selected_instance.transform.position;
+            }
+            else
+            {
+                current_mouse_world = Vector3.zero;
+            }
         }
-        else current_mouse_world = Vector3.zero;
+        
         move = new Vector3(current_mouse_world.x, current_mouse_world.y, -3000.0f);
         float zoomDragMax = zoomDragSpeed *(cameraCurrentZoom/cameraZoomMin);
         Vector3 newPos = Vector3.MoveTowards (cameraPos3D, move, zoomDragMax);
-        //newPos = newPos * (curren)
         newPos = new Vector3 (newPos.x, newPos.y, -3000.0f);
         Main_Camera.transform.position = newPos;
-        //dragOrigin = new Vector3(Input.mousePosition.x, Input.mousePosition.y,-3000);
         cameraPos3D = Main_Camera.transform.position;
+
+        /*
+        if (!zoomToMouse & Manager.Instance.selected_instance!=null)
+        {
+            current_mouse_world = Manager.Instance.selected_instance.transform.position;
+        }
+        else if (zoomToMouse)
+        {
+            move = new Vector3(current_mouse_world.x, current_mouse_world.y, -3000.0f);
+            float zoomDragMax = zoomDragSpeed *(cameraCurrentZoom/cameraZoomMin);
+            Vector3 newPos = Vector3.MoveTowards (cameraPos3D, move, zoomDragMax);
+            //newPos = newPos * (curren)
+            newPos = new Vector3 (newPos.x, newPos.y, -3000.0f);
+            Main_Camera.transform.position = newPos;
+            //dragOrigin = new Vector3(Input.mousePosition.x, Input.mousePosition.y,-3000);
+            cameraPos3D = Main_Camera.transform.position;
+        }
+        else
+        {
+            current_mouse_world = Vector3.zero;
+            move = new Vector3(current_mouse_world.x, current_mouse_world.y, -3000.0f);
+            float zoomDragMax = zoomDragSpeed *(cameraCurrentZoom/cameraZoomMin);
+            Vector3 newPos = Vector3.MoveTowards (cameraPos3D, move, zoomDragMax);
+            //newPos = newPos * (curren)
+            newPos = new Vector3 (newPos.x, newPos.y, -3000.0f);
+            Main_Camera.transform.position = newPos;
+            //dragOrigin = new Vector3(Input.mousePosition.x, Input.mousePosition.y,-3000);
+            cameraPos3D = Main_Camera.transform.position;
+        }
+        */
     }
 
     void PositionOutOfBounds()

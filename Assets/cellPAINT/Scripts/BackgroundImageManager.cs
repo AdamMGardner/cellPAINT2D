@@ -259,8 +259,8 @@ public class BackgroundImageManager : MonoBehaviour
                 }
             else {
                 //sr.sortingOrder = 0;
-                sr.material.renderQueue = 0;
-                allbg[current_bg].renderQueue= 0;
+                sr.material.renderQueue = 1; //0
+                allbg[current_bg].renderQueue= 1; //0
             }
             allbg[current_bg].layer = sr.sortingOrder;
         }
@@ -284,7 +284,7 @@ public class BackgroundImageManager : MonoBehaviour
         Vector4 color = new Vector4 (1, 1, 1, imageOpacity);
         //backgroundImageRenderer.material.SetColor("_Color", color);
         if (current_bg!=-1) {
-            var spriteRenderer = allbg[current_bg].bg.GetComponent<SpriteRenderer>();
+            var spriteRenderer = allbg[current_bg].bg.gameObject.transform.GetComponent<SpriteRenderer>();
             if (spriteRenderer == null) return;
             MaterialPropertyBlock mpb = new MaterialPropertyBlock();
             spriteRenderer.GetPropertyBlock(mpb);
@@ -373,8 +373,8 @@ public class BackgroundImageManager : MonoBehaviour
         prefab2d.layer = LayerMask.NameToLayer("bg_image");
         //prefab.transform.position = cam.ScreenToWorldPoint(new Vector3(screenShot.width, Screen.height / 2.0f, 20));
         SpriteRenderer sp = prefab2d.AddComponent<SpriteRenderer>();
-        Material amat = new Material(Manager.Instance.outline_material.shader);
-        amat.renderQueue = 0;
+        Material amat = new Material(Shader.Find("Sprites/Default"));
+        amat.renderQueue = 1; //0
         sp.material = amat;
         sp.sprite = NewSprite;
         sp.sortingOrder = 0;
@@ -403,8 +403,8 @@ public class BackgroundImageManager : MonoBehaviour
         prefab2d.layer = LayerMask.NameToLayer("bg_image");
         //prefab.transform.position = cam.ScreenToWorldPoint(new Vector3(screenShot.width, Screen.height / 2.0f, 20));
         SpriteRenderer sp = prefab2d.AddComponent<SpriteRenderer>();
-        Material amat = new Material(Manager.Instance.outline_material.shader);
-        amat.renderQueue = 0;
+        Material amat = new Material(Shader.Find("Sprites/Default"));
+        amat.renderQueue = 1; //0
         sp.material = amat;
         sp.sprite = NewSprite;
         sp.sortingOrder = 0;
