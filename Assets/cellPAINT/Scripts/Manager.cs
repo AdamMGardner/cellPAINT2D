@@ -33,6 +33,7 @@ public class Manager : MonoBehaviour {
     public GameObject root;
     public bool layer_number_draw = true;
     public int layer_number_options = 3;//three layer 
+    public CollisionDetectionMode2D detection_mode; 
     public bool boundMode = false;
     public bool surfaceMode = false;//set geT ?
     public bool fiberMode = false;
@@ -51,6 +52,7 @@ public class Manager : MonoBehaviour {
     public string current_mode = "";
     private bool group_interact_mode = true;
     private bool moveWithMode = false;
+    private bool moveWithMode_shift = false;
     //public bool erase_collider_mode = false;
     //public bool pin_collider_mode = false;
     //public bool drag_collider_mode = false;
@@ -1159,7 +1161,7 @@ public class Manager : MonoBehaviour {
             toprb = newObject.AddComponent<Rigidbody2D>();
         }
         Props.RB = toprb;
-        toprb.collisionDetectionMode = CollisionDetectionMode2D.Discrete;// Continuous;
+        toprb.collisionDetectionMode = detection_mode;// Continuous;
         toprb.angularDrag = 20.0f;
         toprb.drag = 20.0f;
         toprb.sleepMode = RigidbodySleepMode2D.StartAsleep;
@@ -1181,7 +1183,7 @@ public class Manager : MonoBehaviour {
             twoLayerBottom.GetComponent<SpriteRenderer>().sortingOrder = -1;
             //Add Rigidbody2D to loop and count.
             Rigidbody2D rb = twoLayerBottom.GetComponent<Rigidbody2D>();
-            rb.collisionDetectionMode = CollisionDetectionMode2D.Discrete;//.Continuous;
+            rb.collisionDetectionMode = detection_mode;//.Continuous;
             //everything[rbCount] = rb;
             everything.Add(rb);
 
@@ -1208,7 +1210,7 @@ public class Manager : MonoBehaviour {
 
             //Add Rigidbody2D to loop and count.
             Rigidbody2D rb = threeLayerMiddle.GetComponent<Rigidbody2D>();
-            rb.collisionDetectionMode = CollisionDetectionMode2D.Discrete;// Continuous;
+            rb.collisionDetectionMode = detection_mode;// Continuous;
             //everything[rbCount] = rb;
             everything.Add(rb);
 
@@ -1218,7 +1220,7 @@ public class Manager : MonoBehaviour {
             //middleRB = rb;
 
             Rigidbody2D rb2 = threeLayerBottom.GetComponent<Rigidbody2D>();
-            rb.collisionDetectionMode = CollisionDetectionMode2D.Discrete;//.Continuous;
+            rb.collisionDetectionMode = detection_mode;//.Continuous;
             //everything[rbCount] = rb;
             everything.Add(rb2);
 
@@ -1912,7 +1914,7 @@ public class Manager : MonoBehaviour {
                     Rigidbody2D rb = newObject.GetComponent<Rigidbody2D>();
                     if (rb==null)
                         rb = newObject.AddComponent<Rigidbody2D>();
-                    rb.collisionDetectionMode = CollisionDetectionMode2D.Discrete;
+                    rb.collisionDetectionMode = detection_mode;
                     rb.angularDrag = 20.0f;
                     rb.drag = 20.0f;
                     //rb.sleepMode = RigidbodySleepMode2D.StartAsleep;
@@ -1946,7 +1948,7 @@ public class Manager : MonoBehaviour {
                             if (HideInstance) newObject2.hideFlags = HideFlags.HideInHierarchy;
                             Rigidbody2D rb2 = newObject2.GetComponent<Rigidbody2D>();
                             if (rb2==null) rb2 = newObject2.AddComponent<Rigidbody2D>();
-                            rb2.collisionDetectionMode = CollisionDetectionMode2D.Discrete;
+                            rb2.collisionDetectionMode = detection_mode;
                             rb2.interpolation = RigidbodyInterpolation2D.Interpolate;
                             rb2.angularDrag = 20.0f;
                             rb2.drag = 20.0f;
@@ -3525,6 +3527,7 @@ public class Manager : MonoBehaviour {
         //if (Input.GetKeyUp(KeyCode.LeftShift)) CleanOutline();
         bool _shift = Input.GetKey(KeyCode.LeftShift);
         bool _ctrl = Input.GetKey(KeyCode.LeftControl);
+
         group_interact_mode = Input.GetKey(KeyCode.LeftControl);
         //bool _shift_up = Input.GetKeyUp(KeyCode.LeftShift);
         if (!hit && Input.GetMouseButton(0)) {
@@ -3535,7 +3538,7 @@ public class Manager : MonoBehaviour {
             PrefabProperties p = other.GetComponent<PrefabProperties>();
             PrefabGroup pg = other.GetComponentInParent<PrefabGroup>();  
             Transform parent = other.transform.parent;
-            if (_shift) {
+            if (_shift || moveWithMode_shift) {
                 if (other.name.StartsWith("ghost_")) {
                     //reparent all the ghost object
                     other.GetComponent<Ghost>().changeParent(root.transform);
@@ -3662,6 +3665,7 @@ public class Manager : MonoBehaviour {
                 {
                     if (Input.GetMouseButtonDown(0)){
                         moveWithMode = true;
+                        moveWithMode_shift = _shift;
                         //put selection under transform
                         if (other.name.StartsWith("ghost_")) {
                             //translate all ghost holding object

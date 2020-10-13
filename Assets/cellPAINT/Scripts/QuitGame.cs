@@ -953,7 +953,10 @@ public class QuitGame : MonoBehaviour
             var issurf = (elems[5] == "0")? false : true;
             var isfiber = (elems[6] == "0")? false : true;
             var comp = elems[7];//int.Parse(elems[6] );
-            if (!Manager.Instance.ingredients_names.ContainsKey(name)) {
+            var prefix = (issurf)?"surface":"interior";
+            var iname = comp+"."+prefix+"."+name;
+            //actual name is compname+"."+prefix+"."+name
+            if (!Manager.Instance.ingredients_names.ContainsKey(iname)) {
                 Debug.Log("AddOneIngredient "+name+" "+sprite_name+" "+comp);
                 Manager.Instance.recipeUI.AddOneIngredient(name, sprite_name, scale2d, yoffset, fiber_length, issurf, isfiber, comp);
             }
@@ -1221,7 +1224,10 @@ public class QuitGame : MonoBehaviour
             var issurf = (elems[5] == "0")? false : true;
             var isfiber = (elems[6] == "0")? false : true;
             var comp = elems[7];//int.Parse(elems[6] );
-            if (!Manager.Instance.ingredients_names.ContainsKey(name)) {
+            var prefix = (issurf)?"surface":"interior";
+            var iname = comp+"."+prefix+"."+name;
+            //actual name is compname+"."+prefix+"."+name
+            if (!Manager.Instance.ingredients_names.ContainsKey(iname)) {
                 Debug.Log("AddOneIngredient "+name+" "+sprite_name+" "+comp);
                 Manager.Instance.recipeUI.AddOneIngredient(name, sprite_name, scale2d, yoffset, fiber_length, issurf, isfiber, comp);
             }
