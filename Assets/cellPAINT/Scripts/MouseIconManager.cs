@@ -97,6 +97,13 @@ public class MouseIconManager : MonoBehaviour
         }
     }
 
+    public void UpdateMouseCursor(){
+        current_mode = Manager.Instance.GetCurrentMode();
+        var cursor_id = cursors_name.IndexOf(current_mode);
+        current_texture = cursors_texture[cursor_id];
+        current_offset = cursors_offset[cursor_id];
+    }
+    
     public void ChangeMouseCursor(bool value){
         if (!change_mouse_cursor) return;
         current_mode = Manager.Instance.GetCurrentMode();
@@ -108,12 +115,6 @@ public class MouseIconManager : MonoBehaviour
             current_texture = cursors_texture[cursor_id];
             current_offset = cursors_offset[cursor_id];
             Cursor.SetCursor(current_texture, current_offset, cursorMode);
-            //if (!Manager.Instance.mask_ui){
-             //   Cursor.SetCursor(current_texture, current_offset, cursorMode);
-            //} else {
-                //Cursor.visible = true;
-                //Cursor.SetCursor(null, Vector2.zero, cursorMode);
-           // }
         }
     }
 

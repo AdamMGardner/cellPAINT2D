@@ -300,7 +300,8 @@ public class RecipeUI : MonoBehaviour {
             Manager.Instance.AddUserDirectory(Path.GetDirectoryName(filename));
             resultData = JSONNode.Parse(File.ReadAllText(filename)); //JSONNode.LoadFromFile(filename);
         }
-        LoadRecipe_cb(resultData);
+        if (use_coroutine) StartCoroutine(LoadRecipe_cb_CR(resultData));
+        else LoadRecipe_cb(resultData);
     }
 
     public void LoadRecipe_cb(JSONNode resultData) {
@@ -379,6 +380,93 @@ public class RecipeUI : MonoBehaviour {
 
     }
     
+    public void SetTofirstIngredient(){
+        //load first ingredient of first compartments
+        int ingid = CompartmentsIngredients_ids[Compartments[current_cid]][0];
+        string iname = Manager.Instance.ingredients_ids[ingid];
+        Manager.Instance.SwitchPrefabFromName(iname);        
+    }
+
+    public IEnumerator LoadRecipe_cb_CR(JSONNode resultData) {
+        
+        int nCompartemnts = 0;
+        int nIngredients = 0;
+        int nC = 0;
+        if (resultData["cytoplasme"] != null)
+        {
+            var cid = random_uid.Next();
+            Compartments.Add(cid);//"Exterior");//"Blood Plasma");
+            nIngredients += resultData["cytoplasme"]["ingredients"].Count;
+            //CompartmentsIngredients.Add(nC, new Vector2(0, nIngredients));
+            CompartmentsIngredients_ids.Add(cid, new List<int>());
+            CompartmentsIDS.Add(cid,"Exterior");
+            CompartmentsNames.Add("Exterior",cid);
+            Debug.Log("found 0 " + nIngredients.ToString());
+            nCompartemnts += 1;
+            nC++;
+        }
+        //for each compartment should add a Cell_Membrane
+        for (int i = 0; i < resultData["compartments"].Count; i++)
+        {
+            var cid = random_uid.Next();
+            Compartments.Add(cid);//.Add(resultData["compartments"].GetKey(i));
+            int total = resultData["compartments"][i]["interior"]["ingredients"].Count +
+                resultData["compartments"][i]["surface"]["ingredients"].Count + 1;
+            //CompartmentsIngredients.Add(nC, new Vector2(nIngredients, total));
+            CompartmentsIngredients_ids.Add(cid, new List<int>());
+            CompartmentsIDS.Add(cid,resultData["compartments"].GetKey(i));
+            CompartmentsNames.Add(resultData["compartments"].GetKey(i),cid);
+            Debug.Log("found " + nIngredients.ToString() + " " + total.ToString()+" "+i.ToString());
+            nIngredients += total;
+            nCompartemnts += 2;
+            nC++;
+        }
+        if (nCompartemnts < 2)
+            nCompartemnts = 2;
+        DateTime start = DateTime.Now;
+        nC = 0;
+        if (resultData["cytoplasme"] != null)
+        {
+            UI_manager.Get.UpdatePB(0.5f,"loading cytoplasme ingredients");       
+            yield return null;
+            var cid = CompartmentsNames["Exterior"];
+            AddRecipeIngredients(cid, resultData["cytoplasme"]["ingredients"], "interior",false);
+            nC++;
+        }
+
+        for (int i = 0; i < resultData["compartments"].Count; i++)
+        {
+            UI_manager.Get.UpdatePB((float)i/(float)(resultData["compartments"].Count),"loading "+resultData["compartments"].GetKey(i)+" ingredients");       
+            yield return null;            
+            //add the membrane
+            //SceneManager.Instance.ingredients_names.Add("DrawMembrane");
+            var cid = CompartmentsNames[resultData["compartments"].GetKey(i)];
+            AddRecipeIngredientMembrane(cid,null, resultData["compartments"][i]);//"Cell_Membrane"
+            AddRecipeIngredients(cid, resultData["compartments"][i]["surface"]["ingredients"], "surface" + i.ToString(),true);
+            AddRecipeIngredients(cid, resultData["compartments"][i]["interior"]["ingredients"], "interior" + i.ToString(),false);
+            nC++;
+        }
+        //this is comment as I manually change a lot of name of the recipe to a better reading for the NSF competition. 
+        //buildHierarchy (resultData);
+        current_cid = 0;
+        loadNextCompartments();
+        //load first ingredient of first compartments
+        int ingid = CompartmentsIngredients_ids[Compartments[current_cid]][0];
+        string iname = Manager.Instance.ingredients_ids[ingid];
+        Manager.Instance.SwitchPrefabFromName(iname);
+        var prefab = Manager.Instance.all_prefab[iname];
+        Manager.Instance.changeDescription(prefab, prefab.GetComponent<SpriteRenderer>());
+        if (is_gridView)
+        {
+            hex_instance[0].GetComponent<Toggle>().isOn = true;
+        }
+        else
+        {
+            hex_list_instance[0].GetComponent<Toggle>().isOn = true;
+        }
+
+    }
+
     public void MergeRecipe(string filename = null) 
     {
         JSONNode resultData;
@@ -400,7 +488,8 @@ public class RecipeUI : MonoBehaviour {
             Manager.Instance.AddUserDirectory(Path.GetDirectoryName(filename));
             resultData = JSONNode.Parse(File.ReadAllText(filename)); //JSONNode.LoadFromFile(filename);
         }
-        MergeRecipe_cb(resultData);
+        if (use_coroutine) StartCoroutine(MergeRecipe_cb_CR(resultData));
+        else MergeRecipe_cb(resultData);
     }
 
     public void MergeRecipe_cb(JSONNode resultData)
@@ -457,6 +546,66 @@ public class RecipeUI : MonoBehaviour {
             hex_list_instance[0].GetComponent<Toggle>().isOn = true;
         }
     }
+
+    public IEnumerator MergeRecipe_cb_CR(JSONNode resultData)
+    {
+        int nCompartemnts = Compartments.Count;
+        int nIngredients = Manager.Instance.ingredients_names.Count;
+        int nC = nCompartemnts;
+        //for each compartment should add a Cell_Membrane
+        for (int i = 0; i < resultData["compartments"].Count; i++)
+        {
+            //if (Compartments.Contains(resultData["compartments"].GetKey(i))) continue;
+            if (CompartmentsNames.ContainsKey(resultData["compartments"].GetKey(i))) continue;
+            Compartments.Add(nC);//.Add(resultData["compartments"].GetKey(i));
+            //CompartmentsIngredients.Add(nC, new Vector2(nIngredients, total));
+            CompartmentsIDS.Add(nC,resultData["compartments"].GetKey(i));
+            CompartmentsNames.Add(resultData["compartments"].GetKey(i),nC);
+            CompartmentsIngredients_ids.Add(nC, new List<int>());
+            nC++;
+        }
+        DateTime start = DateTime.Now;
+        if (resultData["cytoplasme"] != null)
+        {
+            UI_manager.Get.UpdatePB(0.5f,"loading exterior ingredients");       
+            yield return null;  
+            nC =  CompartmentsNames["Exterior"];//("Blood Plasma");
+            AddRecipeIngredients(nC,resultData["cytoplasme"]["ingredients"], "interior",false);
+        }
+        for (int i = 0; i < resultData["compartments"].Count; i++)
+        {
+            UI_manager.Get.UpdatePB((float)i/(float)(resultData["compartments"].Count),"loading "+resultData["compartments"].GetKey(i)+" ingredients");       
+            yield return null;  
+            //add the membrane
+            //SceneManager.Instance.ingredients_names.Add("DrawMembrane");
+            nC =  CompartmentsNames[resultData["compartments"].GetKey(i)];//Compartments.IndexOf(resultData["compartments"].GetKey(i));
+            if (!Manager.Instance.ingredients_names.ContainsKey(resultData["compartments"][i]["name"].Value)) 
+            {
+                AddRecipeIngredientMembrane(nC,null,resultData["compartments"][i]);//"Cell_Membrane"
+            }
+            AddRecipeIngredients(nC,resultData["compartments"][i]["surface"]["ingredients"], "surface" + i.ToString(),true);
+            AddRecipeIngredients(nC,resultData["compartments"][i]["interior"]["ingredients"], "interior" + i.ToString(),false);
+        }
+        //this is comment as I manually change a lot of name of the recipe to a better reading for the NSF competition. 
+        //buildHierarchy (resultData);
+        current_cid = 0;
+        loadNextCompartments();
+        //load first ingredient of first compartments
+        int ingid = CompartmentsIngredients_ids[Compartments[current_cid]][0];
+        string iname = Manager.Instance.ingredients_ids[ingid];
+        Manager.Instance.SwitchPrefabFromName(iname);
+        var prefab = Manager.Instance.all_prefab[iname];
+        Manager.Instance.changeDescription(prefab, prefab.GetComponent<SpriteRenderer>());
+        if (is_gridView)
+        {
+            hex_instance[0].GetComponent<Toggle>().isOn = true;
+        }
+        else
+        {
+            hex_list_instance[0].GetComponent<Toggle>().isOn = true;
+        }
+    }
+
 
     //need the path in the name so we keep info on compartment
     public void AddRecipeIngredients(int cid, JSONNode recipeDictionary, string prefix,bool surface)
@@ -658,8 +807,7 @@ public class RecipeUI : MonoBehaviour {
     }
 
     public void displayTileCounts()
-    {
-        
+    { 
         foreach (Transform child in parent.transform)
         {
             if (!(child.childCount == 0))

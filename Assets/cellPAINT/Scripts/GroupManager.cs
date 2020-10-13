@@ -264,6 +264,37 @@ public class GroupManager : MonoBehaviour
         return false;
     }
 
+
+    public void CheckAttached(GameObject toTest, PrefabGroup g) {
+        var foundJT = new List<SpringJoint2D>();
+        var foundIndexes = new List<int>();
+        for (int i = 0; i < Manager.Instance.attached.Count; i++)
+        {
+            if (Manager.Instance.attached[i] == toTest) {
+                if ((i%2)==0) {
+                    foundJT.Add(Manager.Instance.attachments[i/2]);
+                    foundIndexes.Add(i);
+                }
+                else {
+                    foundJT.Add(Manager.Instance.attachments[(i-1)/2]);
+                    foundIndexes.Add(i-1);
+                }
+            }
+        }
+        for (int i = 0; i < foundIndexes.Count; i++){
+            var spr = foundJT[i];
+            if (IsAttachedToSelection(spr.connectedBody.gameObject)){
+                //the spring need to only relate to object in the selection
+                if (g.attachements.Contains(spr)) continue;
+                g.attachements.Add(spr);
+            }
+            else {
+                if (g.attachements_toskip.Contains(spr)) continue;
+                g.attachements_toskip.Add(spr);
+            }            
+        }
+    }
+
     public void AddSelection(GameObject selection, GameObject group){
         var g = group.GetComponent<PrefabGroup>();
         selection.transform.parent = group.transform;
@@ -271,7 +302,8 @@ public class GroupManager : MonoBehaviour
         if (Manager.Instance.fiber_parents.Contains(selection)) {
             for (int i = 0; i < selection.transform.childCount; i++) {
                 var current_o = selection.transform.GetChild(i).gameObject;
-                var allspring = current_o.GetComponents<SpringJoint2D>();
+                CheckAttached(current_o,g);
+                /*var allspring = current_o.GetComponents<SpringJoint2D>();
                 for (int s = 0; s < allspring.Length; s++)
                 {
                     var spr = allspring[s];
@@ -284,12 +316,13 @@ public class GroupManager : MonoBehaviour
                         if (g.attachements_toskip.Contains(spr)) continue;
                         g.attachements_toskip.Add(spr);
                     }
-                }
+                }*/
             }
         }
         else
         {
-            var allspring = selection.GetComponents<SpringJoint2D>();
+            CheckAttached(selection,g);
+            /*var allspring = selection.GetComponents<SpringJoint2D>();
             foreach (var sjt in allspring)
             {
                 if (IsAttachedToSelection(sjt.connectedBody.gameObject)){
@@ -300,7 +333,7 @@ public class GroupManager : MonoBehaviour
                     if (g.attachements_toskip.Contains(sjt)) continue;
                     g.attachements_toskip.Add(sjt);
                 }
-            }
+            }*/
         }
     }
 
@@ -562,7 +595,8 @@ public class GroupManager : MonoBehaviour
             if (Manager.Instance.fiber_parents.Contains(o)) {
                 for (int i = 0; i < o.transform.childCount; i++) {
                     var current_o = o.transform.GetChild(i).gameObject;
-                    var allspring = current_o.GetComponents<SpringJoint2D>();
+                    CheckAttached(current_o,g);
+                    /*var allspring = current_o.GetComponents<SpringJoint2D>();
                     for (int s = 0; s < allspring.Length; s++)
                     {
                         var spr = allspring[s];
@@ -574,12 +608,13 @@ public class GroupManager : MonoBehaviour
                             if (g.attachements_toskip.Contains(spr)) continue;
                             g.attachements_toskip.Add(spr);
                         }
-                    }
+                    }*/
                 }
             }
             else
             {
-                var allspring = o.GetComponents<SpringJoint2D>();
+                CheckAttached(o,g);
+                /*var allspring = o.GetComponents<SpringJoint2D>();
                 foreach (var spr in allspring)
                 {
                     if (IsAttachedToSelection(spr.connectedBody.gameObject)){
@@ -590,7 +625,7 @@ public class GroupManager : MonoBehaviour
                         if (g.attachements_toskip.Contains(spr)) continue;
                         g.attachements_toskip.Add(spr);
                     }
-                }
+                }*/
             }
         }
         var compartment = "root";

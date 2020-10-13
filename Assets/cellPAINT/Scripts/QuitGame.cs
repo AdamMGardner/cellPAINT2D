@@ -4,17 +4,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Threading.Tasks;
+using System.Text;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 //using UnityStandardAssets.ImageEffects;
 using System.Runtime.InteropServices;
 using Crosstales.FB;
-using System.Text;
 using SimpleJSON;
 
 
 public class QuitGame : MonoBehaviour
 {
+    public bool use_coroutine;
+    public int frequency = 100;
     string path;
     float lastTime;
     public string lastScreenshot = "";
@@ -28,6 +31,8 @@ public class QuitGame : MonoBehaviour
     //public MotionBlur mb;
     public Camera myCamera;
     public bool use_native_browser;
+
+        
     private bool show_browser_save = false;
     private bool save_scene = false;
     private bool show_browser_load = false;
@@ -46,6 +51,7 @@ public class QuitGame : MonoBehaviour
     private byte[] current_bytes;
     private Texture2D current_screenShot;
     private Rect windowRect;// = new Rect(10, 10, 100, 100);
+    private Task loading_task;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
     //
@@ -126,7 +132,8 @@ public class QuitGame : MonoBehaviour
         var loader = new WWW(url);
         yield return loader;
         var zipdata = loader.bytes;
-        LoadFromZipData(zipdata);
+        if (use_coroutine) StartCoroutine(LoadFromZipDataCR(zipdata));
+        else LoadFromZipData(zipdata);
     }
 
     protected void FileSelectedCallback(string path)
@@ -158,6 +165,7 @@ public class QuitGame : MonoBehaviour
         //path = Application.dataPath;
         //if (!mb) mb = Camera.main.GetComponent<MotionBlur>();
         backgroundImageManager = backgroundImageManagerContainer.GetComponent<BackgroundImageManager>();
+        Manager.Instance.recipeUI.use_coroutine = use_coroutine;
     }
 
     public void Exit()
@@ -294,9 +302,92 @@ public class QuitGame : MonoBehaviour
     void LoadFromString(string lines)
     {
         string[] line = lines.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
-        LoadFromLines(line);
+        if (use_coroutine) StartCoroutine(LoadFromLines_CR(line));
+        else LoadFromLines(line);
     }
 
+    IEnumerator LoadFromZipDataCR(byte[] data){
+        //create a memorystream from the data
+        string recipe_data_string="";
+        string recipe_json_data="";
+        using (var memoryStream = new MemoryStream())
+        {
+            memoryStream.Write(data, 0 , data.Length);
+            // Set the position to the beginning of the stream.
+            memoryStream.Seek(0, SeekOrigin.Begin);
+
+            using (ZipArchive archive = new ZipArchive(memoryStream, ZipArchiveMode.Read)){
+                int counter = 0;
+                foreach (ZipArchiveEntry entry in archive.Entries)
+                {
+                    string fname = entry.Name;
+                    if (entry.FullName.EndsWith(".txt", StringComparison.OrdinalIgnoreCase) && entry.Name!="README.txt")
+                    {
+                        //recipe model
+                        using (var stream = entry.Open())
+                                using (var reader = new StreamReader(stream)) {
+                                    recipe_data_string = reader.ReadToEnd();
+                                }                        
+                    }
+                    else if (entry.FullName.EndsWith(".json", StringComparison.OrdinalIgnoreCase)) 
+                    {
+                        //recipe json
+                        using (var stream = entry.Open())
+                                using (var reader = new StreamReader(stream)) {
+                                    recipe_json_data = reader.ReadToEnd();
+                                }                               
+                    }
+                    else {
+                        //sprites images
+                        using (var stream = entry.Open()){
+                            var mem = new MemoryStream();
+                            stream.CopyTo(mem);
+                            byte[] truncated = mem.ToArray();//or .GetBuffer(); for no copy
+                            Texture2D aTexture = new Texture2D (2,2);
+                            aTexture.LoadImage(truncated);
+                            Debug.Log("Adding a texture "+fname);
+                            Debug.Log("Adding a texture exist ? "+Manager.Instance.sprites_textures.ContainsKey(fname).ToString());
+                            if (Manager.Instance.sprites_textures.ContainsKey(fname)){
+                                //update the sprite?
+                                Debug.Log("what is the texture");
+                                Debug.Log(Manager.Instance.sprites_textures[fname]);
+                                //Manager.Instance.sprites_textures[entry.Name] = aTexture;
+                                Debug.Log("OK");
+                            }
+                            else {
+                                Debug.Log("add the texture "+fname);
+                                Debug.Log(Manager.Instance.sprites_textures.Count.ToString());
+                                Manager.Instance.sprites_textures.Add(fname,aTexture);
+                                Debug.Log("OK");
+                            }
+                        }
+                    }
+                    UI_manager.Get.UpdatePB((float)counter/(float)(archive.Entries.Count),"loading archive entry "+entry.Name);       
+                    yield return null;
+                }
+            }
+        }
+        if (recipe_json_data!="") {
+            //load json recipe
+            var resultData = JSONNode.Parse(recipe_json_data);
+            if (Manager.Instance.recipeUI.merge_upon_loading) {
+                if (use_coroutine) StartCoroutine(Manager.Instance.recipeUI.MergeRecipe_cb_CR(resultData));
+                else Manager.Instance.recipeUI.MergeRecipe_cb(resultData);
+            } else {
+                Manager.Instance.Clear();
+                Manager.Instance.recipeUI.Clear();
+                if (use_coroutine) StartCoroutine(Manager.Instance.recipeUI.LoadRecipe_cb_CR(resultData));
+                else Manager.Instance.recipeUI.LoadRecipe_cb(resultData);
+            }            
+        }        
+        if (recipe_data_string!="") {
+            if (!Manager.Instance.recipeUI.merge_upon_loading) {
+                Manager.Instance.Clear();
+            }
+            Debug.Log("LoadFromString");
+            LoadFromString(recipe_data_string);
+        }
+    }
     void LoadFromZipData(byte[] data) {
         //create a memorystream from the data
         string recipe_data_string="";
@@ -503,6 +594,7 @@ public class QuitGame : MonoBehaviour
     //should save a zip with additional ing
     public string SaveScene_cb(string filename, bool write = true)
     {
+        if (filename == "" && write) return "";
         string sep = ",";
         Debug.Log("You are in the saveScene_cb with filename: " + filename);
         if (filename == null) return "";
@@ -810,7 +902,7 @@ public class QuitGame : MonoBehaviour
         return elems[0];
     }
 
-    public void LoadFromLines(string[] lines) {
+    public void LoadFromLines(string[] lines, bool as_task=false) {
         string sep = ",";
         var current_name = "";
         if (Manager.Instance.myPrefab)
@@ -832,6 +924,7 @@ public class QuitGame : MonoBehaviour
             var y = float.Parse(elems[4]);//Debug.Log(y);
             var z = float.Parse(elems[5]);//Debug.Log(z);          
             BackgroundImageManager.Get.AddBackgroundSprites(path,new Vector3(x,y,z),scale2d,rot);
+            if (as_task) UI_manager.Get.UpdatePB((float)lineCounter/(float)(lineCounter + nbg_images),"loading background images");
         }
         lineCounter += nbg_images;
         elems = lines[lineCounter].Split(sep[0]);
@@ -842,6 +935,7 @@ public class QuitGame : MonoBehaviour
         {
             elems = lines[i].Split(sep[0]);
             Manager.Instance.recipeUI.AddOneCompartment(elems[0],false);
+            if (as_task) UI_manager.Get.UpdatePB((float)lineCounter/(float)(lineCounter + extra_compartments),"loading extra compartments");
         }
         lineCounter += extra_compartments;
         elems = lines[lineCounter].Split(sep[0]);
@@ -859,10 +953,14 @@ public class QuitGame : MonoBehaviour
             var issurf = (elems[5] == "0")? false : true;
             var isfiber = (elems[6] == "0")? false : true;
             var comp = elems[7];//int.Parse(elems[6] );
-            if (!Manager.Instance.ingredients_names.ContainsKey(name)) {
+            var prefix = (issurf)?"surface":"interior";
+            var iname = comp+"."+prefix+"."+name;
+            //actual name is compname+"."+prefix+"."+name
+            if (!Manager.Instance.ingredients_names.ContainsKey(iname)) {
                 Debug.Log("AddOneIngredient "+name+" "+sprite_name+" "+comp);
                 Manager.Instance.recipeUI.AddOneIngredient(name, sprite_name, scale2d, yoffset, fiber_length, issurf, isfiber, comp);
             }
+            if (as_task) UI_manager.Get.UpdatePB((float)lineCounter/(float)(lineCounter + extra_ingredient),"loading extra ingredient");
         }
         lineCounter += extra_ingredient;
         elems = lines[lineCounter].Split(sep[0]);
@@ -891,6 +989,7 @@ public class QuitGame : MonoBehaviour
                 Manager.Instance.prefab_materials.Add(name, Manager.Instance.createNewSpriteMaterial(name));
             }//else build the material ?
             Manager.Instance.prefab_materials[name].color = new Color(r, g, b);
+            if (as_task) UI_manager.Get.UpdatePB((float)lineCounter/(float)(lineCounter + n_mat),"loading materials");
         }
         lineCounter += n_mat;
         //first line is nb rb, and nb fiber
@@ -919,6 +1018,7 @@ public class QuitGame : MonoBehaviour
             if (ghost != -1) {
                 GhostManager.Get.UpdateFromObject(newObject, ghost, group_name, group_id);
             }    
+            if (as_task) UI_manager.Get.UpdatePB((float)lineCounter/(float)(lineCounter + nObj),"loading soluble proteins");
         }
         //in case of fiber need to do the random choice of sprite id, or save it
         lineCounter += nObj;
@@ -1005,6 +1105,7 @@ public class QuitGame : MonoBehaviour
             if (do_ghost != -1){
                 GhostManager.Get.UpdateFromObject(fp, do_ghost, group_name, group_id);
             }
+            if (as_task) UI_manager.Get.UpdatePB((float)i/(float)(nFiber),"loading fiber proteins");
         }
         Debug.Log("found nSurfaceOfFiber " + nSurfaceOfFiber.ToString());
         for (int i = 0; i < nSurfaceOfFiber; i++)
@@ -1023,7 +1124,8 @@ public class QuitGame : MonoBehaviour
             GroupManager.Get.UpdateGroupFromObject(newObject, group_name, group_id); 
             if (ghost != -1) {
                 GhostManager.Get.UpdateFromObject(newObject, ghost, group_name, group_id);
-            }               
+            }   
+            if (as_task) UI_manager.Get.UpdatePB((float)i/(float)(nSurfaceOfFiber),"loading surface proteins");            
             lineCounter++;
         }
         //reset ui and manager
@@ -1044,6 +1146,7 @@ public class QuitGame : MonoBehaviour
             var z2 = float.Parse(elems[6]);
             var id2 = elems[7];
             Manager.Instance.restoreOneBond(new Vector3(x1, y1, z1),id1, new Vector3(x2, y2, z2),id2);
+            if (as_task) UI_manager.Get.UpdatePB((float)i/(float)(nLink),"loading bonds");      
             lineCounter++;
         }
         //Manager.Instance.UpdateGhostArea();   
@@ -1051,6 +1154,312 @@ public class QuitGame : MonoBehaviour
         //restore groups
         GroupManager.Get.RestoreGroups();
         GhostManager.Get.RestoreGhost();
+        Manager.Instance.recipeUI.SetTofirstIngredient();
+    }
+
+    IEnumerator LoadFromLines_CR(string[] lines) {
+        int lcounter = 0;
+        if (Manager.Instance.TogglePhysics) Manager.Instance.TogglePhysics.isOn = false;
+        Physics2D.autoSimulation = false;        
+        UI_manager.Get.progress_bar_holder.SetActive(true);    
+        UI_manager.Get.UpdatePB(0.0f,"loading");        
+        string sep = ",";
+        var current_name = "";
+        if (Manager.Instance.myPrefab)
+            current_name = Manager.Instance.myPrefab.name;
+        int lineCounter = 0;
+        //split with space and get x y r name
+        //first line is nb of material color to overwrote
+        string[] elems = lines[lineCounter].Split(sep[0]);
+        int nbg_images =int.Parse(elems[0]);
+        Debug.Log("found nbg_images "+nbg_images.ToString());
+        lineCounter++;
+        for (int i = lineCounter; i < lineCounter + nbg_images; i++)
+        {
+            elems = lines[i].Split(sep[0]);
+            var path  = elems[0];
+            var scale2d = float.Parse(elems[1]);
+            var rot = float.Parse(elems[2]);
+            var x = float.Parse(elems[3]);//Debug.Log(x);
+            var y = float.Parse(elems[4]);//Debug.Log(y);
+            var z = float.Parse(elems[5]);//Debug.Log(z);          
+            BackgroundImageManager.Get.AddBackgroundSprites(path,new Vector3(x,y,z),scale2d,rot);
+            if (lcounter%frequency == 0) {
+                yield return null;
+                UI_manager.Get.UpdatePB((float)lcounter/(float)(nbg_images),"loading background images");
+            }
+            lcounter++;
+            //
+        }
+        lcounter = 0;
+        lineCounter += nbg_images;
+        elems = lines[lineCounter].Split(sep[0]);
+        int extra_compartments = int.Parse(elems[0]);
+        Debug.Log("found extra_compartments "+extra_compartments.ToString());
+        lineCounter++;
+        for (int i = lineCounter; i < lineCounter + extra_compartments; i++)
+        {
+            elems = lines[i].Split(sep[0]);
+            Manager.Instance.recipeUI.AddOneCompartment(elems[0],false);
+            if (lcounter%frequency == 0) {
+                UI_manager.Get.UpdatePB((float)lineCounter/(float)(lineCounter + extra_compartments),"loading extra compartments");
+                yield return null;
+            }
+            lcounter++;
+        }
+        lcounter = 0;
+        lineCounter += extra_compartments;
+        elems = lines[lineCounter].Split(sep[0]);
+        int extra_ingredient = int.Parse(elems[0]);
+        Debug.Log("found extra_ingredient "+extra_ingredient.ToString());
+        lineCounter++;
+        for (int i = lineCounter; i < lineCounter + extra_ingredient; i++)
+        {
+            elems = lines[i].Split(sep[0]);
+            var name = elems[0];
+            var sprite_name = elems[1];
+            var scale2d = float.Parse(elems[2]);
+            var yoffset = float.Parse(elems[3]);
+            var fiber_length = float.Parse(elems[4]);
+            var issurf = (elems[5] == "0")? false : true;
+            var isfiber = (elems[6] == "0")? false : true;
+            var comp = elems[7];//int.Parse(elems[6] );
+            var prefix = (issurf)?"surface":"interior";
+            var iname = comp+"."+prefix+"."+name;
+            //actual name is compname+"."+prefix+"."+name
+            if (!Manager.Instance.ingredients_names.ContainsKey(iname)) {
+                Debug.Log("AddOneIngredient "+name+" "+sprite_name+" "+comp);
+                Manager.Instance.recipeUI.AddOneIngredient(name, sprite_name, scale2d, yoffset, fiber_length, issurf, isfiber, comp);
+            }
+            if (lcounter%frequency == 0) {
+                UI_manager.Get.UpdatePB((float)lcounter/(float)(extra_ingredient),"loading extra ingredient");
+                yield return null;
+            }
+            lcounter++;        
+        }
+        lcounter = 0;
+        lineCounter += extra_ingredient;
+        elems = lines[lineCounter].Split(sep[0]);
+        int n_mat = int.Parse(elems[0]);
+        Debug.Log("found n_mat "+n_mat.ToString());
+        lineCounter++;
+        for (int i = lineCounter; i < lineCounter + n_mat; i++)
+        {
+            elems = lines[i].Split(sep[0]);
+            var name = elems[0];
+            if (name == "Draw") {
+                name = "Draw DNA";
+                elems[1] = elems[2];
+                elems[2] = elems[3];
+                elems[3] = elems[4];
+            }
+            var r = float.Parse(elems[1]);
+            var g = float.Parse(elems[2]);
+            var b = float.Parse(elems[3]);
+            if (name == "background") {
+                Manager.Instance.changeColorBackground( new Color(r, g, b) );
+                continue;
+            }
+            if (!Manager.Instance.prefab_materials.ContainsKey(name))
+            {
+                Manager.Instance.prefab_materials.Add(name, Manager.Instance.createNewSpriteMaterial(name));
+            }//else build the material ?
+            Manager.Instance.prefab_materials[name].color = new Color(r, g, b);
+            if (lcounter%frequency == 0) {
+                UI_manager.Get.UpdatePB((float)lcounter/(float)(n_mat),"loading materials");                
+                yield return null;
+            }
+            lcounter++;
+        }
+        lcounter = 0;
+        lineCounter += n_mat;
+        //first line is nb rb, and nb fiber
+        elems = lines[lineCounter].Split(sep[0]);
+        int nObj = int.Parse(elems[0]);             //nb instances
+        int nFiber = int.Parse(elems[1]);           //nb chains fiber
+        int nSurfaceOfFiber = int.Parse(elems[2]);  //nb surface objects
+        Dictionary<string,Group> groups = new Dictionary<string,Group>();
+        lineCounter++;
+        for (int i = lineCounter; i < lineCounter + nObj; i++)
+        {
+            // 9.848226,21.78014,0.0004882813,197.4075,LDL,0,0
+            elems = lines[i].Split(sep[0]);
+            var x = float.Parse(elems[0]);//Debug.Log(x);
+            var y = float.Parse(elems[1]);//Debug.Log(y);
+            var z = float.Parse(elems[2]);//Debug.Log(z);
+            var zangle = float.Parse(elems[3]);//Debug.Log(zangle);
+            var name = elems[4];//Debug.Log(name);
+            var order = int.Parse(elems[5]);//Debug.Log(order);
+            var kinematic = int.Parse(elems[6]);//Debug.Log(kinematic);
+            var ghost = int.Parse(elems[7]); 
+            var group_name = elems[8];
+            var group_id = int.Parse(elems[9]);      
+            var newObject = Manager.Instance.restoreOneInstance(name, new Vector3(x, y, z), zangle, order, false, (kinematic == 1),false);
+            GroupManager.Get.UpdateGroupFromObject(newObject, group_name, group_id);
+            if (ghost != -1) {
+                GhostManager.Get.UpdateFromObject(newObject, ghost, group_name, group_id);
+            }    
+            if (lcounter%frequency == 0) {
+                UI_manager.Get.UpdatePB((float)lcounter/(float)(nObj),"loading soluble proteins");
+                yield return null;
+            }
+            lcounter++;
+        }
+        lcounter = 0;
+        //in case of fiber need to do the random choice of sprite id, or save it
+        lineCounter += nObj;
+        GameObject attached = null;
+        GameObject fiber = null;
+        Debug.Log("found nFiber " + nFiber.ToString());
+        for (int i = 0; i < nFiber; i++)
+        {
+            attached = null;
+            fiber = null;
+            Debug.Log(lines[lineCounter]);
+            elems = lines[lineCounter].Split(sep[0]);
+            lineCounter++;
+            var name = elems[0];
+            int nPoints = int.Parse(elems[1]);
+            var prefabName = checkFiberName(name);
+            if (prefabName == "DrawDNA") prefabName = "Draw DNA";
+            Debug.Log(name + " fiber  ??  " + prefabName+" "+nPoints.ToString());
+            GameObject fp = Manager.Instance.AddFiberParent(prefabName);
+            var group_name = elems[2];
+            var group_id = int.Parse(elems[3]);            
+            bool closed = name.EndsWith("_Closed");
+            var do_ghost = -1;
+            lcounter = 0;
+            for (int j = 0; j < nPoints; j++)
+            {
+                //-38.75513,-14.91165,0,158.7505,0,0,1
+                elems = lines[lineCounter].Split(sep[0]);
+                if (elems.Length != 7) {
+                    Debug.Log("problem fiber line "+j.ToString()+ " "+lines[lineCounter]);
+                }
+                var x = float.Parse(elems[0]);
+                var y = float.Parse(elems[1]);
+                var z = float.Parse(elems[2]);
+                var zangle = float.Parse(elems[3]);
+                var bounded = elems[4];
+                var kinematic = int.Parse(elems[5]);
+                do_ghost = int.Parse(elems[6]); 
+                if (bounded == "0")
+                {
+                    if (attached != null)
+                    {
+                        fiber = Manager.Instance.restoreAttachFiber(new Vector3(x, y, z),
+                            zangle, attached);
+                        attached = null;
+                    }
+                    else
+                    {
+                        //make sure pinned will be at the proper position
+                        fiber = Manager.Instance.oneInstanceFiberPos(new Vector3(x, y, z), zangle);
+                        Quaternion rotation = Quaternion.AngleAxis(zangle, Vector3.forward);
+                        fiber.transform.position = new Vector3(x, y, z);
+                        fiber.transform.rotation = rotation;
+                    }
+
+                    if (kinematic == 1)
+                        Manager.Instance.pin_object(fiber, kinematic == 1); //SceneManager.Instance.pinInstance(fiber);
+                    if ( fiber.tag != "membrane" ) Manager.Instance.changeColorAndOrderFromDepth(z, fiber);
+                    else fiber.GetComponent<SpriteRenderer>().sortingOrder = 0;
+                }
+                else {
+                    attached = Manager.Instance.restoreAttachments(bounded, new Vector3(x, y, z), zangle, fiber);
+                    Debug.Log("attached to fiber " + attached.name + " " + kinematic.ToString());
+                    if (kinematic == 1)
+                        Manager.Instance.pin_object(attached, kinematic == 1); //SceneManager.Instance.pinInstance(attached);
+                }
+                if (lcounter%frequency == 0) {
+                    UI_manager.Get.UpdatePB((float)j/(float)(nPoints),"loading fiber "+fp.name);
+                    yield return null;
+                }
+                lcounter++;                
+                lineCounter++;
+            }
+            if (closed)
+            {
+                Manager.Instance.closePersistence();
+            }
+
+            if (Manager.Instance.myPrefab.GetComponent<PrefabProperties>().light_fiber)
+            {
+                foreach (Transform child in Manager.Instance.fiber_parent.transform)
+                {
+                    Rigidbody2D rb = child.GetComponent<Rigidbody2D>();
+                    rb.mass = 5.0f;
+                    rb.drag = 1.0f;
+                    rb.angularDrag = 0.05f;
+                }
+            }
+            GroupManager.Get.UpdateGroupFromObject(fp, group_name, group_id);
+            if (do_ghost != -1){
+                GhostManager.Get.UpdateFromObject(fp, do_ghost, group_name, group_id);
+            }
+        }
+        lcounter = 0;
+        Debug.Log("found nSurfaceOfFiber " + nSurfaceOfFiber.ToString());
+        for (int i = 0; i < nSurfaceOfFiber; i++)
+        {
+            elems = lines[lineCounter].Split(sep[0]);
+            var x = float.Parse(elems[0]);
+            var y = float.Parse(elems[1]);
+            var z = float.Parse(elems[2]);
+            var zangle = float.Parse(elems[3]);
+            var name = elems[4];
+            var kinematic = int.Parse(elems[5]);
+            var ghost = int.Parse(elems[6]); 
+            var group_name = elems[7];
+            var group_id = int.Parse(elems[8]);
+            var newObject = Manager.Instance.restoreOneInstance(name, new Vector3(x, y, z), zangle, 0, true, (kinematic == 1), false);
+            GroupManager.Get.UpdateGroupFromObject(newObject, group_name, group_id); 
+            if (ghost != -1) {
+                GhostManager.Get.UpdateFromObject(newObject, ghost, group_name, group_id);
+            }   
+            if (lcounter%frequency == 0) {
+                UI_manager.Get.UpdatePB((float)i/(float)(nSurfaceOfFiber),"loading surface proteins");            
+                yield return null;
+            }
+            lcounter++;
+            lineCounter++;
+        }
+        lcounter = 0;
+        //reset ui and manager
+        elems = lines[lineCounter].Split(sep[0]);
+        int nLink = int.Parse(elems[0]);
+        lineCounter++;
+        Debug.Log("found nLink " + nLink.ToString());
+        for (int i = 0; i < nLink; i++)
+        {
+            //create a joints
+            elems = lines[lineCounter].Split(sep[0]);
+            var x1 = float.Parse(elems[0]);
+            var y1 = float.Parse(elems[1]);
+            var z1 = float.Parse(elems[2]);
+            var id1 = elems[3];
+            var x2 = float.Parse(elems[4]);
+            var y2 = float.Parse(elems[5]);
+            var z2 = float.Parse(elems[6]);
+            var id2 = elems[7];
+            Manager.Instance.restoreOneBond(new Vector3(x1, y1, z1),id1, new Vector3(x2, y2, z2),id2);
+            if (lcounter%frequency == 0) {
+                UI_manager.Get.UpdatePB((float)i/(float)(nLink),"loading bonds");      
+                yield return null;
+            }
+            lcounter++;
+            lineCounter++;
+        }
+        lcounter = 0;
+        //Manager.Instance.UpdateGhostArea();   
+        //if (current_name!="") Manager.Instance.SwitchPrefabFromName(current_name);
+        //restore groups
+        GroupManager.Get.RestoreGroups();
+        GhostManager.Get.RestoreGhost();
+        if (Manager.Instance.TogglePhysics) Manager.Instance.TogglePhysics.isOn = true;
+        Physics2D.autoSimulation = true;  
+        UI_manager.Get.progress_bar_holder.SetActive(false);   
+        Manager.Instance.recipeUI.SetTofirstIngredient();          
     }
 
     //should be able to load a zip
@@ -1069,7 +1478,10 @@ public class QuitGame : MonoBehaviour
             Debug.Log("should load from " + filename);
             string[] lines = System.IO.File.ReadAllLines(filename);
             Debug.Log("should load from this many lines " + lines.Length.ToString());
-            LoadFromLines(lines);
+            //LoadFromLines(lines);
+            //DoAsyncLoadFromLines(lines);
+            if (use_coroutine) StartCoroutine(LoadFromLines_CR(lines));
+            else LoadFromLines(lines);
         }
         else if (ext == ".json")
         {
@@ -1081,7 +1493,8 @@ public class QuitGame : MonoBehaviour
         else if (ext == ".zip") 
         {
             byte[] zipbytes = File.ReadAllBytes(filename);
-            LoadFromZipData(zipbytes);
+            if (use_coroutine) StartCoroutine(LoadFromZipDataCR(zipbytes));
+            else LoadFromZipData(zipbytes);
         }
         else {
             //not supported
