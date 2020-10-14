@@ -216,6 +216,7 @@ public class Add_ingredient_ui : MonoBehaviour
 
     public void setYoffset_cb(){
         //need to take in account the canvas main scale
+        var pw = theSprite.transform.parent.GetComponent<RectTransform>().rect.width;
         input_offset_y = float.Parse (input_offset_y_field.text);
         float cscale = Manager.Instance._canvas.transform.localScale.x;
         input_pixel_ratio = float.Parse (input_pixel_ratio_field.text ); 
@@ -230,8 +231,9 @@ public class Add_ingredient_ui : MonoBehaviour
         theSpriteMb.rectTransform.localPosition = new Vector3(p.x,offy,p.z);
         //membrane thickness is 130px while sprite is 149px. Ang not equal to 42.0
         var thickness = Manager.Instance.membrane_thickness*sc2d/cscale;//angstrom
+        theSpriteMb.pixelsPerUnitMultiplier = 4.0f/(thickness*2.0f/60.0f);
         //theSpriteMb.rectTransform.sizeDelta = new Vector2((int)w,42.0f);
-        theSpriteMb.rectTransform.sizeDelta = new Vector2((int)w,thickness);
+        theSpriteMb.rectTransform.sizeDelta = new Vector2((int)pw,thickness);
         //theSpriteMb.transform.localScale = new Vector3(1.0f,sc2d,1.0f);//1px-1a
         //theSpriteMb.rectTransform.localPosition = new Vector3(p.x,h/2.0f-offy,p.z);
     }
@@ -362,7 +364,7 @@ public class Add_ingredient_ui : MonoBehaviour
                 DoCallIllustrate();
             });
     }
-    
+
 #if UNITY_WEBGL && !UNITY_EDITOR
     public void OnFileUpload(string url) {
         StartCoroutine(OutputRoutineTexture(url));

@@ -446,7 +446,7 @@ public class Manager : MonoBehaviour {
             if (otherImage.sharedMaterial != null) {
                 Description_Holder_HSV.GetComponent<ColorPicker>().Color = otherImage.sharedMaterial.color;
             }
-            var pw = tools_toggle_description_image.transform.GetComponentInParent<RectTransform>().rect.width;
+            var pw = tools_toggle_description_image.transform.parent.GetComponent<RectTransform>().rect.width;
             var ratio =(float) otherImage.sprite.texture.width/(float)otherImage.sprite.texture.height;
             //var w = 150;//(snode.data.thumbnail)?snode.data.thumbnail.width:150;
             var h = 210;//w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
@@ -464,17 +464,18 @@ public class Manager : MonoBehaviour {
             var canvas_scale = w/tools_toggle_description_image.sprite.texture.width; 
             var sc2d = scale2d*canvas_scale*cscale;           
             if (props.is_surface){
+                //h=60 and pixelperunit multiplier is 2
+                //h=146 and pixelperunit multiplier is 0.8
                 UI_manager.Get.IngredientSpriteMb.gameObject.SetActive(true);
                 var offy = -props.y_offset*sc2d/cscale;
                 var p = tools_toggle_description_image.rectTransform.localPosition;
                 UI_manager.Get.IngredientSpriteMb.rectTransform.localPosition = new Vector3(p.x,offy,p.z);
                 var thickness = membrane_thickness*sc2d/cscale;//angstrom
                 //theSpriteMb.rectTransform.sizeDelta = new Vector2((int)w,42.0f);
-
                 //Adam's attempt to scale width of membrane image based on thickness.
                 float adjustedWidth = 620.0f * (thickness/120); //620 x 120 is the original image size.
-
-                UI_manager.Get.IngredientSpriteMb.rectTransform.sizeDelta = new Vector2((int)adjustedWidth,thickness); //pw replaced with adjustedWidth
+                UI_manager.Get.IngredientSpriteMb.pixelsPerUnitMultiplier = 4.0f/(thickness*2.0f/60.0f);
+                UI_manager.Get.IngredientSpriteMb.rectTransform.sizeDelta = new Vector2((int)pw,thickness); //pw replaced with adjustedWidth
                 Debug.Log("props for "+props.name+" "+props.y_offset.ToString()+" "+props.scale2d.ToString());
             }
             else {
