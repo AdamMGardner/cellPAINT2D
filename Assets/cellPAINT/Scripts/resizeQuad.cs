@@ -16,7 +16,7 @@ public class resizeQuad : MonoBehaviour
     {
         CameraMove cm=cam.GetComponent<CameraMove>();
         cam.orthographicSize = cm.cameraZoomMax;
-        y = cm.cameraZoomMax * 2.0f; //Orthograpic size is half so it must be multiplied by 2.
+        y = cm.cameraZoomMax * 20.0f; //Orthograpic size is half so it must be multiplied by 2.
         x = y * cam.aspect; //multiplies X by the aspect ratio of the screen.
         Background_Quad.transform.localScale = new Vector3(x, y, 1);
         last_size = cm.cameraZoomMax;

@@ -361,7 +361,7 @@ public class RecipeUI : MonoBehaviour {
         }
         //this is comment as I manually change a lot of name of the recipe to a better reading for the NSF competition. 
         //buildHierarchy (resultData);
-        current_cid = 0;
+        current_cid = -1;
         loadNextCompartments();
         //load first ingredient of first compartments
         int ingid = CompartmentsIngredients_ids[Compartments[current_cid]][0];
@@ -448,7 +448,7 @@ public class RecipeUI : MonoBehaviour {
         }
         //this is comment as I manually change a lot of name of the recipe to a better reading for the NSF competition. 
         //buildHierarchy (resultData);
-        current_cid = 0;
+        current_cid = -1;
         loadNextCompartments();
         //load first ingredient of first compartments
         int ingid = CompartmentsIngredients_ids[Compartments[current_cid]][0];

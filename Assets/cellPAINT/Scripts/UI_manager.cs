@@ -31,6 +31,7 @@ public class UI_manager : MonoBehaviour
     public GameObject progress_bar_holder;
     public Slider progress_bar;
     public Text progress_label;
+    public Slider pixelscale_slider;
     private static UI_manager _instance = null;
     public static UI_manager Get
     {
@@ -67,7 +68,7 @@ public class UI_manager : MonoBehaviour
         progress_bar.value = value;
         progress_label.text = label;        
     }
-    
+
     public void SetNinstance(float number) {
         Manager.Instance.nbInstancePerClick = (int) number;
         ninstance_click_field.text = number.ToString();

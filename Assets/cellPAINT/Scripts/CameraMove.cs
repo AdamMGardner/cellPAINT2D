@@ -6,7 +6,9 @@ public class CameraMove : MonoBehaviour {
     public bool zoomToMouse;
     public float dragSpeed = 1;
     public float zoomDragSpeed = 0.15f;
+    public float rotation_speed = 2.0f;
     private Vector3 dragOrigin;
+    private float ZrotOrigin;
     public Camera Main_Camera;
     private float mapY;
     private float mapX;
@@ -38,10 +40,14 @@ public class CameraMove : MonoBehaviour {
         Main_Camera.orthographicSize = cameraCurrentZoom;
         ChildTransSize();
         if (use_Viewport) Main_Camera.rect = new Rect (0.25f,1,0,1);
+        ZrotOrigin = 0.0f;
     }
 
     void Update()
     {
+        if (cameraCurrentZoom != Main_Camera.orthographicSize) {
+            cameraCurrentZoom = (int) Main_Camera.orthographicSize;
+        }
         //dragOrigin = new Vector3(Input.mousePosition.x, Input.mousePosition.y,-3000);
         if (Manager.Instance.mask_ui) return;
         if (Input.GetAxis("Mouse ScrollWheel") > 0) // back
@@ -68,15 +74,47 @@ public class CameraMove : MonoBehaviour {
             PositionOutOfBounds();
             //  }
         }
-        //Input.GetMouseButtonDown(2) super zoom
+        else if (Input.GetMouseButtonDown(2)){
+            //ZrotOrigin = Main_Camera.transform.eulerAngles.z;
+            dragOrigin = new Vector3(Input.mousePosition.x, Input.mousePosition.y,0);
+            Vector3 target_position = Vector3.zero;
+            if (Manager.Instance.selected_instance!=null){
+                target_position = Manager.Instance.selected_instance.transform.position;
+                Main_Camera.transform.position = target_position;
+                Main_Camera.transform.position = new Vector3(Main_Camera.transform.position.x,Main_Camera.transform.position.y,-3000);
+                //Main_Camera.transform.LookAt(target_position, Vector3.up);                
+            }
+        }
         else if (Input.GetMouseButtonDown(1)) {
-            dragOrigin = Input.mousePosition;
+            dragOrigin = new Vector3(Input.mousePosition.x, Input.mousePosition.y,-3000);
         }
         else if (Input.GetMouseButton(1))
         {
-            cameraMapping();
+            //cameraMapping();
             Move();
-            PositionOutOfBounds();
+            //PositionOutOfBounds();
+        }
+        else if (Input.GetMouseButton(2)){
+            Vector3 target_position = Vector3.zero;
+            if (Manager.Instance.selected_instance!=null){
+                target_position = Manager.Instance.selected_instance.transform.position;
+            }
+            //rotate around Z by smooth increment
+            //Main_Camera.transform.eulerAngles += Vector3.forward * (rotation_speed * Time.deltaTime);
+            Vector3 current_mouse = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
+            //Vector3 current_mouse_world = Main_Camera.ScreenToWorldPoint(current_mouse);
+            //Vector3 dragOrigin_world = Main_Camera.ScreenToWorldPoint(dragOrigin);
+            Vector3 d = (current_mouse - dragOrigin);
+            float sign = (d.x < 0.0f )? -1.0f : 1.0f;
+            float amount  = d.magnitude*rotation_speed*sign ;
+            ZrotOrigin+=amount;
+            //Main_Camera.transform.eulerAngles += Vector3.forward * (rotation_speed * ZrotOrigin) * sign;
+            Main_Camera.transform.rotation = Quaternion.AngleAxis(ZrotOrigin, Vector3.forward);
+            dragOrigin = current_mouse;
+            //Main_Camera.orthographicSize = cameraZoomMax;
+            //vertExtent = Main_Camera.transform.InverseTransformVector(Main_Camera.ScreenToWorldPoint(new Vector3(0.0f, Main_Camera.pixelRect.height, 0.0f))).y;
+            //horzExtent = Main_Camera.transform.InverseTransformVector(Main_Camera.ScreenToWorldPoint(new Vector3(Main_Camera.pixelRect.width, 0.0f, 0.0f))).x;
+            //Main_Camera.orthographicSize = cameraCurrentZoom;
         }
         else { }
         if (use_Viewport) {
@@ -88,8 +126,8 @@ public class CameraMove : MonoBehaviour {
     void cameraMapping()
     {
         cameraPos3D = Main_Camera.transform.position;
-        mapYPre = Main_Camera.ScreenToWorldPoint(new Vector3(0.0f, Main_Camera.pixelRect.height, 0.0f));
-        mapXPre = Main_Camera.ScreenToWorldPoint(new Vector3(Main_Camera.pixelRect.width, 0.0f, 0.0f));
+        mapYPre = Main_Camera.transform.InverseTransformVector(Main_Camera.ScreenToWorldPoint(new Vector3(0.0f, Screen.height, 0.0f)));
+        mapXPre = Main_Camera.transform.InverseTransformVector(Main_Camera.ScreenToWorldPoint(new Vector3(Screen.width, 0.0f, 0.0f)));
 
         mapY = mapYPre.y - cameraPos3D.y;
         mapX = mapXPre.x - cameraPos3D.x;
@@ -111,8 +149,8 @@ public class CameraMove : MonoBehaviour {
         //MoveOutOfBounds();
 
         move = new Vector3(pos.x, pos.y, 0.0f);
-
-        Main_Camera.transform.Translate(move);
+        Main_Camera.transform.Translate(Main_Camera.transform.InverseTransformVector(move));
+        //Main_Camera.transform.Translate(move);
         dragOrigin = new Vector3(Input.mousePosition.x, Input.mousePosition.y,-3000);
         cameraPos3D = Main_Camera.transform.position;
     }
@@ -144,6 +182,7 @@ public class CameraMove : MonoBehaviour {
     {
         cameraCurrentZoom = (int)Mathf.Max(cameraZoomMin, Mathf.Min(cameraCurrentZoom + zoomDir, cameraZoomMax));
         Main_Camera.orthographicSize = cameraCurrentZoom;
+        UI_manager.Get.pixelscale_slider.value = cameraCurrentZoom;
     }
 
     void ZoomMove()

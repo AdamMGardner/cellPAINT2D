@@ -262,7 +262,10 @@ public class BackgroundImageManager : MonoBehaviour
                 sr.material.renderQueue = 1; //0
                 allbg[current_bg].renderQueue= 1; //0
             }
-            allbg[current_bg].layer = sr.sortingOrder;
+            if (sr.sortingOrder < 1) {
+                inputLayerslider.value = 1.0f;
+                SetBackgroundImageLayer(1.0f);
+            }
         }
     }
 

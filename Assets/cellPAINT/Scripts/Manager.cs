@@ -3530,8 +3530,9 @@ public class Manager : MonoBehaviour {
 
         group_interact_mode = Input.GetKey(KeyCode.LeftControl);
         //bool _shift_up = Input.GetKeyUp(KeyCode.LeftShift);
+        if (!hit && Input.GetMouseButtonDown(0)) selected_instance = null;
         if (!hit && Input.GetMouseButton(0)) {
-            selected_instance = null;
+            //selected_instance = null;
 
         }
         else if (Input.GetMouseButtonUp(0) && dragMode && (_shift||moveWithMode)) {
@@ -3602,7 +3603,7 @@ public class Manager : MonoBehaviour {
             PrefabGroup pg = other.GetComponentInParent<PrefabGroup>();  
             Transform parent = other.transform.parent;
             
-            selected_instance = other;
+            if (Input.GetMouseButtonDown(0)) selected_instance = other;
             last_other = other;
             var props = other.GetComponent<PrefabProperties>();
             current_properties = props;
@@ -4276,6 +4277,7 @@ public class Manager : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        updateScale();
         dt = Time.deltaTime;
         if (dt > safety_deltaTime) {
             safety_frame ++;
@@ -4314,7 +4316,7 @@ public class Manager : MonoBehaviour {
         //if (mask_ui) return;//problem then it doesnt catch the buttonUp
         if (fiberMode)
         {
-            selected_instance = null;
+            //selected_instance = null;
             drawInstanceFiber();
         }
         else if (dragMode || pinMode || infoMode || eraseMode) {
@@ -4342,20 +4344,20 @@ public class Manager : MonoBehaviour {
         //else if (eraseMode) pindragInstance();// eraseInstance();
         else if (surfaceMode) {
             if (mask_ui) return;
-            selected_instance = null;
+            //selected_instance = null;
             UdateSurfacePrefab();
             drawInstanceSurface();
         }
         else if (boundMode) {
             if (mask_ui) return;
-            selected_instance = null;
+            //selected_instance = null;
             UdateBoundToPrefab();
             drawInstanceBoundToFiber();
         }
         else if (drawMode)
         {
             if (mask_ui) return;
-            selected_instance = null;
+            //selected_instance = null;
             drawInstance();
         }
         else if (bucketMode) {
@@ -4382,7 +4384,6 @@ public class Manager : MonoBehaviour {
         else if (Input.GetMouseButtonUp(0)) {
             delta = 0;
         }
-        updateScale();
     }
 
     void FixedUpdate()
@@ -5411,6 +5412,8 @@ public class Manager : MonoBehaviour {
             string name = addedObject.name;
         }
     }
+
+
     public void updateScale()
     {
         var pixel_scale = (unit_scale * 10.0f) / 100.0f;
