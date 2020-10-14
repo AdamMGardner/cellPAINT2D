@@ -471,7 +471,10 @@ public class Manager : MonoBehaviour {
                 var thickness = membrane_thickness*sc2d/cscale;//angstrom
                 //theSpriteMb.rectTransform.sizeDelta = new Vector2((int)w,42.0f);
 
-                UI_manager.Get.IngredientSpriteMb.rectTransform.sizeDelta = new Vector2((int)pw,thickness);
+                //Adam's attempt to scale width of membrane image based on thickness.
+                float adjustedWidth = 620.0f * (thickness/120); //620 x 120 is the original image size.
+
+                UI_manager.Get.IngredientSpriteMb.rectTransform.sizeDelta = new Vector2((int)adjustedWidth,thickness); //pw replaced with adjustedWidth
                 Debug.Log("props for "+props.name+" "+props.y_offset.ToString()+" "+props.scale2d.ToString());
             }
             else {
