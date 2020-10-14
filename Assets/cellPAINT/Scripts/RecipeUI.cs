@@ -1509,7 +1509,7 @@ public class RecipeUI : MonoBehaviour {
 
         VerticalLayoutGroup vertLayout = parent.transform.gameObject.AddComponent<VerticalLayoutGroup>() as VerticalLayoutGroup;
         vertLayout.spacing = 40.0f;
-        vertLayout.padding = new RectOffset (5,5,40,40);
+        vertLayout.padding = new RectOffset (5,5,25,40);
         vertLayout.childControlHeight  = true;
         vertLayout.childControlWidth = false;
         vertLayout.childForceExpandHeight = false;
