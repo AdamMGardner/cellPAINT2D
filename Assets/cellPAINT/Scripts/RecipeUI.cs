@@ -633,6 +633,7 @@ public class RecipeUI : MonoBehaviour {
 
     public void AddRecipeIngredientMembrane(int cid, string iname = null, JSONNode compDictionary=null)
     {
+        Debug.Log("AddRecipeIngredientMembrane "+iname);
         int n = random_uid.Next();// Manager.Instance.ingredients_names.Count;
         if (iname==null && compDictionary!=null) {
             var cname = compDictionary["name"].Value;
@@ -643,6 +644,7 @@ public class RecipeUI : MonoBehaviour {
         CompartmentsIngredients_ids[cid].Add(n);
         Manager.Instance.ingredient_node.Add(iname, compDictionary);
         Manager.Instance.ingredients_names.Add(iname,n);
+        Debug.Log("Manager.Instance.ingredients_names "+Manager.Instance.ingredients_names[iname].ToString());
         Manager.Instance.ingredients_ids.Add(n,iname);
         Manager.Instance.sprites_names.Add(n,prefab_name);
         if (!Manager.Instance.prefab_materials.ContainsKey(iname))
@@ -1416,7 +1418,16 @@ public class RecipeUI : MonoBehaviour {
     }
 
     public void AddOneCompartment(string cname, bool update_ui=true) {
-        if (CompartmentsIDS.ContainsValue(cname)) return;
+        var name = cname+".surface."+cname+"_membrane";
+        if (CompartmentsIDS.ContainsValue(cname)&&CompartmentsNames.ContainsKey(cname)) {
+            Debug.Log(cname+" already exist ?");
+            Debug.Log(CompartmentsNames[cname]);
+            //doest he membrane ingrdient exist ?
+            if (!Manager.Instance.all_prefab.ContainsKey(name)){
+                AddRecipeIngredientMembrane(CompartmentsNames[cname],name);
+            }
+            return;
+        }
         int nCompartemnts = random_uid.Next();// Compartments.Count;
         if (Compartments.Contains(nCompartemnts)) nCompartemnts++;
         Compartments.Add(nCompartemnts);
@@ -1425,7 +1436,7 @@ public class RecipeUI : MonoBehaviour {
         CompartmentsIngredients_ids.Add(nCompartemnts, new List<int>());
         Manager.Instance.additional_compartments_names.Add(cname);
         Manager.Instance.update_texture = true;
-        var name = cname+".surface."+cname+"_membrane";
+        Debug.Log(cname+" has been added, "+name);
         AddRecipeIngredientMembrane(nCompartemnts,name);//"Cell_Membrane"
         if (update_ui) {
             Loadcompartment(nCompartemnts);

@@ -384,7 +384,7 @@ public class QuitGame : MonoBehaviour
             if (!Manager.Instance.recipeUI.merge_upon_loading) {
                 Manager.Instance.Clear();
             }
-            Debug.Log("LoadFromString");
+            Debug.Log("LoadFromZipDataCR LoadFromString");
             LoadFromString(recipe_data_string);
         }
     }
@@ -450,7 +450,7 @@ public class QuitGame : MonoBehaviour
             if (!Manager.Instance.recipeUI.merge_upon_loading) {
                 Manager.Instance.Clear();
             }
-            Debug.Log("LoadFromString");
+            Debug.Log("LoadFromZipData LoadFromString");
             LoadFromString(recipe_data_string);
         }
         else if (recipe_json_data!="") {
@@ -916,7 +916,7 @@ public class QuitGame : MonoBehaviour
         lineCounter++;
         for (int i = lineCounter; i < lineCounter + nbg_images; i++)
         {
-            elems = lines[i].Split(sep[0]);
+            elems = lines[i].Replace("\n", "").Replace("\r", "").Split(sep[0]);
             var path  = elems[0];
             var scale2d = float.Parse(elems[1]);
             var rot = float.Parse(elems[2]);
@@ -933,7 +933,7 @@ public class QuitGame : MonoBehaviour
         lineCounter++;
         for (int i = lineCounter; i < lineCounter + extra_compartments; i++)
         {
-            elems = lines[i].Split(sep[0]);
+            elems = lines[i].Replace("\n", "").Replace("\r", "").Split(sep[0]);
             Manager.Instance.recipeUI.AddOneCompartment(elems[0],false);
             if (as_task) UI_manager.Get.UpdatePB((float)lineCounter/(float)(lineCounter + extra_compartments),"loading extra compartments");
         }
@@ -944,7 +944,7 @@ public class QuitGame : MonoBehaviour
         lineCounter++;
         for (int i = lineCounter; i < lineCounter + extra_ingredient; i++)
         {
-            elems = lines[i].Split(sep[0]);
+            elems = lines[i].Replace("\n", "").Replace("\r", "").Split(sep[0]);
             var name = elems[0];
             var sprite_name = elems[1];
             var scale2d = float.Parse(elems[2]);
@@ -969,7 +969,7 @@ public class QuitGame : MonoBehaviour
         lineCounter++;
         for (int i = lineCounter; i < lineCounter + n_mat; i++)
         {
-            elems = lines[i].Split(sep[0]);
+            elems = lines[i].Replace("\n", "").Replace("\r", "").Split(sep[0]);
             var name = elems[0];
             if (name == "Draw") {
                 name = "Draw DNA";
@@ -1002,7 +1002,7 @@ public class QuitGame : MonoBehaviour
         for (int i = lineCounter; i < lineCounter + nObj; i++)
         {
             // 9.848226,21.78014,0.0004882813,197.4075,LDL,0,0
-            elems = lines[i].Split(sep[0]);
+            elems = lines[i].Replace("\n", "").Replace("\r", "").Split(sep[0]);
             var x = float.Parse(elems[0]);//Debug.Log(x);
             var y = float.Parse(elems[1]);//Debug.Log(y);
             var z = float.Parse(elems[2]);//Debug.Log(z);
@@ -1030,7 +1030,7 @@ public class QuitGame : MonoBehaviour
             attached = null;
             fiber = null;
             Debug.Log(lines[lineCounter]);
-            elems = lines[lineCounter].Split(sep[0]);
+            elems = lines[lineCounter].Replace("\n", "").Replace("\r", "").Split(sep[0]);
             lineCounter++;
             var name = elems[0];
             int nPoints = int.Parse(elems[1]);
@@ -1045,7 +1045,7 @@ public class QuitGame : MonoBehaviour
             for (int j = 0; j < nPoints; j++)
             {
                 //-38.75513,-14.91165,0,158.7505,0,0,1
-                elems = lines[lineCounter].Split(sep[0]);
+                elems = lines[lineCounter].Replace("\n", "").Replace("\r", "").Split(sep[0]);
                 if (elems.Length != 7) {
                     Debug.Log("problem fiber line "+j.ToString()+ " "+lines[lineCounter]);
                 }
@@ -1110,7 +1110,7 @@ public class QuitGame : MonoBehaviour
         Debug.Log("found nSurfaceOfFiber " + nSurfaceOfFiber.ToString());
         for (int i = 0; i < nSurfaceOfFiber; i++)
         {
-            elems = lines[lineCounter].Split(sep[0]);
+            elems = lines[lineCounter].Replace("\n", "").Replace("\r", "").Split(sep[0]);
             var x = float.Parse(elems[0]);
             var y = float.Parse(elems[1]);
             var z = float.Parse(elems[2]);
@@ -1136,7 +1136,7 @@ public class QuitGame : MonoBehaviour
         for (int i = 0; i < nLink; i++)
         {
             //create a joints
-            elems = lines[lineCounter].Split(sep[0]);
+            elems = lines[lineCounter].Replace("\n", "").Replace("\r", "").Split(sep[0]);
             var x1 = float.Parse(elems[0]);
             var y1 = float.Parse(elems[1]);
             var z1 = float.Parse(elems[2]);
@@ -1176,7 +1176,7 @@ public class QuitGame : MonoBehaviour
         lineCounter++;
         for (int i = lineCounter; i < lineCounter + nbg_images; i++)
         {
-            elems = lines[i].Split(sep[0]);
+            elems = lines[i].Replace("\n", "").Replace("\r", "").Split(sep[0]);
             var path  = elems[0];
             var scale2d = float.Parse(elems[1]);
             var rot = float.Parse(elems[2]);
@@ -1199,7 +1199,8 @@ public class QuitGame : MonoBehaviour
         lineCounter++;
         for (int i = lineCounter; i < lineCounter + extra_compartments; i++)
         {
-            elems = lines[i].Split(sep[0]);
+            elems = lines[i].Replace("\n", "").Replace("\r", "").Split(sep[0]);
+            Debug.Log("AddOneCompartment "+elems[0]);
             Manager.Instance.recipeUI.AddOneCompartment(elems[0],false);
             if (lcounter%frequency == 0) {
                 UI_manager.Get.UpdatePB((float)lineCounter/(float)(lineCounter + extra_compartments),"loading extra compartments");
@@ -1215,7 +1216,7 @@ public class QuitGame : MonoBehaviour
         lineCounter++;
         for (int i = lineCounter; i < lineCounter + extra_ingredient; i++)
         {
-            elems = lines[i].Split(sep[0]);
+            elems = lines[i].Replace("\n", "").Replace("\r", "").Split(sep[0]);
             var name = elems[0];
             var sprite_name = elems[1];
             var scale2d = float.Parse(elems[2]);
@@ -1245,7 +1246,7 @@ public class QuitGame : MonoBehaviour
         lineCounter++;
         for (int i = lineCounter; i < lineCounter + n_mat; i++)
         {
-            elems = lines[i].Split(sep[0]);
+            elems = lines[i].Replace("\n", "").Replace("\r", "").Split(sep[0]);
             var name = elems[0];
             if (name == "Draw") {
                 name = "Draw DNA";
@@ -1283,7 +1284,7 @@ public class QuitGame : MonoBehaviour
         for (int i = lineCounter; i < lineCounter + nObj; i++)
         {
             // 9.848226,21.78014,0.0004882813,197.4075,LDL,0,0
-            elems = lines[i].Split(sep[0]);
+            elems = lines[i].Replace("\n", "").Replace("\r", "").Split(sep[0]);
             var x = float.Parse(elems[0]);//Debug.Log(x);
             var y = float.Parse(elems[1]);//Debug.Log(y);
             var z = float.Parse(elems[2]);//Debug.Log(z);
@@ -1313,10 +1314,11 @@ public class QuitGame : MonoBehaviour
         Debug.Log("found nFiber " + nFiber.ToString());
         for (int i = 0; i < nFiber; i++)
         {
+            UI_manager.Get.UpdatePB(0.0f,"loading fiber ");
             attached = null;
             fiber = null;
             Debug.Log(lines[lineCounter]);
-            elems = lines[lineCounter].Split(sep[0]);
+            elems = lines[lineCounter].Replace("\n", "").Replace("\r", "").Split(sep[0]);
             lineCounter++;
             var name = elems[0];
             int nPoints = int.Parse(elems[1]);
@@ -1332,7 +1334,7 @@ public class QuitGame : MonoBehaviour
             for (int j = 0; j < nPoints; j++)
             {
                 //-38.75513,-14.91165,0,158.7505,0,0,1
-                elems = lines[lineCounter].Split(sep[0]);
+                elems = lines[lineCounter].Replace("\n", "").Replace("\r", "").Split(sep[0]);
                 if (elems.Length != 7) {
                     Debug.Log("problem fiber line "+j.ToString()+ " "+lines[lineCounter]);
                 }
@@ -1402,7 +1404,7 @@ public class QuitGame : MonoBehaviour
         Debug.Log("found nSurfaceOfFiber " + nSurfaceOfFiber.ToString());
         for (int i = 0; i < nSurfaceOfFiber; i++)
         {
-            elems = lines[lineCounter].Split(sep[0]);
+            elems = lines[lineCounter].Replace("\n", "").Replace("\r", "").Split(sep[0]);
             var x = float.Parse(elems[0]);
             var y = float.Parse(elems[1]);
             var z = float.Parse(elems[2]);
@@ -1433,7 +1435,7 @@ public class QuitGame : MonoBehaviour
         for (int i = 0; i < nLink; i++)
         {
             //create a joints
-            elems = lines[lineCounter].Split(sep[0]);
+            elems = lines[lineCounter].Replace("\n", "").Replace("\r", "").Split(sep[0]);
             var x1 = float.Parse(elems[0]);
             var y1 = float.Parse(elems[1]);
             var z1 = float.Parse(elems[2]);

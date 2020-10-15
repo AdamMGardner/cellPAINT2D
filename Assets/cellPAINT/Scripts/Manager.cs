@@ -778,6 +778,10 @@ public class Manager : MonoBehaviour {
     public GameObject Build(string aname = null,string img_name = null) {
         string prefab_name = aname;
         if (img_name == null) img_name = aname;
+        if (!ingredients_names.ContainsKey(aname)) {
+            Debug.Log("Build didnt found " + aname + " in ingredients_names");
+            return null;
+        }
         int inde = ingredients_names[aname];
         if (inde != -1 && sprites_names.ContainsKey(inde)) {
             img_name = sprites_names[inde];
@@ -818,7 +822,7 @@ public class Manager : MonoBehaviour {
         //myPrefab = Resources.Load("Prefabs/" + name) as GameObject;
         if (!all_prefab.ContainsKey(name))
         {
-            Debug.Log(name + " not found in all_prefab "+name.Split('.')[2]);
+            Debug.Log("SwitchPrefabFromName "+name + " not found in all_prefab "+name.Split('.')[2]);
             myPrefab = Resources.Load("Prefabs/" + name.Split('.')[2]) as GameObject;
             if (myPrefab==null){
                 myPrefab = Build(name);
@@ -1030,7 +1034,7 @@ public class Manager : MonoBehaviour {
         GameObject Prefab;
         if (!all_prefab.ContainsKey(name))
         {
-            Debug.Log(name + " not found in all_prefab");
+            Debug.Log("restoreOneInstance "+name + " not found in all_prefab");
             Prefab = Resources.Load("Prefabs/" + name.Split('.')[2]) as GameObject;
             if (Prefab == null)
                 Prefab = Build(name);
@@ -2177,7 +2181,7 @@ public class Manager : MonoBehaviour {
         //myPrefab = Resources.Load("Prefabs/" + name) as GameObject;
         if (!all_prefab.ContainsKey(name))
         {
-            Debug.Log(name + " not found in all_prefab");
+            Debug.Log("AddFiberParent "+ name + " not found in all_prefab");
             myPrefab = Resources.Load("Prefabs/" + name) as GameObject;
             if (myPrefab == null)
                 myPrefab = Build(name);
