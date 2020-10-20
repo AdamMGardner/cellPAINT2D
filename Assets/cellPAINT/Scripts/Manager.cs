@@ -4846,8 +4846,8 @@ public class Manager : MonoBehaviour {
         RaycastHit2D hit = Physics2D.Raycast(current_camera.ScreenPointToRay(Input.mousePosition).origin,current_camera.ScreenPointToRay(Input.mousePosition).direction, 100, layerMask);  
         //Physics2D.CircleCast(Vector2 origin, float radius, Vector2 direction, float distance = Mathf.Infinity, int layerMask = DefaultRaycastLayers, float minDepth = -Mathf.Infinity, float maxDepth = Mathf.Infinity);
         //RaycastHit2D hit = Physics2D.CircleCast(current_camera.ScreenPointToRay(Input.mousePosition).origin,2.0f,current_camera.ScreenPointToRay(Input.mousePosition).direction,100, layerMask);
-        Debug.Log("UdateSurfacePrefab "+layerMask.ToString());
-        Debug.Log(hit);
+        //Debug.Log("UdateSurfacePrefab "+layerMask.ToString());
+        //Debug.Log(hit);
         if (hit){
             if (hit.collider){
                 Debug.Log("HIT "+hit.collider.gameObject.name);

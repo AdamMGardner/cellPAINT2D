@@ -157,7 +157,7 @@ public class Add_ingredient_ui : MonoBehaviour
             StartCoroutine(GetText(query_answer_url));
         }
         if (query_done) {
-            StartCoroutine(GetText(query_answer_url));
+            //StartCoroutine(GetText(query_answer_url));
             query_done = false;
         }
         if (!query_done &&(driver!=null)&&do_screen_capture){
@@ -579,7 +579,7 @@ public class Add_ingredient_ui : MonoBehaviour
                 if (loader) loader.gameObject.SetActive(false); 
                 query_done = false;
                 redo_query = false;
-                log_label.text = webRequest.error;
+                log_label.text = webRequest.error+"\n problem with illustrate call; clic ILLUSTRATE again";
             }
             else
             {
@@ -591,6 +591,7 @@ public class Add_ingredient_ui : MonoBehaviour
                 redo_query = false;
                 query_sent = true; 
                 log_label.text = "";
+                StartCoroutine(GetText(query_answer_url));
                 //var sprite = Manager.Instance.LoadNewSprite(filePath);
                 //theSprite.sprite = sprite;
             }
@@ -616,7 +617,7 @@ public class Add_ingredient_ui : MonoBehaviour
                 Illustrate.interactable = true;
                 Create.interactable = true;  
                 if (loader) loader.gameObject.SetActive(false); 
-                log_label.text = uwr.error;           
+                log_label.text = uwr.error+"\n problem with illustrate image; clic ILLUSTRATE again";
             }
             else
             {
@@ -629,9 +630,13 @@ public class Add_ingredient_ui : MonoBehaviour
                 theSpriteFiberRight.sprite = mySprite;
                 var ratio =(float) theSprite.sprite.texture.width/(float)theSprite.sprite.texture.height;
                 //var w = 150;//(snode.data.thumbnail)?snode.data.thumbnail.width:150;
-                var h = 210;//w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
+                var h = 300.0f;//w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
                 var w = h*ratio;
-                theSprite.rectTransform.sizeDelta = new Vector2(w,(int)h);    
+                if (theSprite.sprite.texture.width > theSprite.sprite.texture.height) {
+                    w = 300;
+                    h = (float)w/ratio;
+                }
+                theSprite.rectTransform.sizeDelta = new Vector2((int)w,(int)h);    
                 if (loader) loader.gameObject.SetActive(false);          
                 setYoffset_cb();
                 setFiberLength_cb();        
