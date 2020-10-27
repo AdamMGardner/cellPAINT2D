@@ -68,6 +68,18 @@
      <Compile Include="Assets\SSAO Pro\Scripts\Attributes\HelpURLAttribute.cs" />
      <Compile Include="Assets\SSAO Pro\Scripts\SSAOPro.cs" />
      <Compile Include="Assets\Spin.cs" />
+     <Compile Include="Assets\StandaloneFileBrowser\IStandaloneFileBrowser.cs" />
+     <Compile Include="Assets\StandaloneFileBrowser\Sample\BasicSample.cs" />
+     <Compile Include="Assets\StandaloneFileBrowser\Sample\CanvasSampleOpenFileImage.cs" />
+     <Compile Include="Assets\StandaloneFileBrowser\Sample\CanvasSampleOpenFileText.cs" />
+     <Compile Include="Assets\StandaloneFileBrowser\Sample\CanvasSampleOpenFileTextMultiple.cs" />
+     <Compile Include="Assets\StandaloneFileBrowser\Sample\CanvasSampleSaveFileImage.cs" />
+     <Compile Include="Assets\StandaloneFileBrowser\Sample\CanvasSampleSaveFileText.cs" />
+     <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowser.cs" />
+     <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowserEditor.cs" />
+     <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowserLinux.cs" />
+     <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowserMac.cs" />
+     <Compile Include="Assets\StandaloneFileBrowser\StandaloneFileBrowserWindows.cs" />
      <Compile Include="Assets\UIWidgets\Sample Assets\CenteredSliderLabel.cs" />
      <Compile Include="Assets\UIWidgets\Sample Assets\DialogInputHelper.cs" />
      <Compile Include="Assets\UIWidgets\Sample Assets\ListView\ListViewCustomSample.cs" />
@@ -192,10 +204,12 @@
      <Compile Include="Assets\UIWidgets\Standart Assets\Utilites\Utilites.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\AddForce.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\Add_ingredient_ui.cs" />
+     <Compile Include="Assets\cellPAINT\Scripts\AutocompleteInputField.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\BackgroundImageManager.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\BasePhysicsDemo.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\CameraMove.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\CameraNavigation.cs" />
+     <Compile Include="Assets\cellPAINT\Scripts\ChangeText.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\DragRigidbody2D.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\DrawArrowUI.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\DrawMeshContour.cs" />
@@ -217,7 +231,9 @@
      <Compile Include="Assets\cellPAINT\Scripts\LineRenderPingColor.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\Manager.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\ManagerECS.cs" />
+     <Compile Include="Assets\cellPAINT\Scripts\MeasureManager.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\MouseIconManager.cs" />
+     <Compile Include="Assets\cellPAINT\Scripts\MoveCarret.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\PDBtoPrefab.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\PdbLoader.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\PrefabGroup.cs" />
@@ -226,7 +242,9 @@
      <Compile Include="Assets\cellPAINT\Scripts\RecipeUI.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\SecondCameraScript.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\SimpleJSON.cs" />
+     <Compile Include="Assets\cellPAINT\Scripts\SimpleUndo.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\Triangulate.cs" />
+     <Compile Include="Assets\cellPAINT\Scripts\UI_manager.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\UndoStack.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\WheelUI.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\buildBoundary.cs" />
@@ -243,6 +261,7 @@
      <None Include="Assets\cellPAINT\Shader\RayMarchDistanceFieldCube.shader" />
      <None Include="Assets\cellPAINT\Shader\Sprites-Contour.shader" />
      <None Include="Assets\UIWidgets\Shaders\UIGradientShaderPlaneHSV.shader" />
+     <None Include="Assets\cellPAINT\Shader\Sprites-Compartment.shader" />
      <None Include="Assets\cellPAINT\Shader\spritecolor.shader" />
      <None Include="Assets\GracesGames\SimpleFileBrowser\DemoFiles\TextFileWithNewLines.txt" />
      <None Include="Assets\cellPAINT\Shader\GearXStage.shader" />
@@ -273,6 +292,7 @@
      <None Include="Assets\SSAO Pro\Readme.txt" />
      <None Include="Assets\UIWidgets\readme.txt" />
      <None Include="Assets\cellPAINT\Shader\Sprites-NucleicAcid.shader" />
+     <None Include="Assets\cellPAINT\Shader\3Dtextmeasure.shader" />
      <None Include="Assets\GracesGames\SimpleFileBrowser\ReadMe.txt" />
      <None Include="Assets\cellPAINT\Shader\GLlineZOff.shader" />
      <None Include="Assets\UIWidgets\Shaders\UIGradientShaderHLineHSV.shader" />
@@ -480,12 +500,6 @@
     <Reference Include="Accord.Statistics">
         <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Assets/Plugins/Accord/Accord.Statistics.dll</HintPath>
     </Reference>
-    <Reference Include="Ookii.Dialogs">
-        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Assets/Plugins/crosstales/FileBrowser/Native/Windows/Ookii.Dialogs.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Windows.Forms">
-        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Assets/Plugins/crosstales/FileBrowser/Native/Windows/System.Windows.Forms.dll</HintPath>
-    </Reference>
     <Reference Include="Selenium.WebDriverBackedSelenium">
         <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Assets/Plugins/selenium/Selenium.WebDriverBackedSelenium.dll</HintPath>
     </Reference>
@@ -494,6 +508,12 @@
     </Reference>
     <Reference Include="WebDriver.Support">
         <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Assets/Plugins/selenium/WebDriver.Support.dll</HintPath>
+    </Reference>
+    <Reference Include="Ookii.Dialogs">
+        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Assets/StandaloneFileBrowser/Plugins/Ookii.Dialogs.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Assets/StandaloneFileBrowser/Plugins/System.Windows.Forms.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.6f1/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/mscorlib.dll</HintPath>
@@ -848,6 +868,12 @@
     </Reference>
     <Reference Include="Boo.Lang">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.6f1/Editor/Data/MonoBleedingEdge/lib/mono/unityscript/Boo.Lang.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Compression">
+        <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.6f1/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/System.IO.Compression.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Compression.FileSystem">
+        <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.6f1/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/System.IO.Compression.FileSystem.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Timeline.Editor">
         <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
