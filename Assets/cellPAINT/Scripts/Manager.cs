@@ -108,6 +108,9 @@ public class Manager : MonoBehaviour {
     public Toggle ToggleBrush;
     public Toggle TogglePhysics;
     public GameObject message_panel;
+    public Toggle message_panel_togel;
+    public int current_message;
+    public List<bool> stoped_message;
     //need a progress bar for loading
     //private Progressbar pb;
     private Text currentLabel;
@@ -337,7 +340,7 @@ public class Manager : MonoBehaviour {
 
     public string getDescriptionName(string iname)
     {
-        Debug.Log("getDescriptionName "+iname);
+        //Debug.Log("getDescriptionName "+iname);
         //return description text given an ingredient name
         if (AllIngredients.GetAllKeys().Contains(iname)) {
             if (AllIngredients[iname].GetAllKeys().Contains("name")) return AllIngredients[iname]["name"];
@@ -345,7 +348,7 @@ public class Manager : MonoBehaviour {
         var sname = iname.Split('.');
         if ( sname.Length > 1) {
             iname = iname.Split('.')[2];
-            Debug.Log("getDescriptionName Split "+iname);
+            //Debug.Log("getDescriptionName Split "+iname);
             if (AllIngredients.GetAllKeys().Contains(iname)) {
             if (AllIngredients[iname].GetAllKeys().Contains("name")) return AllIngredients[iname]["name"];
             }
@@ -1969,9 +1972,14 @@ public class Manager : MonoBehaviour {
             else {
                 if (Input.GetMouseButtonDown(0))
                 {
-                    message_panel.SetActive(true);
-                    align_to_mouse(message_panel);
-                    message_panel.GetComponentInChildren<Text>().text = "Membrane protein can only be drawn on top of a membrane. Draw a membrane first.";
+                    if (!stoped_message[0])
+                    {
+                        message_panel.SetActive(true);
+                        current_message = 0;
+                        message_panel_togel.gameObject.SetActive(true);
+                        align_to_mouse(message_panel);
+                        message_panel.GetComponentInChildren<Text>().text = "Membrane protein can only be drawn on top of a membrane. Draw a membrane first.";
+                    }
                 }
             }
         }
@@ -4295,6 +4303,8 @@ public class Manager : MonoBehaviour {
                 //pop up warning
                 if (message_panel) {
                     message_panel.SetActive(true);
+                    current_message = 1;
+                    message_panel_togel.gameObject.SetActive(false);
                     message_panel.GetComponentInChildren<Text>().text = "Physics became unstable and was turned off; erase or move the faulty object before turning it back on";
                     UI_manager.Get.ToggleSettings.isOn = true;
                 }

@@ -7,6 +7,8 @@ public class CameraMove : MonoBehaviour {
     public float dragSpeed = 1;
     public float zoomDragSpeed = 0.15f;
     public float rotation_speed = 2.0f;
+    public float elapsedTime;
+    public float last_elapasedTime;
     private Vector3 dragOrigin;
     private float ZrotOrigin;
     public Camera Main_Camera;
@@ -28,10 +30,14 @@ public class CameraMove : MonoBehaviour {
     public int zoomvalue = 2;
     public Vector3 pmousePos;
     public Vector3 pmousePosWorld;
+    public Vector3 current_mouse_world;
     public int cameraCurrentZoom = 20;
     public int cameraZoomMax = 20;
     public int cameraZoomMin = 5;
 
+    public bool wheel_start = false;
+    public float wheel_start_time = 0;
+    public float wheel_start_time_threshold = 0.1f;
     void Start()
     {
         Main_Camera.orthographicSize = cameraZoomMax;
@@ -41,6 +47,18 @@ public class CameraMove : MonoBehaviour {
         ChildTransSize();
         if (use_Viewport) Main_Camera.rect = new Rect (0.25f,1,0,1);
         ZrotOrigin = 0.0f;
+        elapsedTime = Time.realtimeSinceStartup;
+    }
+    
+    void OnGUI()
+    {
+        Event e = Event.current;
+        if (e.isMouse)
+        {
+            if ( e.rawType == EventType.ScrollWheel ) {
+                Debug.Log("mouse delta ScrollWheel is " + e.delta.ToString());
+            }
+        }
     }
 
     void Update()
@@ -50,6 +68,22 @@ public class CameraMove : MonoBehaviour {
         }
         //dragOrigin = new Vector3(Input.mousePosition.x, Input.mousePosition.y,-3000);
         if (Manager.Instance.mask_ui) return;
+        if (Input.GetAxis("Mouse ScrollWheel")!=0 && !wheel_start) {
+            wheel_start = true;
+            wheel_start_time = Time.realtimeSinceStartup;
+            Vector3 current_mouse = new Vector3(Input.mousePosition.x, Input.mousePosition.y, -3000);
+            current_mouse_world = Main_Camera.ScreenToWorldPoint(current_mouse);          
+            if (Manager.Instance.selected_instance!=null)
+            {
+                current_mouse_world = Manager.Instance.selected_instance.transform.position;
+            }              
+        }
+        if (Input.GetAxis("Mouse ScrollWheel")==0 && wheel_start) {
+            if ((Time.realtimeSinceStartup - wheel_start_time) > wheel_start_time_threshold) {
+                Debug.Log((Time.realtimeSinceStartup - wheel_start_time).ToString());
+                wheel_start = false;
+            }
+        }
         if (Input.GetAxis("Mouse ScrollWheel") > 0) // back
         {
             //if (cameraCurrentZoom < cameraZoomMax)
@@ -142,9 +176,9 @@ public class CameraMove : MonoBehaviour {
     {
         int mouseInv = (use_mouse) ? -1 : 1;
         Vector3 current_mouse = new Vector3(Input.mousePosition.x, Input.mousePosition.y, -3000);
-        Vector3 current_mouse_world = Main_Camera.ScreenToWorldPoint(current_mouse);
+        Vector3 cmouse_world = Main_Camera.ScreenToWorldPoint(current_mouse);
         Vector3 dragOrigin_world = Main_Camera.ScreenToWorldPoint(dragOrigin);
-        pos = (current_mouse_world - dragOrigin_world) * dragSpeed * mouseInv;
+        pos = (cmouse_world - dragOrigin_world) * dragSpeed * mouseInv;
         
         //MoveOutOfBounds();
 
@@ -188,13 +222,13 @@ public class CameraMove : MonoBehaviour {
     void ZoomMove()
     {
         Vector3 current_mouse = new Vector3(Input.mousePosition.x, Input.mousePosition.y, -3000);
-        Vector3 current_mouse_world = Main_Camera.ScreenToWorldPoint(current_mouse);
-        if (pmousePosWorld!= null && Vector3.Distance(Input.mousePosition,pmousePos) < threshold_mouse){
-            current_mouse_world = pmousePosWorld;
-        }
-        else {
-            pmousePosWorld = current_mouse_world;
-        }
+        //Vector3 current_mouse_world = Main_Camera.ScreenToWorldPoint(current_mouse);
+        //if (pmousePosWorld!= null && Vector3.Distance(Input.mousePosition,pmousePos) < threshold_mouse){
+        //    current_mouse_world = pmousePosWorld;
+        // }
+        // else {
+        //    pmousePosWorld = current_mouse_world;
+        //}
         //MoveOutOfBounds();
 
         if (!zoomToMouse)
@@ -205,10 +239,14 @@ public class CameraMove : MonoBehaviour {
             }
             else
             {
-                current_mouse_world = Vector3.zero;
+                current_mouse_world = Main_Camera.transform.position;
             }
-        }
-        
+        }     
+        else {
+            if (wheel_start) {
+                //current_mouse_world = Main_Camera.ScreenToWorldPoint(pmousePos);        
+            }
+        }  
         move = new Vector3(current_mouse_world.x, current_mouse_world.y, -3000.0f);
         float zoomDragMax = zoomDragSpeed *(cameraCurrentZoom/cameraZoomMin);
         Vector3 newPos = Vector3.MoveTowards (cameraPos3D, move, zoomDragMax);

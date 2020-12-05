@@ -32,6 +32,11 @@ public class UI_manager : MonoBehaviour
     public Slider progress_bar;
     public Text progress_label;
     public Slider pixelscale_slider;
+    public List<string> all_toolTips;
+    public GameObject ToolTip;
+    public float enter_time_tooltip;
+    public float time_threshold_tooltip;
+    public int current_tooltip_id = -1;
     private static UI_manager _instance = null;
     public static UI_manager Get
     {
@@ -60,9 +65,13 @@ public class UI_manager : MonoBehaviour
 
     void Update()
     {
-
+        if (current_tooltip_id != - 1){
+            if ( Time.realtimeSinceStartup - enter_time_tooltip > time_threshold_tooltip) {
+                //show the tool tip
+                ShowToolTipsCall(current_tooltip_id);
+            }
+        }
     }
-
 
     public void UpdatePB(float value, string label) {
         progress_bar.value = value;
@@ -162,5 +171,38 @@ public class UI_manager : MonoBehaviour
         drag_frequency.value = float.Parse(number);
     }   
 
+    public void CenterCamera(){
+        if (Camera.main.transform.position == Vector3.zero) {
+            Camera.main.transform.rotation = Quaternion.identity;
+        }
+        else Camera.main.transform.position = Vector3.zero;
+    }
+    
+    public void ShowToolTips(int id){
+        Manager.Instance.mask_ui = true;
+        enter_time_tooltip = Time.realtimeSinceStartup;
+        current_tooltip_id = id;
+    }
 
+    public void ShowToolTipsCall(int id){
+        //Manager.Instance.mask_ui = true;
+        //all_toolTips
+        //tool tips show on the mouse ?
+        //after 5sec ?
+        ToolTip.SetActive(true);
+        ToolTip.GetComponentInChildren<Text>().text = all_toolTips[id];
+        ToolTip.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y-60, 0);
+    }
+
+    public void HideToolTips() 
+    {
+        Manager.Instance.mask_ui = false;
+        current_tooltip_id = -1;
+        Manager.Instance.mask_ui = false;
+        ToolTip.SetActive(false);
+    }
+
+    public void DontShowMessage(bool toggle){
+        Manager.Instance.stoped_message[Manager.Instance.current_message] = toggle;
+    }
 }
