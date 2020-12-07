@@ -979,18 +979,22 @@ public class RecipeUI : MonoBehaviour {
             instance_props.protein_sprite.sprite = sprite;
             float ratio = (float)instance_props.protein_sprite.sprite.texture.width / (float)instance_props.protein_sprite.sprite.texture.height;
             float s;
+            float w;
             if (is_gridView)
             {
-                s = 80.0f;
+                s = 69;//80.0f;
+                w = 69;//69.00198f;
             }
             else
             {
                 s = 30.0f;
+                w = 30.0f;
             }
             //float s = 80;
             float h = (s / ratio);
             if (h > s) instance_props.protein_sprite.rectTransform.sizeDelta = new Vector2((int)(s / ratio), s);
             else  instance_props.protein_sprite.rectTransform.sizeDelta = new Vector2(s, (int)(s / ratio));
+            instance_props.protein_sprite.rectTransform.sizeDelta = new Vector2((int) s, (int)w);
             instance_props.protein_sprite.material = amat;//;
         }
         else {

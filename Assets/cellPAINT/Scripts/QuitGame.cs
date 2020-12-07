@@ -1468,6 +1468,7 @@ public class QuitGame : MonoBehaviour
     public void LoadScene_cb(string filename)
     {
         Manager.Instance.CheckDir();
+        Manager.Instance.AddUserDirectory(Path.GetDirectoryName(filename));
         Debug.Log("You are in the loadScene_cb with filename: " + filename);
         var ext = Path.GetExtension(filename);
         if (ext == ".txt")

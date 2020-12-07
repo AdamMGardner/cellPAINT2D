@@ -1826,6 +1826,7 @@
             "sprite": {
               "image": "RNA.png",
               "offsety": 0,
+              "lengthy" : 30.0,
               "scale2d": 3.5
             }
           },
