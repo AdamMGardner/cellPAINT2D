@@ -93,7 +93,7 @@ public class CameraMove : MonoBehaviour {
             ChildTransSize();
             cameraMapping();
             ZoomMove();
-            PositionOutOfBounds();
+            //PositionOutOfBounds();
             // }
         }
 
@@ -105,7 +105,7 @@ public class CameraMove : MonoBehaviour {
             ChildTransSize();
             cameraMapping();
             ZoomMove();
-            PositionOutOfBounds();
+            //PositionOutOfBounds();
             //  }
         }
         else if (Input.GetMouseButtonDown(2)){
