@@ -255,15 +255,24 @@ public class QuitGame : MonoBehaviour
        // if (ui != null) { ui.SetActive(false); }
         //var mask = myCamera.cullingMask;
         //myCamera.cullingMask = LayerMask.NameToLayer("Everything");
-        
-        int resWidth = Screen.width*2;
-        int resHeight = Screen.height*2;
+        //hide the mouse sprite
+        var boundaries = GameObject.Find("boundary");
+        boundaries.SetActive(false);
+        if (Manager.Instance.current_prefab) {
+            Manager.Instance.current_prefab.SetActive(false);
+        }
+        float offsetX1 = Manager.Instance.PanelLeft.GetComponent<RectTransform>().rect.width*Manager.Instance._canvas.transform.localScale.x;
+        float offsetX2 = Manager.Instance.PanelRight.GetComponent<RectTransform>().rect.width*Manager.Instance._canvas.transform.localScale.x;
+        //hide the boundaries
+        //clip on the ui
+        int resWidth = Screen.width;//*2;
+        int resHeight = Screen.height;//*2;
 
-        int resWidthN = resWidth;
+        int resWidthN = resWidth-(int)(offsetX1+offsetX2);
         int resHeightN = resHeight;
 
         //RenderTexture rt = new RenderTexture(resWidthN, resHeightN, 24);
-        RenderTexture rt = RenderTexture.GetTemporary(resWidthN, resHeightN, 24);
+        RenderTexture rt = RenderTexture.GetTemporary(resWidth, resHeight, 24);
         myCamera.targetTexture = rt;
 
         TextureFormat tFormat;
@@ -279,7 +288,7 @@ public class QuitGame : MonoBehaviour
         current_screenShot.Apply();
         var temp = RenderTexture.active;
         RenderTexture.active = rt;
-        current_screenShot.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
+        current_screenShot.ReadPixels(new Rect(offsetX1, 0, resWidthN, resHeight), 0, 0);
         RenderTexture.active = temp;
         current_bytes = current_screenShot.EncodeToPNG();
         // RenderTexture.active = null;
@@ -296,7 +305,11 @@ public class QuitGame : MonoBehaviour
         //SceneManager.Instance.myPrefab = tempObject;
 
         // if (ui) ui.SetActive(true);
-       // myCamera.cullingMask = mask;
+        // myCamera.cullingMask = mask;
+        boundaries.SetActive(true);
+        if (Manager.Instance.current_prefab) {
+            Manager.Instance.current_prefab.SetActive(true);
+        }
     }
 
     void LoadFromString(string lines)

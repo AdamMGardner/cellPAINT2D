@@ -40,6 +40,8 @@ public class CameraMove : MonoBehaviour {
     public float wheel_start_time_threshold = 0.1f;
     void Start()
     {
+        //cameraZoom max should accomodate an ecoli size at max for now.
+        //3000nm*3000nm
         Main_Camera.orthographicSize = cameraZoomMax;
         vertExtent = (Main_Camera.ScreenToWorldPoint(new Vector3(0.0f, Main_Camera.pixelRect.height, 0.0f)).y);
         horzExtent = (Main_Camera.ScreenToWorldPoint(new Vector3(Main_Camera.pixelRect.width, 0.0f, 0.0f)).x);

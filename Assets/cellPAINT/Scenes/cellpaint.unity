@@ -12783,6 +12783,8 @@ MonoBehaviour:
   zLevel: 0
   colorValue: 1
   layerDirection: 1
+  PanelLeft: {fileID: 539380622}
+  PanelRight: {fileID: 2096091258}
 --- !u!1 &26082107
 GameObject:
   m_ObjectHideFlags: 0
@@ -35351,7 +35353,7 @@ MonoBehaviour:
   pmousePosWorld: {x: 0, y: 0, z: 0}
   current_mouse_world: {x: 0, y: 0, z: 0}
   cameraCurrentZoom: 35
-  cameraZoomMax: 300
+  cameraZoomMax: 350
   cameraZoomMin: 2
   wheel_start: 0
   wheel_start_time: 0
@@ -35380,6 +35382,8 @@ MonoBehaviour:
   rightc: {x: 0, y: 0, z: 0}
   leftc: {x: 0, y: 0, z: 0}
   colliderWidth: 250
+  maxWidthCanvas: 1500
+  maxHeightCanvas: 1500
   boundryArea: 0
   offset_left: 0
 --- !u!114 &480845720
@@ -99389,7 +99393,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000061035156}
+  m_AnchoredPosition: {x: 0, y: -0.0005493164}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1925938701
@@ -106963,7 +106967,7 @@ GameObject:
   - component: {fileID: 2096091260}
   - component: {fileID: 2096091262}
   m_Layer: 5
-  m_Name: Panel (1)
+  m_Name: PanelRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

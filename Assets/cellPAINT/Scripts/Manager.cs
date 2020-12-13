@@ -278,7 +278,9 @@ public class Manager : MonoBehaviour {
     private float lerp_time = 0.0f;
     //public float bicycle_radius = 1.0f;//should be equal the size of the membrane
 
-
+    public GameObject PanelLeft;
+    public GameObject PanelRight;
+    
     /*image effect*/
     //private UnityStandardAssets.ImageEffects.Bloom bloomEffect;
     //private UnityStandardAssets.ImageEffects.VignetteAndChromaticAberration vignetteEffect;
@@ -3750,8 +3752,12 @@ public class Manager : MonoBehaviour {
                         DestroyHierarchyFamily(other.GetComponent<PrefabProperties>().name);
                     }
                 }
-                else DestroyInstance(other);
-
+                else {
+                    if (other.layer != 25)
+                    {
+                        DestroyInstance(other);
+                    }
+                }
             }
         }
     }
@@ -5438,11 +5444,11 @@ public class Manager : MonoBehaviour {
     {
         var pixel_scale = (unit_scale * 10.0f) / 100.0f;
         var unity_scale2d = 1.0f / (unit_scale * 10.0f);
-        //scale bar is 300pix and it has a width of 128px
+        //scale bar has a width of 128px
         //var imageScale =  1.0f/300.0f;
         //var local_scale = 1.0f/(pixel_scale * imageScale);
         var p1 = current_camera.ScreenToWorldPoint(Vector3.zero);
-        var p2 = current_camera.ScreenToWorldPoint(new Vector3(128.0f,0,0));//300px
+        var p2 = current_camera.ScreenToWorldPoint(new Vector3(128.0f,0,0));
         var Distance = Vector3.Magnitude(p2-p1)*unit_scale; // in unity world coordinates
         scale_bar_text.text = Mathf.Round(Distance).ToString()+ "nm";
         float cscale = 1.0f/_canvas.transform.localScale.x;

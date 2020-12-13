@@ -23,6 +23,8 @@ public class buildBoundary : MonoBehaviour
     private float colliderWidthScreen;
 
     public float colliderWidth;
+    public int maxWidthCanvas = 2000;
+    public int maxHeightCanvas = 2000;
     public float boundryArea;
     public float offset_left=0.0f;//346
     private float last_size;
@@ -36,9 +38,10 @@ public class buildBoundary : MonoBehaviour
       
         cam = GetComponent<Camera>();
         cm=cam.GetComponent<CameraMove>();
-        cam.orthographicSize = cm.cameraZoomMax-50;
-        last_width = Screen.width;//cam.pixelRect.width;//max screen size ?
-        last_height = Screen.height;//cam.pixelRect.height;
+        cam.orthographicSize = cm.cameraZoomMax - 100;
+        //use user preference ?
+        last_width = Mathf.Max(maxWidthCanvas,Screen.width);// should it be a  defined size 
+        last_height = Mathf.Max(maxHeightCanvas,Screen.height);// should it be a  defined size 
 
         //build the box collider surrounding the view port
         boundary = new GameObject("boundary");
