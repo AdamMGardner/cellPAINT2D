@@ -2528,7 +2528,9 @@ public class Manager : MonoBehaviour {
                     return true;
                 }
             else {
-                return false;
+                //check for border
+                if (hit.collider.gameObject.layer == 25) return true;//do we click on boundary
+                else return false;
                 //Debug.Log("didnt skip  "+hit.collider.gameObject.layer.ToString());
             }
         } else {

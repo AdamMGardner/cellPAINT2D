@@ -179,7 +179,6 @@ public class UI_manager : MonoBehaviour
     }
     
     public void ShowToolTips(int id){
-        Manager.Instance.mask_ui = true;
         enter_time_tooltip = Time.realtimeSinceStartup;
         current_tooltip_id = id;
     }
@@ -196,9 +195,7 @@ public class UI_manager : MonoBehaviour
 
     public void HideToolTips() 
     {
-        Manager.Instance.mask_ui = false;
         current_tooltip_id = -1;
-        Manager.Instance.mask_ui = false;
         ToolTip.SetActive(false);
     }
 

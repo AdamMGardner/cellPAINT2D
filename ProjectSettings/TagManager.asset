@@ -9,6 +9,7 @@ TagManager:
   - MembraneChain
   - layout
   - ghost
+  - close
   layers:
   - Default
   - TransparentFX
@@ -35,7 +36,7 @@ TagManager:
   - group
   - bg_image
   - MembraneBot
-  - 
+  - Boundary
   - 
   - 
   - 

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class buildBoundary : MonoBehaviour
 {
+    public bool use_quad;
+    public GameObject quadPrefab;
     private Camera cam;
     private GameObject boundary;
     public BoxCollider2D top;
@@ -22,7 +24,7 @@ public class buildBoundary : MonoBehaviour
 
     public float colliderWidth;
     public float boundryArea;
-    public float offset_left=0.0f;
+    public float offset_left=0.0f;//346
     private float last_size;
     private float last_size_max=0;
     private float prev_W=0.0f;
@@ -34,21 +36,35 @@ public class buildBoundary : MonoBehaviour
       
         cam = GetComponent<Camera>();
         cm=cam.GetComponent<CameraMove>();
-        cam.orthographicSize = cm.cameraZoomMax;
+        cam.orthographicSize = cm.cameraZoomMax-50;
         last_width = Screen.width;//cam.pixelRect.width;//max screen size ?
         last_height = Screen.height;//cam.pixelRect.height;
 
         //build the box collider surrounding the view port
         boundary = new GameObject("boundary");
         boundary.transform.position = new Vector2(0, 0);
-        top = boundary.AddComponent<BoxCollider2D>();
-        bottom = boundary.AddComponent<BoxCollider2D>();
-        right = boundary.AddComponent<BoxCollider2D>();
-        left = boundary.AddComponent<BoxCollider2D>();
-        last_size_max=last_size = cm.cameraZoomMax; //orthographicSize;
+        if (use_quad) {
+
+        }
+        else
+        {
+            top = boundary.AddComponent<BoxCollider2D>();
+            bottom = boundary.AddComponent<BoxCollider2D>();
+            right = boundary.AddComponent<BoxCollider2D>();
+            left = boundary.AddComponent<BoxCollider2D>();
+        }
+        last_size_max = last_size = cm.cameraZoomMax; //orthographicSize;
 
         changeBoundary();
         cam.orthographicSize = cm.cameraCurrentZoom;
+    }
+
+    void CreateABound(Vector3 size, Vector3 pos){
+        var bo = GameObject.Instantiate(quadPrefab);
+        bo.transform.parent = boundary.transform;
+        bo.transform.position = pos;
+        bo.transform.localScale = size;
+        bo.AddComponent<BoxCollider2D>();        
     }
 
     void changeBoundary()
@@ -66,18 +82,27 @@ public class buildBoundary : MonoBehaviour
         float H = Vector2.Distance(topc, bottomc) + colliderWidth;
 
         boundryArea = (W - colliderWidth*2) * (H - colliderWidth*2);
+        if (use_quad) {
+            CreateABound(new Vector3(W, colliderWidth,0), new Vector3(topc.x, topc.y,1));
+            CreateABound(new Vector3(W, colliderWidth,0), new Vector3(bottomc.x, bottomc.y,1));
+            CreateABound(new Vector3(colliderWidth, H,0), new Vector3(rightc.x, rightc.y,1));
+            CreateABound(new Vector3(colliderWidth, H,0), new Vector3(leftc.x, leftc.y,1));
 
-        top.offset = topc;
-        top.size = new Vector2(W, colliderWidth);
+        }
+        else {
+            top.offset = topc;
+            top.size = new Vector2(W, colliderWidth);
 
-        bottom.offset = bottomc;
-        bottom.size = new Vector2(W, colliderWidth);
+            bottom.offset = bottomc;
+            bottom.size = new Vector2(W, colliderWidth);
 
-        right.offset = rightc;
-        right.size = new Vector2(colliderWidth, H);
+            right.offset = rightc;
+            right.size = new Vector2(colliderWidth, H);
 
-        left.offset = leftc;
-        left.size = new Vector2(colliderWidth, H);
+            left.offset = leftc;
+            left.size = new Vector2(colliderWidth, H);
+        }
+
         prev_W = W;
         prev_H = H;
     }

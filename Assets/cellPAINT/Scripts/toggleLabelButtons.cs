@@ -120,15 +120,15 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
  
      public void OnPointerUp (PointerEventData eventData) {
         //Debug.Log("OnPointerUp called.");
-        if (gameObject.GetComponent<Button>()){
+        //this should be called only whit button that close a widget, as closing may not trigger onpointerExit.
+        if (gameObject.GetComponent<Button>() && gameObject.tag == "close"){
             Manager.Instance.mask_ui = false;
         }
      }
 
      public  void OnPointerEnter(PointerEventData data)
     {
-        Debug.Log("OnPointerEnter called.");
-        
+        Debug.Log("OnPointerEnter called.");      
         if (only_ui) 
         {
             MouseIconManager.Get.ToggleMouseCursorCustomUI(false);
@@ -233,6 +233,7 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
 
     void Over(BaseEventData eventData) {
         //show the descritpion
+        Debug.Log("over ");
         if (!only_ui && prefab_name!="" && prefab_name != null)
         {
             updateTileCount();
@@ -290,6 +291,7 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
     }
 
     void Exit(BaseEventData eventData) {
+        Debug.Log("exit ");
         if (!only_ui) {
             Debug.Log("exit " + prefab_name);
             if (!count_updated & !is_ListView) label.SetActive(false);

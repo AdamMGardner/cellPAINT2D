@@ -2647,7 +2647,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DEBUG: 0
-  version: v2.0
+  version: v2.0.1
   HideInstance: 0
   current_camera: {fileID: 480845712}
   current_prefab: {fileID: 0}
@@ -17158,7 +17158,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 18
+    m_FontSize: 17
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 1
@@ -17814,9 +17814,10 @@ GameObject:
   - component: {fileID: 130866154}
   - component: {fileID: 130866153}
   - component: {fileID: 130866152}
+  - component: {fileID: 130866156}
   m_Layer: 5
   m_Name: Close Button
-  m_TagString: Untagged
+  m_TagString: close
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -17952,6 +17953,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 130866150}
   m_CullTransparentMesh: 0
+--- !u!114 &130866156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 130866150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ee18823fb5e45b48be862ead6387fbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  only_ui: 1
+  is_ListView: 0
+  label: {fileID: 0}
+  prefab_name: 
+  protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
+  delete_panel: {fileID: 0}
+  label_txt: {fileID: 0}
 --- !u!1 &131404527
 GameObject:
   m_ObjectHideFlags: 0
@@ -20298,6 +20319,16 @@ PrefabInstance:
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 480845712}
+    - target: {fileID: 1997434683520488874, guid: 929d7edbe7557514dbd34720e83dacd1,
+        type: 3}
+      propertyPath: m_MaxValue
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 1997434683520488874, guid: 929d7edbe7557514dbd34720e83dacd1,
+        type: 3}
+      propertyPath: m_Value
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 1997434683610979343, guid: 929d7edbe7557514dbd34720e83dacd1,
         type: 3}
       propertyPath: m_AnchorMin.x
@@ -28469,7 +28500,7 @@ GameObject:
   - component: {fileID: 373928801}
   m_Layer: 5
   m_Name: Close Button
-  m_TagString: Untagged
+  m_TagString: close
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -35320,7 +35351,7 @@ MonoBehaviour:
   pmousePosWorld: {x: 0, y: 0, z: 0}
   current_mouse_world: {x: 0, y: 0, z: 0}
   cameraCurrentZoom: 35
-  cameraZoomMax: 200
+  cameraZoomMax: 300
   cameraZoomMin: 2
   wheel_start: 0
   wheel_start_time: 0
@@ -35337,6 +35368,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00ca87fd114275e4ca94366c113a31c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  use_quad: 1
+  quadPrefab: {fileID: 3993433240657075443, guid: 3497b98e4c8997648a89f5d0d2d513f0,
+    type: 3}
   top: {fileID: 0}
   bottom: {fileID: 0}
   right: {fileID: 0}
@@ -35345,9 +35379,9 @@ MonoBehaviour:
   bottomc: {x: 0, y: 0, z: 0}
   rightc: {x: 0, y: 0, z: 0}
   leftc: {x: 0, y: 0, z: 0}
-  colliderWidth: 40
+  colliderWidth: 250
   boundryArea: 0
-  offset_left: 346
+  offset_left: 0
 --- !u!114 &480845720
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45407,7 +45441,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 18
+    m_FontSize: 17
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 1
@@ -46509,6 +46543,7 @@ GameObject:
   - component: {fileID: 745721409}
   - component: {fileID: 745721408}
   - component: {fileID: 745721407}
+  - component: {fileID: 745721411}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -46671,6 +46706,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 745721405}
   m_CullTransparentMesh: 0
+--- !u!114 &745721411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 745721405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ee18823fb5e45b48be862ead6387fbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  only_ui: 1
+  is_ListView: 0
+  label: {fileID: 0}
+  prefab_name: 
+  protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
+  delete_panel: {fileID: 0}
+  label_txt: {fileID: 0}
 --- !u!1 &759405788
 GameObject:
   m_ObjectHideFlags: 0
@@ -47502,7 +47557,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 18
+    m_FontSize: 17
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 1
@@ -53825,7 +53880,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 18
+    m_FontSize: 17
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 1
@@ -55309,9 +55364,10 @@ GameObject:
   - component: {fileID: 987743136}
   - component: {fileID: 987743135}
   - component: {fileID: 987743134}
+  - component: {fileID: 987743137}
   m_Layer: 5
   m_Name: Close Button
-  m_TagString: Untagged
+  m_TagString: close
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -55427,6 +55483,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 987743132}
   m_CullTransparentMesh: 0
+--- !u!114 &987743137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 987743132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ee18823fb5e45b48be862ead6387fbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  only_ui: 1
+  is_ListView: 0
+  label: {fileID: 0}
+  prefab_name: 
+  protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
+  delete_panel: {fileID: 0}
+  label_txt: {fileID: 0}
 --- !u!1 &989498355
 GameObject:
   m_ObjectHideFlags: 0
@@ -85971,6 +86047,11 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1119781373359661088, guid: 7f5a1a78d22a8ef4a9d6f48f3efd71b5,
+        type: 3}
+      propertyPath: m_TagString
+      value: close
+      objectReference: {fileID: 0}
     - target: {fileID: 1119781373359661094, guid: 7f5a1a78d22a8ef4a9d6f48f3efd71b5,
         type: 3}
       propertyPath: m_Enabled
@@ -91510,7 +91591,7 @@ GameObject:
   - component: {fileID: 1751027543}
   m_Layer: 5
   m_Name: Close Button
-  m_TagString: Untagged
+  m_TagString: close
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -91924,7 +92005,7 @@ GameObject:
   - component: {fileID: 1757060330}
   m_Layer: 5
   m_Name: Close Button
-  m_TagString: Untagged
+  m_TagString: close
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -92416,7 +92497,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 18
+    m_FontSize: 17
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 1
@@ -92526,6 +92607,7 @@ GameObject:
   - component: {fileID: 1765662331}
   - component: {fileID: 1765662333}
   - component: {fileID: 1765662332}
+  - component: {fileID: 1765662334}
   m_Layer: 5
   m_Name: MessagePanel
   m_TagString: Untagged
@@ -92665,6 +92747,26 @@ MonoBehaviour:
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
+--- !u!114 &1765662334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765662326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ee18823fb5e45b48be862ead6387fbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  only_ui: 1
+  is_ListView: 0
+  label: {fileID: 0}
+  prefab_name: 
+  protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
+  delete_panel: {fileID: 0}
+  label_txt: {fileID: 0}
 --- !u!1 &1765879564
 GameObject:
   m_ObjectHideFlags: 0
@@ -99287,7 +99389,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -0.000061035156}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1925938701
@@ -99589,9 +99691,10 @@ GameObject:
   - component: {fileID: 1933297037}
   - component: {fileID: 1933297036}
   - component: {fileID: 1933297035}
+  - component: {fileID: 1933297039}
   m_Layer: 5
   m_Name: Close Button
-  m_TagString: Untagged
+  m_TagString: close
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -99726,6 +99829,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1933297033}
   m_CullTransparentMesh: 0
+--- !u!114 &1933297039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1933297033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ee18823fb5e45b48be862ead6387fbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  only_ui: 1
+  is_ListView: 0
+  label: {fileID: 0}
+  prefab_name: 
+  protein_sprite: {fileID: 0}
+  mb_sprite: {fileID: 0}
+  delete_panel: {fileID: 0}
+  label_txt: {fileID: 0}
 --- !u!1 &1933583864
 GameObject:
   m_ObjectHideFlags: 0
@@ -101333,7 +101456,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 18
+    m_FontSize: 17
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 1
@@ -101507,7 +101630,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 18
+    m_FontSize: 17
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 1
@@ -107388,7 +107511,7 @@ GameObject:
   - component: {fileID: 2117457305}
   m_Layer: 5
   m_Name: Close Button (1)
-  m_TagString: Untagged
+  m_TagString: close
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -108613,7 +108736,7 @@ GameObject:
   - component: {fileID: 7988924700144403180}
   m_Layer: 5
   m_Name: ButtonExit (1)
-  m_TagString: Untagged
+  m_TagString: close
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
