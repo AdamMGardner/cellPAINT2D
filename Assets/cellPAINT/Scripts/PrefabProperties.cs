@@ -826,9 +826,13 @@ public class PrefabProperties : MonoBehaviour
         foreach (var col in coll) DestroyImmediate(col);
         PolygonCollider2D box = gameObject.GetComponent<PolygonCollider2D>();
         if (box == null) box = gameObject.AddComponent<PolygonCollider2D>();
-        Vector2[] pts = box.points;
+        Vector2[] pts = box.points;//is this getting all points ?
+        List<Vector2> plist = new List<Vector2>();
+        for (int i=0; i < box.pathCount;i++) {
+            plist.AddRange(new List<Vector2>(box.GetPath(i)));
+        }
         DestroyImmediate(box);
-        pcp = Helper.BuildOBB2D(pts, 0.0f); //TestEigenTest(cluster);
+        pcp = Helper.BuildOBB2D(plist.ToArray(), 0.0f); //TestEigenTest(cluster);
         Debug.Log("pcp"); Debug.Log(pcp);
         //use the polygon collider to get the path and compute the simple collider
         /*
@@ -881,19 +885,19 @@ public class PrefabProperties : MonoBehaviour
             center = mrot * center;
             float radius = (Mathf.Abs(m_ext.y) / 2.0f)/2.0f;
             //main collider first
-            if (Mathf.Abs(m_ext.x - m_ext.y) < 0.25f)
+            /*if (Mathf.Abs(m_ext.x - m_ext.y) < 0.25f)
             {
                 CircleCollider2D Circle = gameObject.AddComponent<CircleCollider2D>();
                 Circle.radius = ((Mathf.Abs(m_ext.x) + Mathf.Abs(m_ext.y)) / 2.0f) / 2.0f;
                 Circle.offset = new Vector2(center.x, center.y);
             }
             else
-            {
-                m_ext = Quaternion.Inverse(mrot) * new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
-                BoxCollider2D abox = gameObject.AddComponent<BoxCollider2D>();
-                abox.size = new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
-                abox.offset = new Vector2(center.x, center.y);
-            }
+            {*/
+            m_ext = Quaternion.Inverse(mrot) * new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
+            BoxCollider2D abox = gameObject.AddComponent<BoxCollider2D>();
+            abox.size = new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
+            abox.offset = new Vector2(center.x, center.y);
+            //}
             float lengthy = (y_length==-1.0f)?Mathf.Abs(m_ext.x):y_length* unity_scale2d/local_scale;
             if (y_length==-1.0f) y_length = Mathf.Abs(m_ext.x)/(unity_scale2d/local_scale);
             //anchor collider, on X axis.
@@ -934,8 +938,12 @@ public class PrefabProperties : MonoBehaviour
         PolygonCollider2D box = gameObject.GetComponent<PolygonCollider2D>();
         if (box == null) box = gameObject.AddComponent<PolygonCollider2D>();
         Vector2[] pts = box.points;
+        List<Vector2> plist = new List<Vector2>();
+        for (int i=0; i < box.pathCount;i++) {
+            plist.AddRange(new List<Vector2>(box.GetPath(i)));
+        }
         DestroyImmediate(box);
-        pcp = Helper.BuildOBB2D(pts, 0.0f); //TestEigenTest(cluster);
+        pcp = Helper.BuildOBB2D(plist.ToArray(), 0.0f); //TestEigenTest(cluster);
         Debug.Log("pcp"); Debug.Log(pcp);
         var pixel_scale = (Manager.Instance.unit_scale * 10.0f) / 100.0f;
         var unity_scale2d = 1.0f / (Manager.Instance.unit_scale * 10.0f);
@@ -963,20 +971,20 @@ public class PrefabProperties : MonoBehaviour
             //setup the collider
             center = mrot * center;
             float radius = (Mathf.Abs(m_ext.y) / 2.0f)/2.0f;
-            //main collider first
-            if (Mathf.Abs(m_ext.x - m_ext.y) < 0.25f)
-            {
-                CircleCollider2D Circle = gameObject.AddComponent<CircleCollider2D>();
-                Circle.radius = ((Mathf.Abs(m_ext.x) + Mathf.Abs(m_ext.y)) / 2.0f) / 2.0f;
-                Circle.offset = new Vector2(center.x, center.y);
-            }
-            else
-            {
-                m_ext = Quaternion.Inverse(mrot) * new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
-                BoxCollider2D abox = gameObject.AddComponent<BoxCollider2D>();
-                abox.size = new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
-                abox.offset = new Vector2(center.x, center.y);
-            }
+            //alway use a box for fiber
+            //if (Mathf.Abs(m_ext.x - m_ext.y) < 0.25f)
+            //{
+            //    CircleCollider2D Circle = gameObject.AddComponent<CircleCollider2D>();
+            ///    Circle.radius = ((Mathf.Abs(m_ext.x) + Mathf.Abs(m_ext.y)) / 2.0f) / 2.0f;
+            //    Circle.offset = new Vector2(center.x, center.y);
+            //}
+            //else
+            //{
+            m_ext = Quaternion.Inverse(mrot) * new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
+            BoxCollider2D abox = gameObject.AddComponent<BoxCollider2D>();
+            abox.size = new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
+            abox.offset = new Vector2(center.x, center.y);
+            //}
             //anchor collider, on X axis. depends on fiber_length
             float lengthy = y_length * unity_scale2d * 1.0f/local_scale;//Mathf.Abs(m_ext.x);
             CircleCollider2D CircleLeft = gameObject.AddComponent<CircleCollider2D>();

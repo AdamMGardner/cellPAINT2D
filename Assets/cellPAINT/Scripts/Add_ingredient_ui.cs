@@ -253,6 +253,7 @@ public class Add_ingredient_ui : MonoBehaviour
     public void setFiberLength(string number){
         //theSprite.rectTransform.rotation = Quaternion.Euler(0, 0, float.Parse (number));
         fiber_length = float.Parse (number);
+        if (fiber_length >=  fiber_length_slider.maxValue) fiber_length_slider.maxValue = fiber_length;
         fiber_length_slider.value = fiber_length;
         setFiberLength_cb(); 
     }
