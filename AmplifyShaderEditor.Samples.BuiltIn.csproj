@@ -9,10 +9,10 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{78898d35-859e-77c8-bf13-e676f399a188}</ProjectGuid>
+    <ProjectGuid>{8974b332-92cd-2ff7-684b-aef4d9362f34}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>Assembly-CSharp-Editor-firstpass</AssemblyName>
+    <AssemblyName>AmplifyShaderEditor.Samples.BuiltIn</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <BaseDirectory>.</BaseDirectory>
@@ -26,7 +26,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169</NoWarn>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <NoConfig>true</NoConfig>
@@ -36,47 +36,138 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\Plugins\crosstales\Common\Editor\Task\BaseCompileDefines.cs" />
-     <Compile Include="Assets\Plugins\crosstales\Common\Editor\Task\BaseSetupResources.cs" />
-     <Compile Include="Assets\Plugins\crosstales\Common\Editor\Task\NYCheck.cs" />
-     <Compile Include="Assets\Plugins\crosstales\Common\Editor\Util\BaseGAApi.cs" />
-     <Compile Include="Assets\Plugins\crosstales\FileBrowser\Editor\Integration\ConfigBase.cs" />
-     <Compile Include="Assets\Plugins\crosstales\FileBrowser\Editor\Integration\ConfigPreferences.cs" />
-     <Compile Include="Assets\Plugins\crosstales\FileBrowser\Editor\Integration\ConfigWindow.cs" />
-     <Compile Include="Assets\Plugins\crosstales\FileBrowser\Editor\Task\CompileDefines.cs" />
-     <Compile Include="Assets\Plugins\crosstales\FileBrowser\Editor\Task\ConfigLoader.cs" />
-     <Compile Include="Assets\Plugins\crosstales\FileBrowser\Editor\Task\ReminderCheck.cs" />
-     <Compile Include="Assets\Plugins\crosstales\FileBrowser\Editor\Task\SetApiLevel.cs" />
-     <Compile Include="Assets\Plugins\crosstales\FileBrowser\Editor\Task\SetupResources.cs" />
-     <Compile Include="Assets\Plugins\crosstales\FileBrowser\Editor\Task\Tracer.cs" />
-     <Compile Include="Assets\Plugins\crosstales\FileBrowser\Editor\Task\UpdateCheck.cs" />
-     <Compile Include="Assets\Plugins\crosstales\FileBrowser\Editor\Task\ZInstaller.cs" />
-     <Compile Include="Assets\Plugins\crosstales\FileBrowser\Editor\Util\EditorConfig.cs" />
-     <Compile Include="Assets\Plugins\crosstales\FileBrowser\Editor\Util\EditorConstants.cs" />
-     <Compile Include="Assets\Plugins\crosstales\FileBrowser\Editor\Util\EditorHelper.cs" />
-     <Compile Include="Assets\Plugins\crosstales\FileBrowser\Editor\Util\GAApi.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\AntialiasingEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\BloomAndFlaresEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\BloomEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\CameraMotionBlurEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\ColorCorrectionCurvesEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\ColorCorrectionLookupEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\CreaseShadingEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\DepthOfFieldDeprecatedEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\DepthOfFieldEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\EdgeDetectionEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\NoiseAndGrainEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\SunShaftsEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\TonemappingEditor.cs" />
-     <Compile Include="Assets\Standard Assets\Editor\ImageEffects\VignetteAndChromaticAberrationEditor.cs" />
+     <Compile Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community ForceShield\ForceShieldDestroyBall.cs" />
+     <Compile Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community ForceShield\ForceShieldImpactDetection.cs" />
+     <Compile Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community ForceShield\ForceShieldShootBall.cs" />
+     <Compile Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community HighlightAnimated\highlightAnimated.cs" />
+     <Compile Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community Volumetric Pixelization\Pixelize.cs" />
+     <Compile Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community Volumetric Pixelization\VolumetricSphere.cs" />
+     <Compile Include="Assets\AmplifyShaderEditor\Examples\Built-In\PlaneClip\PlaneClip.cs" />
+     <Compile Include="Assets\AmplifyShaderEditor\Examples\Built-In\SimpleGPUInstancing\SimpleGPUInstancingExample.cs" />
+     <Compile Include="Assets\AmplifyShaderEditor\Examples\Built-In\Smear\SimpleMoveExample.cs" />
+     <Compile Include="Assets\AmplifyShaderEditor\Examples\Built-In\Smear\Smear.cs" />
+     <Compile Include="Assets\AmplifyShaderEditor\Examples\Built-In\TemplateExamples\PostProcess\Sobel\PostProcessExample.cs" />
+     <Compile Include="Assets\AmplifyShaderEditor\Examples\Built-In\TemplateExamples\Sprites\SpriteMask\SpriteMaskController.cs" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\MultiPassDistortion\DoublePassUnlitTemplate.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\StencilExample\RefractionsPanels\AnimatedRefraction.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\VertexNormalReconstruction\VertexNormalReconstruction.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\TwoSidedWithFace\TwoSideWithFace.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Projectors\ProjectorLight.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Projectors\ProjectorShadow.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\SimpleTerrain\SimpleWater.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\TemplateExamples\PostProcess\Sobel\Sobel.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Dithering\DitheringFade.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community Volumetric Pixelization\Screen And Mask.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\TemplateExamples\UI\SimpleUI\SimpleUI.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community Volumetric Pixelization\Credits.txt" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\StencilExample\Portals\Portal03\StencilMask03.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\SimpleTerrain\SimpleTerrainBase.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\PlaneClip\PlaneClip.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\StencilExample\Portals\Portal03\StencilDiffuse03.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\TriplanarProjection\TriplanarProjection.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Transparency\Transparency.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community EnvironmentGradient\Credits.txt" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community LowPolyWater\LowPolyWater.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community ForceShield\ForceShield.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community Skybox Cubemap Extended\Shaders\Skybox Cubemap Extended.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\ParallaxOffsetFakeInterior\ParallaxWindow.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community EnvironmentGradient\MourEnvironmentGradient.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\XRay\ProceduralWall.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\ScreenSpaceDetail\ScreenSpaceDetail.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community SingleChannelMasking\Credits.txt" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\SimpleLambert\SimpleLambert.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community 2Sided\2Sided.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community Volumetric Pixelization\Breakdown.txt" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\ReflectRefractSoapBubble\ReflectRefractSoapBubble.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\SimpleBlur\SimpleBlur.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\SimplePotionLiquid\SimplePotionLiquid.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\XRay\XRay.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\SimpleTerrain\SimpleTerrainFirstPass.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community Dissolve Burn\DissolveBurn.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\AnimatedFire\AnimatedFire.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\UVLightReveal\UV light.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Extrusion\NormalExtrusion.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\StencilExample\Portals\Portal02\StencilDiffuse02.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community HologramSimple\Hologram Simple.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\WorldPosSLices\WorldPosSlices.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community HologramSimple\Credits.txt" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\CubemapReflections\CubemapReflections.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\TemplateExamples\Sprites\SpriteMask\SpritesMask.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\RadialUVDistortion\RadialUVDistortion.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Substance2018\Readme.txt" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\TemplateExamples\PostProcess\Sobel\Credits.txt" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\RimLight\RimLight.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\TemplateExamples\Particles\HeatHaze\ParticlesTest.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\TemplateExamples\PostProcess\FilmGrain\FilmGrain.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\TriplanarProjection\TriplanarSimple.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\CustomRTRain\Readme.txt" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\SimplePotionLiquid\SimpleGlass.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Outline\Outline.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Translucency\Translucency.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\UISpriteFX\UISpriteFX 3.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\RefractedShadows\RefractedShadows.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\TextureArray\TextureArray.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community LowPolyWater\Credits.txt" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community Dissolve Burn\Credits.txt" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community HighlightAnimated\Highlight_Animated.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\PositionCutoff\LocalPosCutoff.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community HighlightAnimated\Credits.txt" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\ObjectNormalRefraction\ShaderBallInterior.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\MultiPassDistortion\MultiPassDistortion.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\SimpleTexture\SimpleTexture.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\ObjectNormalRefraction\ObjectNormalRefraction.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Mosaic Effect PPS\Readme.txt" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\SimpleGPUInstancing\SimpleGPUInstancing.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\StencilExample\Portals\Portal02\StencilMask02.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\AnimatedUVDistortion\AnimatedUVDistortion.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\SimpleTerrain\SimpleTerrainAddPass.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\TemplateExamples\Sprites\SimpleSprite\SimpleSprite.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\ScaleIndependentTile\ScaleIndependentTile.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Tessellation\Tessellation.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Water\WaterSample.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Matcap\MatcapSample.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\TerrainSnowCoverage\TerrainSnowCoverageFirstPass.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\ParallaxOcclusionMappingPOM\SandPOM.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\TerrainSnowCoverage\TerrainBase.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community ForceShield\Credits.txt" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Substance\Readme.txt" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Transmission\Transmission.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\PlaneClip\Credits.txt" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community Melting\Melting.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\ReadFromAtlasTiled\ImprovedReadFromAtlasTiled.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\ScreenSpaceCurvature\ScreenSpaceCurvature.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community SingleChannelMasking\SingleChannelMasking.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\OrientationBasedSprite\OrientationBasedSprite.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\DoubleLayerCustomSurface\DoubleLayerCustomSurface.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Burn\BurnEffect.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\CustomOutlineToon\CustomOutlineToon.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Dithering\DitheringFadeBlueNoise.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\UISpriteFX\UISpriteFX.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\TemplateExamples\PostProcess\FilmGrain\Credits.txt" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\ReadFromAtlasTiled\ReadFromAtlasTiled.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\SimpleNoise\SimpleNoise.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\ParallaxMapping\ParallaxMappingIterations.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\SnowAccum\SnowAccum.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community Skybox Cubemap Extended\Credits.txt" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community Melting\Credits.txt" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\PlaneClip\ClipArea.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\SimpleRefraction\SimpleRefraction.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Water\Ground.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\SimpleTerrain\GrassBlades.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\CustomLightingToon\CustomLightingToon.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\StencilExample\Portals\Portal01\StencilDiffuse01.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community Volumetric Pixelization\Combine Layers.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\StencilExample\Portals\Portal01\StencilMask01.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\TemplateExamples\UI\MaskedUI\MaskedUI.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\AnimatedFire-ShaderFunction\AnimatedFire-ShaderFunction.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\UnlitWithLightmap\UnlitWithLightmap.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Smear\Smear.shader" />
+     <None Include="Assets\AmplifyShaderEditor\Examples\Built-In\Community 2Sided\Credits.txt" />
     <Reference Include="UnityEngine">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.6f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.6f1/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.ARModule">
-        <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.6f1/Editor/Data/Managed/UnityEngine/UnityEngine.ARModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AccessibilityModule">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.6f1/Editor/Data/Managed/UnityEngine/UnityEngine.AccessibilityModule.dll</HintPath>
@@ -308,9 +399,6 @@
     </Reference>
     <Reference Include="System.Windows.Forms">
         <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Assets/StandaloneFileBrowser/Plugins/System.Windows.Forms.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework">
-        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Library/PackageCache/com.unity.ext.nunit@1.0.0/net35/unity-custom/nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.6f1/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/mscorlib.dll</HintPath>
@@ -672,54 +760,14 @@
     <Reference Include="System.IO.Compression.FileSystem">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.6f1/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/System.IO.Compression.FileSystem.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEditor.TestRunner">
-        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Library/ScriptAssemblies/UnityEditor.TestRunner.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.TestRunner">
-        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Library/ScriptAssemblies/UnityEngine.TestRunner.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Timeline.Editor">
-        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.VSCode.Editor">
-        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.TextMeshPro.Editor">
-        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+    <Reference Include="UnityEditor.UI">
+        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
         <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Timeline">
-        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.CollabProxy.Editor">
-        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Rider.Editor">
-        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.2D.Sprite.Editor">
-        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Library/ScriptAssemblies/Unity.2D.Sprite.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.TextMeshPro">
-        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.UI">
-        <HintPath>C:/Users/adamm/Documents/GitHub/cellPAINT2D/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
-      <Project>{335c6684-a92d-8c95-bfb6-fbb796c1b1f6}</Project>
-      <Name>Assembly-CSharp-firstpass</Name>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="AmplifyShaderEditor.csproj">
-      <Project>{79750f3e-38ff-de90-ddc1-cfdcd703062d}</Project>
-      <Name>AmplifyShaderEditor</Name>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
