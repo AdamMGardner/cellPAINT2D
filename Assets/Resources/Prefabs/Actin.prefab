@@ -135,6 +135,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: Actin
+  id: 0
   common_name: 
   function_group: 
   compartment: 

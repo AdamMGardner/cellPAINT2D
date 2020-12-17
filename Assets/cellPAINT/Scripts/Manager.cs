@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Threading.Tasks;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -32,6 +33,7 @@ public class Manager : MonoBehaviour {
     public GameObject myPrefab;
     public GameObject root;
     public bool layer_number_draw = true;
+    public bool drawFiberPinned = true;
     public int layer_number_options = 3;//three layer 
     public CollisionDetectionMode2D detection_mode; 
     public bool boundMode = false;
@@ -85,6 +87,7 @@ public class Manager : MonoBehaviour {
     public float fiber_length;
     public float fiber_closing_distance;
     //public float fiber_current_distance;
+    public int fiberDrawPinnedCoolDown = 20;
     public bool fiber_distanceJoint = false;
     public bool fiber_hingeJoint = false;
     public float fiber_distance = 0.05f;
@@ -160,7 +163,12 @@ public class Manager : MonoBehaviour {
 
     private ErasePrefab eraser;
     
+    private bool inCooldownLoop = false;
+
     private PrefabProperties current_properties;
+    private Dictionary <GameObject, int> fiberDrawPinned_Cooldown;
+    private List<GameObject> fiberDrawPinned_toAdd = new List<GameObject>();
+    private List<GameObject> fiberDrawPinned_toRemove= new List<GameObject>();
     public Dictionary<string, int> proteins_count;
     private Dictionary<string, Text> proteins_ui_labels;
     public Dictionary<string, Material> prefab_materials;
@@ -1392,6 +1400,7 @@ public class Manager : MonoBehaviour {
         {
             if (fiber_parent.transform.childCount > 1)
                 other = fiber_parent.transform.GetChild(nchild - 1).gameObject;
+                //other.GetComponent<Rigidbody2D>().isKinematic= false;
         }
         else {
             indice = other.transform.GetSiblingIndex();
@@ -1463,6 +1472,9 @@ public class Manager : MonoBehaviour {
             }
         }
         fiber_quadOb.transform.rotation = rotation;
+
+        if (drawFiberPinned) addFiberDrawPinned(fiber_quadOb); 
+
         return fiber_quadOb;
     }
 
@@ -1752,6 +1764,7 @@ public class Manager : MonoBehaviour {
         selected_prefab = new List<string>();
         selectedobject = new List<GameObject>();
         proteins_count = new Dictionary<string, int>();
+        fiberDrawPinned_Cooldown = new Dictionary<GameObject, int>();
         //ui.OnSelect.AddListener(SwitchPrefab);
         dragger = current_camera.GetComponent<DragRigidbody2D>();
         eraser = GetComponent<ErasePrefab>();
@@ -4410,11 +4423,20 @@ public class Manager : MonoBehaviour {
         else if (Input.GetMouseButtonUp(0)) {
             delta = 0;
         }
+
+
     }
 
     void FixedUpdate()
     {
         //DiffuseEverything();
+        
+        if (fiberDrawPinned_Cooldown != null & drawFiberPinned)
+        {
+            fiberDrawPinned();
+        }
+
+
         fixedCount++;
     }
 
@@ -5596,6 +5618,80 @@ public class Manager : MonoBehaviour {
                 current_prefab.GetComponent<SpriteRenderer>().sortingOrder = -2;
             }
         }*/
+    }
+    public void ToggleDrawFiberPinned()
+    {
+        drawFiberPinned = !drawFiberPinned;
+    }
+
+    public async void addFiberDrawPinned(GameObject fiberToAdd)
+    {
+
+        while (inCooldownLoop == true)
+        {
+            await Task.Yield();
+        }
+ 
+        fiberDrawPinned_Cooldown.Add(fiberToAdd,fiberDrawPinnedCoolDown);
+
+    }
+
+    public async void removeFiberDrawPinned(GameObject fiberToRemove)
+    {
+        while (inCooldownLoop == true)
+        {
+            await Task.Yield();
+        }
+
+        fiberDrawPinned_Cooldown.Remove(fiberToRemove);
+    }
+
+    public void fiberDrawPinned()
+    {
+
+        // Needs to be called from fixed update and only if dictionary is occupied.
+        // itterate over dictionary
+
+        if (fiberDrawPinned_Cooldown.Count <= 0) return;
+
+        inCooldownLoop = true;
+        List<GameObject> tempList = new List<GameObject>(fiberDrawPinned_Cooldown.Keys);
+        for (int i = 0; i < tempList.Count; i++)
+        {
+            // If cool down is zero then pin object and remove from the dictionary
+            GameObject fiberUnit = tempList[i];
+
+            int coolDown = fiberDrawPinned_Cooldown[fiberUnit];
+
+            if (coolDown > 0)
+            {
+                coolDown--;
+                fiberDrawPinned_Cooldown[fiberUnit] = coolDown;
+            }
+            else
+            {
+                // If cool down is zero then pin object and remove from the dictionary
+                fiberUnit.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+                PrefabProperties fiberUnitProps = fiberUnit.GetComponent<PrefabProperties>();
+                fiberUnitProps.ispined = true;
+                pinned_object.Add(fiberUnitProps);
+                fiberDrawPinned_toRemove.Add(fiberUnit);
+            }
+        }
+
+        inCooldownLoop = false;
+
+        if (fiberDrawPinned_toRemove.Count >= 0) 
+        { 
+            foreach (GameObject fiberPinnedRemove in fiberDrawPinned_toRemove)
+            {
+                removeFiberDrawPinned(fiberPinnedRemove);
+            }
+        }
+        fiberDrawPinned_toRemove.Clear();
+
+
+        // If cool down is zero then pin object and remove from the dictionary
     }
 
     public void NucleicAcidDepthLerp(GameObject toapplyto=null)
