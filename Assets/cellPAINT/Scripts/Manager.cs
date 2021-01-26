@@ -63,6 +63,7 @@ public class Manager : MonoBehaviour {
     public int layer_frequence = 3;
     public int nbInstancePerClick = 1;
     public float radiusPerClick = 1;
+    public bool randomizeAllIngredientPos = true;
     public bool mask_ui = false;
     private Vector3 mousePos;
     private Vector3 prev_mousePos;
@@ -1141,8 +1142,26 @@ public class Manager : MonoBehaviour {
         if (rbCount >= MaxRigidBodies) return;
         if (instancePrefab.GetComponent<PrefabProperties>() == null) return;
         var pname = instancePrefab.GetComponent<PrefabProperties>().name;
-        Vector3 objectPosMiddle = new Vector3(objectPos.x, objectPos.y, 0.125f);
-        Vector3 objectPosBottom = new Vector3(objectPos.x, objectPos.y, 0.250f);
+
+        //Randomize all positions?
+        Vector3 objectPosBottom;
+        Vector3 objectPosMiddle;
+        if (randomizeAllIngredientPos)
+        {
+            //need to get position of the mouse and find new random positions.
+            Vector3 randomizedPos = UnityEngine.Random.insideUnitCircle * radiusPerClick;
+            objectPosMiddle = new Vector3(transform.position.x + randomizedPos.x, transform.position.y + randomizedPos.y, 0.125f);
+            randomizedPos = UnityEngine.Random.insideUnitCircle * radiusPerClick;
+            objectPosBottom = new Vector3(transform.position.x + randomizedPos.x, transform.position.y + randomizedPos.y, 0.250f);
+        }
+        else
+        {
+            objectPosMiddle = new Vector3(objectPos.x, objectPos.y, 0.125f);
+            objectPosBottom = new Vector3(objectPos.x, objectPos.y, 0.250f);
+        }
+
+        //Vector3 objectPosMiddle = new Vector3(objectPos.x, objectPos.y, 0.125f);
+        //Vector3 objectPosBottom = new Vector3(objectPos.x, objectPos.y, 0.250f);
         var layer = LayerMask.NameToLayer("Top Layer");
         var order = 0;
         if (layer_number_options == 1) {
