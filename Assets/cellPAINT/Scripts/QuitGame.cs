@@ -485,7 +485,7 @@ public class QuitGame : MonoBehaviour
         {
             using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
             {
-                var demoFile = archive.CreateEntry("moel_file.txt");
+                var demoFile = archive.CreateEntry("model_file.txt");
                 using (var entryStream = demoFile.Open())
                 {
                     using (var streamWriter = new StreamWriter(entryStream))

@@ -8,6 +8,7 @@ using SimpleJSON;
 [Serializable]
 public class PrefabProperties : MonoBehaviour
 {
+    
     public string name;
     public int id;
     public string common_name;
@@ -119,6 +120,9 @@ public class PrefabProperties : MonoBehaviour
     private FixedJoint2D hjdown2;
     private Rigidbody2D  CircleDownRb;
     private bool _checked = false;
+    public bool debug_show_colliders = false;
+
+    private ShowCollider showCollider;
 
     //private Rigidbody2D rigidbody;
     void IcosahedronRotation()
@@ -1075,6 +1079,7 @@ public class PrefabProperties : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        //colliders_debug = new List<LineRenderer>();
         int[,] array2DIcosChoices = new int[12, 5] { { 1, 2, 7, 8, 9 }, { 0, 2, 7, 10, 11 }, { 0, 1, 3, 8, 11 }, { 2, 4, 5, 8, 11 }, { 3, 5, 6, 9, 10 }, { 3, 4, 6, 10, 11 }, { 4, 5, 7, 9, 10 }, { 0, 1, 6, 9, 10 }, { 0, 2, 3, 4, 9 }, { 0, 4, 6, 7, 8 }, { 1, 5, 6, 7, 11 }, { 1, 2, 3, 5, 10 } };
         //timeToGo = Time.fixedTime + Random.Range(0.0f, 1.0f);
         area = getArea();
@@ -1613,6 +1618,10 @@ public class PrefabProperties : MonoBehaviour
 
     void Update() {
         checkFiberConnection();
+        /*if (debug_show_colliders) {
+            if (showCollider == null) showCollider = gameObject.AddComponent<ShowCollider>();
+            showCollider.enabled = true;
+        }*/
         //ShowAttachmentsLineRenderer();
         /*SpringJoint2D jt = gameObject.GetComponent<SpringJoint2D>();
         if( !is_fiber )
