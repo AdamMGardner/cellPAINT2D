@@ -1,0 +1,2000 @@
+{
+  "recipe": {
+    "paths": [
+      [
+        "autoPACKserver",
+        "https://cdn.rawgit.com/mesoscope/cellPACK_data/master/cellPACK_database_1.1.0"
+      ]
+    ],
+    "name": "root",
+    "version": "1.0"
+  },
+  "options": {
+    "cancelDialog": false,
+    "_hackFreepts": false,
+    "windowsSize": 50,
+    "use_gradient": false,
+    "placeMethod": "jitter",
+    "saveResult": false,
+    "runTimeDisplay": false,
+    "overwritePlaceMethod": true,
+    "innerGridMethod": "jordan",
+    "boundingBox": [
+      [
+        -350,
+        -350,
+        -350
+      ],
+      [
+        350,
+        350,
+        350
+      ]
+    ],
+    "gradients": [],
+    "smallestProteinSize": 0,
+    "computeGridParams": true,
+    "freePtsUpdateThrehod": 0,
+    "pickWeightedIngr": true,
+    "_timer": false,
+    "ingrLookForNeighbours": false,
+    "pickRandPt": true,
+    "largestProteinSize": 0,
+    "resultfile": "",
+    "use_periodicity": false,
+    "EnviroOnly": false
+  },
+  "cytoplasme": {
+    "ingredients": {
+      "Albumin": {
+        "encapsulatingRadius": 40,
+        "name": "Albumin",
+        "source": {
+          "pdb": "1e7i",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "bu": "BU1",
+          "model": "",
+          "selection": ""
+        },
+        "nbMol": 0,
+        "molarity": 0,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "None",
+        "principalVector": [
+          0,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "Albumin",
+        "Type": "MultiSphere",
+        "packingMode": "",
+        "comments": "",
+        "confidence": 0,
+        "color":[0.9058824,0.9843137,0.2],
+        "sprite": {
+          "image": "",
+          "offsety": 0,
+          "scale2d": 3.5
+        }
+      },
+      "Serotransferrin": {
+        "encapsulatingRadius": 40,
+        "name": "Serotransferrin",
+        "source": {
+          "pdb": "3v83",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "bu": "BU1",
+          "model": "",
+          "selection": ""
+        },
+        "nbMol": 0,
+        "molarity": 0,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "None",
+        "principalVector": [
+          0,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "Serotransferrin",
+        "Type": "MultiSphere",
+        "packingMode": "",
+        "comments": "",
+        "confidence": 0,
+        "color":[0.9686275, 0.9843137, 0.09411765],
+        "sprite": {
+          "image": "",
+          "offsety": 0,
+          "scale2d": 3.5
+        }
+      },
+      "HDL": {
+        "encapsulatingRadius": 40,
+        "color":[0.9960784, 0.8078431, 0.5294118],
+        "name": "HDL",
+        "source": {
+          "pdb": "2msc",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "bu": "BU1",
+          "model": "",
+          "selection": ""
+        },
+        "nbMol": 0,
+        "molarity": 0,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "None",
+        "principalVector": [
+          0,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "HDL",
+        "Type": "MultiSphere",
+        "packingMode": "",
+        "comments": "",
+        "confidence": 0,
+        "sprite": {
+          "image": "",
+          "offsety": 0,
+          "scale2d": 3.5
+        }
+      },
+      "LDL": {
+        "encapsulatingRadius": 40,
+        "color":[0.9960784, 0.8823529, 0.6392157],
+        "name": "LDL",
+        "source": {
+          "emdb": "5421",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "pdb": "None",
+          "bu": "BU1",
+          "model": "",
+          "selection": ""
+        },
+        "nbMol": 0,
+        "molarity": 0,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "None",
+        "principalVector": [
+          0,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "LDL",
+        "Type": "MultiSphere",
+        "packingMode": "",
+        "comments": "",
+        "confidence": 0,
+        "sprite": {
+          "image": "",
+          "offsety": 0,
+          "scale2d": 3.5
+        }
+      },
+      "Ceruloplasmin": {
+        "encapsulatingRadius": 40,
+        "color":[ 0.8470588, 0.9960784, 0.003921569],
+        "name": "Ceruloplasmin",
+        "source": {
+          "pdb": "1kcw",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "bu": "BU1",
+          "model": "",
+          "selection": ""
+        },
+        "nbMol": 0,
+        "molarity": 0,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "None",
+        "principalVector": [
+          0,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "Ceruloplasmin",
+        "Type": "MultiSphere",
+        "packingMode": "",
+        "comments": "",
+        "confidence": 0,
+        "sprite": {
+          "image": "",
+          "offsety": 0,
+          "scale2d": 3.5
+        }
+      },
+      "IgG": {
+        "encapsulatingRadius": 40,
+        "color":[ 0.9960784, 0.8980392, 0.003921569],
+        "name": "IgG",
+        "source": {
+          "pdb": "igg.pdb",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "bu": "BU1",
+          "model": "",
+          "selection": ""
+        },
+        "nbMol": 0,
+        "molarity": 0,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "None",
+        "principalVector": [
+          0,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "IgG",
+        "Type": "MultiSphere",
+        "packingMode": "",
+        "comments": "",
+        "confidence": 0,
+        "sprite": {
+          "image": "",
+          "offsety": 0,
+          "scale2d": 3.5
+        }
+      },
+      "IgA": {
+        "encapsulatingRadius": 40,
+        "color":[ 0.9960784, 0.9137255, 0.003921569],
+        "name": "IgA",
+        "source": {
+          "pdb": "2rcj",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "bu": "BU1",
+          "model": "",
+          "selection": ""
+        },
+        "nbMol": 0,
+        "molarity": 0,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "None",
+        "principalVector": [
+          0,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "IgA",
+        "Type": "MultiSphere",
+        "packingMode": "",
+        "comments": "",
+        "confidence": 0,
+        "sprite": {
+          "image": "",
+          "offsety": 0,
+          "scale2d": 3.5
+        }
+      },
+      "IgM": {
+        "encapsulatingRadius": 40,
+        "color":[ 0.9960784, 0.9294118, 0.003921569],
+        "name": "IgM",
+        "source": {
+          "pdb": "2rcj",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "bu": "BU1",
+          "model": "",
+          "selection": ""
+        },
+        "nbMol": 0,
+        "molarity": 0,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "None",
+        "principalVector": [
+          0,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "IgM",
+        "Type": "MultiSphere",
+        "packingMode": "",
+        "comments": "",
+        "confidence": 0,
+        "sprite": {
+          "image": "",
+          "offsety": 0,
+          "scale2d": 3.5
+        }
+      },
+      "Complement_Factor_C3": {
+        "color":[ 0.9960784, 0.8470588, 0.003921569],
+        "encapsulatingRadius": 40,
+        "name": "Complement_Factor_C3",
+        "source": {
+          "pdb": "2a73",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "bu": "BU1",
+          "model": "",
+          "selection": ""
+        },
+        "nbMol": 0,
+        "molarity": 0,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "None",
+        "principalVector": [
+          0,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "Complement_Factor_C3",
+        "Type": "MultiSphere",
+        "packingMode": "",
+        "comments": "",
+        "confidence": 0,
+        "sprite": {
+          "image": "",
+          "offsety": 0,
+          "scale2d": 3.5
+        }
+      },
+      "Complement_Factor_H": {
+        "encapsulatingRadius": 40,
+        "color":[ 0.9960784, 0.8588235, 0.07058824],
+        "name": "Complement_Factor_H",
+        "source": {
+          "pdb": "1haq",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "bu": "BU1",
+          "model": "",
+          "selection": ""
+        },
+        "nbMol": 0,
+        "molarity": 0,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "None",
+        "principalVector": [
+          0,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "Complement_Factor_H",
+        "Type": "MultiSphere",
+        "packingMode": "",
+        "comments": "",
+        "confidence": 0,
+        "sprite": {
+          "image": "",
+          "offsety": 0,
+          "scale2d": 3.5
+        }
+      },
+      "Complement_Factor_C4_A": {
+        "color":[ 0.9960784, 0.8156863, 0.003921569],
+        "encapsulatingRadius": 40,
+        "name": "Complement_Factor_C4_A",
+        "source": {
+          "pdb": "4fxk",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "bu": "BU1",
+          "model": "",
+          "selection": ""
+        },
+        "nbMol": 0,
+        "molarity": 0,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "None",
+        "principalVector": [
+          0,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "Complement_Factor_C4_A",
+        "Type": "MultiSphere",
+        "packingMode": "",
+        "comments": "",
+        "confidence": 0,
+        "sprite": {
+          "image": "",
+          "offsety": 0,
+          "scale2d": 3.5
+        }
+      },
+      "Complement_Factor_B": {
+        "encapsulatingRadius": 40,
+        "color":[ 0.9960784, 0.8470588, 0.003921569],
+        "name": "Complement_Factor_B",
+        "source": {
+          "pdb": "2ok5",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "bu": "BU1",
+          "model": "",
+          "selection": ""
+        },
+        "nbMol": 0,
+        "molarity": 0,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "None",
+        "principalVector": [
+          0,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "Complement_Factor_B",
+        "Type": "MultiSphere",
+        "packingMode": "",
+        "comments": "",
+        "confidence": 0,
+        "sprite": {
+          "image": "",
+          "offsety": 0,
+          "scale2d": 3.5
+        }
+      },
+      "Alpha_2_MacroGlobulin": {
+        "encapsulatingRadius": 40,
+        "color":[ 0.9960784, 0.5607843, 0.4392157],
+        "name": "Alpha_2_MacroGlobulin",
+        "source": {
+          "pdb": "4acq",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "bu": "BU1",
+          "model": "",
+          "selection": ""
+        },
+        "nbMol": 0,
+        "molarity": 0,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "None",
+        "principalVector": [
+          0,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "Alpha_2_MacroGlobulin",
+        "Type": "MultiSphere",
+        "packingMode": "",
+        "comments": "",
+        "confidence": 0,
+        "sprite": {
+          "image": "",
+          "offsety": 0,
+          "scale2d": 3.5
+        }
+      },
+      "Alpha_1_AntiTrypsin": {
+        "encapsulatingRadius": 40,
+        "color":[ 0.9960784,0.5176471,0.2784314],
+        "name": "Alpha_1_AntiTrypsin",
+        "source": {
+          "pdb": "1psi",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "bu": "BU1",
+          "model": "",
+          "selection": ""
+        },
+        "nbMol": 0,
+        "molarity": 0,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "None",
+        "principalVector": [
+          0,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "Alpha_1_AntiTrypsin",
+        "Type": "MultiSphere",
+        "packingMode": "",
+        "comments": "",
+        "confidence": 0,
+        "sprite": {
+          "image": "",
+          "offsety": 0,
+          "scale2d": 3.5
+        }
+      },
+      "Haptoglobin": {
+        "encapsulatingRadius": 40,
+        "color":[ 0.9960784,0.3333333,0.3294118],
+        "name": "Haptoglobin",
+        "source": {
+          "pdb": "4x01",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "bu": "BU1",
+          "model": "",
+          "selection": ""
+        },
+        "nbMol": 0,
+        "molarity": 0,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "None",
+        "principalVector": [
+          0,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "Haptoglobin",
+        "Type": "MultiSphere",
+        "packingMode": "",
+        "comments": "",
+        "confidence": 0,
+        "sprite": {
+          "image": "",
+          "offsety": 0,
+          "scale2d": 3.5
+        }
+      },
+      "Hemopexin": {
+        "color":[ 0.9960784,0.5294118,0.5254902],
+        "encapsulatingRadius": 40,
+        "name": "Hemopexin",
+        "source": {
+          "pdb": "1qjs",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "bu": "BU1",
+          "model": "",
+          "selection": ""
+        },
+        "nbMol": 0,
+        "molarity": 0,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "None",
+        "principalVector": [
+          0,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "Hemopexin",
+        "Type": "MultiSphere",
+        "packingMode": "",
+        "comments": "",
+        "confidence": 0,
+        "sprite": {
+          "image": "",
+          "offsety": 0,
+          "scale2d": 3.5
+        }
+      },
+      "Fibrinogen": {
+        "encapsulatingRadius": 40,
+        "color":[ 0.9960784,0.6078432,0.6078432],
+        "name": "Fibrinogen",
+        "source": {
+          "pdb": "3ghg_ABCDEFMNOP.pdb",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "bu": "BU1",
+          "model": "",
+          "selection": ""
+        },
+        "nbMol": 0,
+        "molarity": 0,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "None",
+        "principalVector": [
+          0,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "Fibrinogen",
+        "Type": "MultiSphere",
+        "packingMode": "",
+        "comments": "",
+        "confidence": 0,
+        "sprite": {
+          "image": "",
+          "offsety": 0,
+          "scale2d": 3.5
+        }
+      },
+      "Transthyretin": {
+        "color":[ 0.7490196,0.9960784,0.1254902],
+        "encapsulatingRadius": 40,
+        "name": "Transthyretin",
+        "source": {
+          "pdb": "1tta",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "bu": "BU1",
+          "model": "",
+          "selection": ""
+        },
+        "nbMol": 0,
+        "molarity": 0,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "None",
+        "principalVector": [
+          0,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "Transthyretin",
+        "Type": "MultiSphere",
+        "packingMode": "",
+        "comments": "",
+        "confidence": 0,
+        "sprite": {
+          "image": "",
+          "offsety": 0,
+          "scale2d": 3.5
+        }
+      },
+      "Insulin": {
+        "color":[ 1,1,1],
+        "encapsulatingRadius": 40,
+        "name": "Insulin",
+        "source": {
+          "pdb": "2hiu",
+          "transform": {
+            "offset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "bu": "BU1",
+          "model": "",
+          "selection": ""
+        },
+        "nbMol": 0,
+        "molarity": 0,
+        "molecularweight": 0,
+        "meshFile": "",
+        "meshType": "None",
+        "principalVector": [
+          0,
+          0,
+          0
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "uniprot": "",
+        "label": "Insulin",
+        "Type": "MultiSphere",
+        "packingMode": "",
+        "comments": "",
+        "confidence": 0,
+        "sprite": {
+          "image": "",
+          "offsety": 0,
+          "scale2d": 3.5
+        }
+      }
+    }
+  },
+  "compartments": {
+    "Coronavirus": {
+      "geom_type": "mb",
+      "geom": "mb",
+      "name": "CoronavirusSept",
+      "thickness": 7.5,
+      "surface": {
+          "ingredients": {
+              "M": {
+                  "encapsulatingRadius": 25,
+                  "name": "M",
+                  "source": {
+                      "pdb": "M_dimer.pdb",
+                      "bu": "AU",
+                      "selection": "",
+                      "model": "",
+                      "transform": {
+                          "offset": [
+                              -21,
+                              12,
+                              0
+                          ]
+                      }
+                  },
+                  "nbMol": 0,
+                  "molarity": 0,
+                  "molecularweight": 0,
+                  "meshType": "file",
+                  "principalVector": [
+                      1,
+                      0,
+                      0
+                  ],
+                  "offset": [
+                      -21,
+                      12,
+                      0
+                  ],
+                  "uniprot": "",
+                  "label": "protein_label",
+                  "Type": "MultiSphere",
+                  "positions": [],
+                  "radii": [],
+                  "packingMode": "random",
+                  "comments": "",
+                  "color":[0.9686275,0.3215686,0.7098039],
+                  "confidence": 0,
+                  "sprite": {
+                      "image": "M.png",
+                      "offsety": "-19",
+                      "scale2d": 6,
+                      "lengthy": 0
+                  },
+                  "custom_data": []
+              },
+              "E": {
+                  "encapsulatingRadius": 25,
+                  "name": "E",
+                  "source": {
+                      "pdb": "E_rb.pdb",
+                      "bu": "AU",
+                      "selection": "",
+                      "model": "",
+                      "transform": {
+                          "offset": [
+                              4,
+                              6,
+                              0
+                          ]
+                      }
+                  },
+                  "nbMol": 0,
+                  "molarity": 0,
+                  "molecularweight": 0,
+                  "meshFile": "",
+                  "meshType": "file",
+                  "principalVector": [
+                      -0.4,
+                      0.03,
+                      -0.92
+                  ],
+                  "offset": [
+                      4,
+                      6,
+                      0
+                  ],
+                  "uniprot": "",
+                  "label": "protein_label",
+                  "Type": "MultiSphere",
+                  "positions": [],
+                  "radii": [],
+                  "packingMode": "random",
+                  "comments": "",
+                  "color":[ 0.8705882,0.2235294,0.9568627],
+                  "confidence": 0,
+                  "sprite": {
+                      "image": "E.png",
+                      "offsety": 7.211102550927978,
+                      "scale2d": 6,
+                      "lengthy": 0
+                  },
+                  "custom_data": []
+              },
+              "Spike_open": {
+                  "encapsulatingRadius": 25,
+                  "name": "Spike_open",
+                  "source": {
+                      "pdb": "spike_open_cleaved_p_g_amarolab.pdb",
+                      "bu": "AU",
+                      "selection": "",
+                      "model": "",
+                      "transform": {
+                          "offset": [
+                              10,
+                              -10,
+                              187
+                          ]
+                      }
+                  },
+                  "nbMol": 0,
+                  "molarity": 0,
+                  "molecularweight": 0,
+                  "meshFile": "",
+                  "meshType": "file",
+                  "principalVector": [
+                      0,
+                      0,
+                      1
+                  ],
+                  "offset": [
+                      10,
+                      -10,
+                      187
+                  ],
+                  "uniprot": "",
+                  "label": "protein_label",
+                  "Type": "MultiSphere",
+                  "positions": [],
+                  "radii": [],
+                  "packingMode": "random",
+                  "comments": "",
+                  "color":[ 0.8862745,0.1490196,0.7647059],
+                  "confidence": 0,
+                  "sprite": {
+                      "image": "Spike_open.png",
+                      "offsety": "115",
+                      "scale2d": 6,
+                      "lengthy": 0
+                  },
+                  "custom_data": []
+              },
+              "Spike_closed": {
+                  "encapsulatingRadius": 25,
+                  "name": "Spike_closed",
+                  "source": {
+                      "pdb": "spike_closed_cleaved_p_g_amarolab.pdb",
+                      "bu": "AU",
+                      "selection": "",
+                      "model": "",
+                      "transform": {
+                          "offset": [
+                              0,
+                              0,
+                              189
+                          ]
+                      }
+                  },
+                  "nbMol": 0,
+                  "molarity": 0,
+                  "molecularweight": 0,
+                  "meshFile": "",
+                  "meshType": "file",
+                  "principalVector": [
+                      0,
+                      0,
+                      1
+                  ],
+                  "offset": [
+                      0,
+                      0,
+                      189
+                  ],
+                  "uniprot": "",
+                  "label": "protein_label",
+                  "Type": "MultiSphere",
+                  "positions": [],
+                  "radii": [],
+                  "packingMode": "random",
+                  "comments": "",
+                  "color":[ 0.8862745,0.1490196,0.7647059],
+                  "confidence": 0,
+                  "sprite": {
+                      "image": "Spike_closed.png",
+                      "offsety": "110",
+                      "scale2d": 6,
+                      "lengthy": 0
+                  },
+                  "custom_data": []
+              },
+              "Spike_postfusion": {
+                  "encapsulatingRadius": 25,
+                  "name": "Spike_postfusion",
+                  "source": {
+                      "pdb": "6xra",
+                      "bu": "AU",
+                      "selection": "",
+                      "model": "",
+                      "transform": {
+                          "offset": [
+                              0,
+                              0,
+                              154
+                          ]
+                      }
+                  },
+                  "nbMol": 0,
+                  "molarity": 0,
+                  "molecularweight": 0,
+                  "meshFile": "",
+                  "meshType": "file",
+                  "principalVector": [
+                      0,
+                      0,
+                      1
+                  ],
+                  "offset": [
+                      0,
+                      0,
+                      154
+                  ],
+                  "uniprot": "",
+                  "label": "protein_label",
+                  "Type": "MultiSphere",
+                  "positions": [],
+                  "radii": [],
+                  "packingMode": "random",
+                  "comments": "",
+                  "color":[ 0.8862745,0.1490196,0.7647059],
+                  "confidence": 0,
+                  "sprite": {
+                      "image": "Spike_postfusion.png",
+                      "offsety": "124",
+                      "scale2d": 6,
+                      "lengthy": 0
+                  },
+                  "custom_data": []
+              }
+          }
+      },
+      "interior": {
+          "ingredients": {
+              "Nucleocapsid": {
+                  "color":[ 0.6862,0.49019,1.0],
+                  "encapsulatingRadius": 40,
+                  "name": "Nucleocapsid",
+                  "source": {
+                      "pdb": "N.pdb",
+                      "bu": "AU",
+                      "selection": "",
+                      "model": "",
+                      "transform": {
+                          "offset": [
+                              0,
+                              0,
+                              0
+                          ]
+                      }
+                  },
+                  "nbMol": 0,
+                  "molarity": 0,
+                  "molecularweight": 0,
+                  "meshFile": "sphere",
+                  "meshType": "sphere",
+                  "principalVector": [
+                      0,
+                      0,
+                      1
+                  ],
+                  "offset": [
+                      0,
+                      0,
+                      0
+                  ],
+                  "label": "protein_label",
+                  "Type": "Grow",
+                  "positions": [
+                      {
+                          "coords": [
+                              0,
+                              0,
+                              0
+                          ]
+                      }
+                  ],
+                  "radii": [
+                      {
+                          "radii": [
+                              40
+                          ]
+                      }
+                  ],
+                  "packingMode": "random",
+                  "confidence": 0,
+                  "sprite": {
+                      "image": "COVRNANucleocapsid.png",
+                      "offsety": 0,
+                      "lengthy": 45,
+                      "scale2d": 6
+                  },
+                  "custom_data": []
+              }
+          }
+      },
+      "mb": {
+          "positions": [
+            0,
+            0,
+            0
+          ],
+          "radii": [
+            500
+          ]
+      }
+  },
+    "HumanCell": {
+      "geom_type": "None",
+      "geom": "",
+      "name": "HumanCell",
+      "thickness": 7.5,
+      "color":[ 0.7803922,0.9960784,0.7176471],
+      "surface": {
+        "ingredients": {
+          "GPCR": {
+            "color":[0.3843137,0.9960784,0.003921569],
+            "encapsulatingRadius": 40,
+            "name": "GPCR",
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "bu": "BU1",
+              "model": "",
+              "selection": ""
+            },
+            "nbMol": 0,
+            "molarity": 0,
+            "molecularweight": 0,
+            "meshFile": "",
+            "meshType": "None",
+            "principalVector": [
+              0,
+              0,
+              0
+            ],
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "uniprot": "",
+            "label": "GPCR",
+            "Type": "MultiSphere",
+            "packingMode": "",
+            "comments": "",
+            "confidence": 0,
+            "sprite": {
+              "image": "CXCR4.png",
+              "offsety": 0,
+              "scale2d": 3.5
+            }
+          },
+          "Ion_Channel": {
+            "color":[0.003921569,0.9960784,0.03529412],
+            "encapsulatingRadius": 40,
+            "name": "Ion_Channel",
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "bu": "BU1",
+              "model": "",
+              "selection": ""
+            },
+            "nbMol": 0,
+            "molarity": 0,
+            "molecularweight": 0,
+            "meshFile": "",
+            "meshType": "None",
+            "principalVector": [
+              0,
+              0,
+              0
+            ],
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "uniprot": "",
+            "label": "Ion_Channel",
+            "Type": "MultiSphere",
+            "packingMode": "",
+            "comments": "",
+            "confidence": 0,
+            "sprite": {
+              "image": "Ion_Channel.png",
+              "offsety": "25",
+              "scale2d": 3.5
+            }
+          },
+          "G_Protein": {
+            "color":[0.007843138,0.9921569,0.8941177],
+            "encapsulatingRadius": 40,
+            "name": "G_Protein",
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "bu": "BU1",
+              "model": "",
+              "selection": ""
+            },
+            "nbMol": 0,
+            "molarity": 0,
+            "molecularweight": 0,
+            "meshFile": "",
+            "meshType": "None",
+            "principalVector": [
+              0,
+              0,
+              0
+            ],
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "uniprot": "",
+            "label": "G_Protein",
+            "Type": "MultiSphere",
+            "packingMode": "",
+            "comments": "",
+            "confidence": 0,
+            "sprite": {
+              "image": "G_Protein.png",
+              "offsety": "-45",
+              "scale2d": 3.5
+            }
+          },
+          "Ras": {
+            "color":[0.0627451,0.9960784,0.8705882],
+            "encapsulatingRadius": 40,
+            "name": "Ras",
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "bu": "BU1",
+              "model": "",
+              "selection": ""
+            },
+            "nbMol": 0,
+            "molarity": 0,
+            "molecularweight": 0,
+            "meshFile": "",
+            "meshType": "None",
+            "principalVector": [
+              0,
+              0,
+              0
+            ],
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "uniprot": "",
+            "label": "Ras",
+            "Type": "MultiSphere",
+            "packingMode": "",
+            "comments": "",
+            "confidence": 0,
+            "sprite": {
+              "image": "RAS.png",
+              "offsety": "-30",
+              "scale2d": 3.5
+            }
+          },
+          "ACE": {
+            "color":[0.3843137,0.9994,0.003921569],
+            "encapsulatingRadius": 40,
+            "name": "ACE",
+            "source": {
+              "pdb": "ACE.pdb",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "bu": "BU1",
+              "model": "",
+              "selection": ""
+            },
+            "nbMol": 0,
+            "molarity": 0,
+            "molecularweight": 0,
+            "meshFile": "",
+            "meshType": "None",
+            "principalVector": [
+              0,
+              0,
+              0
+            ],
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "uniprot": "",
+            "label": "ACE",
+            "Type": "MultiSphere",
+            "packingMode": "",
+            "comments": "",
+            "confidence": 0,
+            "sprite": {
+              "image": "CoronaVirus_Sprites_ACEcontrast.png",
+              "offsety": 50,
+              "scale2d": 12.0
+            }
+          }
+        }
+      },
+      "interior": {
+        "ingredients": {
+          "RNA": {
+            "nbMol": 0,
+            "packingMode": "",
+            "orientation": [
+              1,
+              0,
+              0
+            ],
+            "weight": 1,
+            "color": [
+              0.792,
+              0.232,
+              1.0
+            ],
+            "nbJitter": 1,
+            "proba_not_binding": 0.5,
+            "radii": [
+              [
+                6
+              ]
+            ],
+            "cutoff_boundary": 55,
+            "encapsulatingRadius": 40,
+            "positions2": [
+              [
+                [
+                  50,
+                  0,
+                  0
+                ]
+              ]
+            ],
+            "rejectionThreshold": 300,
+            "isAttractor": false,
+            "Type": "Grow",
+            "useLength": false,
+            "uLength": 100,
+            "source": {
+              "pdb": "rna.pdb",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "bu": "BU1",
+              "model": "",
+              "selection": ""
+            },
+            "gradient": "",
+            "use_rbsphere": false,
+            "jitterMax": [
+              1,
+              1,
+              1
+            ],
+            "packingPriority": -20,
+            "orientBiasRotRangeMax": -3.1415927,
+            "closed": false,
+            "useHalton": true,
+            "biased": 0.5,
+            "molarity": 0,
+            "useOrientBias": false,
+            "rotRange": 6.2831,
+            "orientBiasRotRangeMin": -3.1415927,
+            "marge": 80,
+            "perturbAxisAmplitude": 0.1,
+            "use_mesh_rb": false,
+            "principalVector": [
+              0,
+              0,
+              0
+            ],
+            "properties": {},
+            "partners_name": [],
+            "name": "RNA",
+            "positions": [
+              [
+                [
+                  -50,
+                  0,
+                  0
+                ]
+              ]
+            ],
+            "excluded_partners_name": [],
+            "placeType": "jitter",
+            "cutoff_surface": 25,
+            "length": 3700,
+            "walkingMode": "sphere",
+            "constraintMarge": false,
+            "proba_binding": 0.5,
+            "useRotAxis": false,
+            "molecularweight": 0,
+            "meshFile": "",
+            "meshType": "None",
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "uniprot": "",
+            "label": "RNA",
+            "comments": "",
+            "confidence": 0,
+            "sprite": {
+              "image": "RNA.png",
+              "offsety": 0,
+              "lengthy" : 30.0,
+              "scale2d": 3.5
+            }
+          },
+          "Ribosome": {
+            "color":[ 0.3607843,0.4235294,0.9960784],
+            "encapsulatingRadius": 40,
+            "name": "Ribosome",
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "bu": "BU1",
+              "model": "",
+              "selection": ""
+            },
+            "nbMol": 0,
+            "molarity": 0,
+            "molecularweight": 0,
+            "meshFile": "",
+            "meshType": "None",
+            "principalVector": [
+              0,
+              0,
+              0
+            ],
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "uniprot": "",
+            "label": "Ribosome",
+            "Type": "MultiSphere",
+            "packingMode": "",
+            "comments": "",
+            "confidence": 0,
+            "sprite": {
+              "image": "Ribosome.png",
+              "offsety": 0,
+              "scale2d": 3.5
+            }
+          },
+          "Transfer_RNA": {
+            "color":[ 0.4117647,0.3921569,0.9960784],
+            "encapsulatingRadius": 40,
+            "name": "Transfer_RNA",
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "bu": "BU1",
+              "model": "",
+              "selection": ""
+            },
+            "nbMol": 0,
+            "molarity": 0,
+            "molecularweight": 0,
+            "meshFile": "",
+            "meshType": "None",
+            "principalVector": [
+              0,
+              0,
+              0
+            ],
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "uniprot": "",
+            "label": "Transfer_RNA",
+            "Type": "MultiSphere",
+            "packingMode": "",
+            "comments": "",
+            "confidence": 0,
+            "sprite": {
+              "image": "Transfer_RNA.png",
+              "offsety": 0,
+              "scale2d": 3.5
+            }
+          },
+          "Elongation_Factor": {
+            "color":[ 0.427451,0.3960784,0.9960784],
+            "encapsulatingRadius": 40,
+            "name": "Elongation_Factor",
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "bu": "BU1",
+              "model": "",
+              "selection": ""
+            },
+            "nbMol": 0,
+            "molarity": 0,
+            "molecularweight": 0,
+            "meshFile": "",
+            "meshType": "None",
+            "principalVector": [
+              0,
+              0,
+              0
+            ],
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "uniprot": "",
+            "label": "Elongation_Factor",
+            "Type": "MultiSphere",
+            "packingMode": "",
+            "comments": "",
+            "confidence": 0,
+            "sprite": {
+              "image": "Elongation_Factor.png",
+              "offsety": 0,
+              "scale2d": 3.5
+            }
+          },
+          "AminoAcytl_tRNA_Synthetase": {
+            "color":[0.427451,0.5215687,0.9960784],
+            "encapsulatingRadius": 40,
+            "name": "AminoAcytl_tRNA_Synthetase",
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "bu": "BU1",
+              "model": "",
+              "selection": ""
+            },
+            "nbMol": 0,
+            "molarity": 0,
+            "molecularweight": 0,
+            "meshFile": "",
+            "meshType": "None",
+            "principalVector": [
+              0,
+              0,
+              0
+            ],
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "uniprot": "",
+            "label": "AminoAcytl_tRNA_Synthetase",
+            "Type": "MultiSphere",
+            "packingMode": "",
+            "comments": "",
+            "confidence": 0,
+            "sprite": {
+              "image": "AminoAcytl_tRNA_Synthetase.png",
+              "offsety": 0,
+              "scale2d": 3.5
+            }
+          },
+          "CCT": {
+            "color":[ 0.4588235,0.5921569,0.9960784],
+            "encapsulatingRadius": 40,
+            "name": "CCT",
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "bu": "BU1",
+              "model": "",
+              "selection": ""
+            },
+            "nbMol": 0,
+            "molarity": 0,
+            "molecularweight": 0,
+            "meshFile": "",
+            "meshType": "None",
+            "principalVector": [
+              0,
+              0,
+              0
+            ],
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "uniprot": "",
+            "label": "CCT",
+            "Type": "MultiSphere",
+            "packingMode": "",
+            "comments": "",
+            "confidence": 0,
+            "sprite": {
+              "image": "CCT.png",
+              "offsety": 0,
+              "scale2d": 3.5
+            }
+          },
+          "Actin": {
+            "encapsulatingRadius": 40,
+            "name": "Actin",
+            "source": {
+              "pdb": "3MFP",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "bu": "BU1",
+              "model": "",
+              "selection": ""
+            },
+            "nbMol": 0,
+            "molarity": 0,
+            "molecularweight": 0,
+            "meshFile": "",
+            "meshType": "None",
+            "principalVector": [
+              0,
+              0,
+              0
+            ],
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "uniprot": "",
+            "label": "Actin",
+            "Type": "Grow",
+            "packingMode": "",
+            "comments": "",
+            "confidence": 0,
+            "sprite": {
+              "image": "Actin.png",
+              "offsety": 0,
+              "scale2d": 3.5
+            }
+          },
+          "Pyruvate_Kinase": {
+            "color":[ 0.2392157,0.5647059,0.9960784],
+            "encapsulatingRadius": 40,
+            "name": "Pyruvate_Kinase",
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "bu": "BU1",
+              "model": "",
+              "selection": ""
+            },
+            "nbMol": 0,
+            "molarity": 0,
+            "molecularweight": 0,
+            "meshFile": "",
+            "meshType": "None",
+            "principalVector": [
+              0,
+              0,
+              0
+            ],
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "uniprot": "",
+            "label": "Pyruvate_Kinase",
+            "Type": "MultiSphere",
+            "packingMode": "",
+            "comments": "",
+            "confidence": 0,
+            "sprite": {
+              "image": "Pyruvate_Kinase.png",
+              "offsety": 0,
+              "scale2d": 3.5
+            }
+          },
+          "GPD": {
+            "color":[ 0.2901961,0.6901961,0.9960784],
+            "encapsulatingRadius": 40,
+            "name": "GPD",
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "bu": "BU1",
+              "model": "",
+              "selection": ""
+            },
+            "nbMol": 0,
+            "molarity": 0,
+            "molecularweight": 0,
+            "meshFile": "",
+            "meshType": "None",
+            "principalVector": [
+              0,
+              0,
+              0
+            ],
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "uniprot": "",
+            "label": "GPD",
+            "Type": "MultiSphere",
+            "packingMode": "",
+            "comments": "",
+            "confidence": 0,
+            "sprite": {
+              "image": "GPD.png",
+              "offsety": 0,
+              "scale2d": 3.5
+            }
+          },
+          "PGK": {
+            "color":[ 0.3882353,0.6627451,0.9960784],
+            "encapsulatingRadius": 40,
+            "name": "PGK",
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "bu": "BU1",
+              "model": "",
+              "selection": ""
+            },
+            "nbMol": 0,
+            "molarity": 0,
+            "molecularweight": 0,
+            "meshFile": "",
+            "meshType": "None",
+            "principalVector": [
+              0,
+              0,
+              0
+            ],
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "uniprot": "",
+            "label": "PGK",
+            "Type": "MultiSphere",
+            "packingMode": "",
+            "comments": "",
+            "confidence": 0,
+            "sprite": {
+              "image": "PGK.png",
+              "offsety": 0,
+              "scale2d": 3.5
+            }
+          },
+          "Aldolase": {
+            "color":[ 0.2784314,0.5176471,0.9960784],
+            "encapsulatingRadius": 40,
+            "name": "Aldolase",
+            "source": {
+              "pdb": "lipids.pdb",
+              "transform": {
+                "offset": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              "bu": "BU1",
+              "model": "",
+              "selection": ""
+            },
+            "nbMol": 0,
+            "molarity": 0,
+            "molecularweight": 0,
+            "meshFile": "",
+            "meshType": "None",
+            "principalVector": [
+              0,
+              0,
+              0
+            ],
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "uniprot": "",
+            "label": "Aldolase",
+            "Type": "MultiSphere",
+            "packingMode": "",
+            "comments": "",
+            "confidence": 0,
+            "sprite": {
+              "image": "Aldolase.png",
+              "offsety": 0,
+              "scale2d": 3.5
+            }
+          }
+        }
+      }
+    }
+  }
+}

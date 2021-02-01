@@ -2390,6 +2390,7 @@ public class Manager : MonoBehaviour {
             jt1.anchor = collStart.offset;
             jt1.connectedAnchor = coll_fiber[0].offset;
         }
+ 
         /*
         JointAngleLimits2D limits1 = jt.limits;
         limits1.min = -5.0f-150.0f;
@@ -3033,6 +3034,35 @@ public class Manager : MonoBehaviour {
         }
     }
 
+    public void ShowCollidersDebugModeHierarchy(Transform parent, bool toggle){
+        if (parent == null) return;
+        foreach (Transform ch in parent.transform)
+        {
+            if (fiber_parents.Contains(ch.gameObject)) {
+                ShowCollidersDebugModeHierarchy(ch,toggle);
+            }
+            PrefabProperties p = ch.GetComponent<PrefabProperties>();
+            if (p)
+            {
+                if (p.is_Group) {
+                    ShowCollidersDebugModeHierarchy(ch,toggle);
+                }
+                else {
+                    var showCollider = p.gameObject.GetComponent<ShowCollider>();
+                    if (showCollider == null && toggle) showCollider = p.gameObject.AddComponent<ShowCollider>();
+                    if (showCollider) showCollider.Toggle(toggle);
+                    ShowCollidersDebugModeHierarchy(ch,toggle);
+                }
+            } else {
+                if (ch.GetComponent<Collider2D>()) {
+                    var showCollider = ch.gameObject.GetComponent<ShowCollider>();
+                    if (showCollider == null && toggle) showCollider = ch.gameObject.AddComponent<ShowCollider>();
+                    if (showCollider) showCollider.Toggle(toggle);                    
+                }
+                ShowCollidersDebugModeHierarchy(ch,toggle);
+            }
+        }
+    }
     public void DestroyHierarchy(Transform parent)
     {
         if (!parent) return;

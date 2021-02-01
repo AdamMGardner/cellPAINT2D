@@ -202,4 +202,9 @@ public class UI_manager : MonoBehaviour
     public void DontShowMessage(bool toggle){
         Manager.Instance.stoped_message[Manager.Instance.current_message] = toggle;
     }
+
+    public void ToggleDebugCollider(bool value) {
+        //loop every object and toggle colliders.
+        Manager.Instance.ShowCollidersDebugModeHierarchy(Manager.Instance.root.transform, value);
+    }
 }

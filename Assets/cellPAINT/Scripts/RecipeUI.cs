@@ -217,7 +217,10 @@ public class RecipeUI : MonoBehaviour {
         CompartmentsIDS.Clear();
         CompartmentsNames.Clear();
         CompartmentsIngredients_ids.Clear();
-        //Manager.Instance.ingredients_prefab.Clear();
+        foreach (var KeyVal in Manager.Instance.all_prefab)
+        {
+            GameObject.Destroy(KeyVal.Value);
+        }
         Manager.Instance.all_prefab.Clear();
         Manager.Instance.ingredients_names.Clear();
         Manager.Instance.ingredients_ids.Clear();
@@ -234,6 +237,11 @@ public class RecipeUI : MonoBehaviour {
         if (merge_upon_loading){
             MergeRecipe_cb(resultData);
             return;
+        }
+        //clean up loaded prefab
+        foreach (var KeyVal in Manager.Instance.all_prefab)
+        {
+            GameObject.Destroy(KeyVal.Value);
         }
         Manager.Instance.Clear();
         Manager.Instance.ingredient_node.Clear();
