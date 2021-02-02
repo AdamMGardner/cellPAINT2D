@@ -2647,14 +2647,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DEBUG: 0
-  version: v2.0.2
+  version: v2.0.3
   HideInstance: 0
   current_camera: {fileID: 480845712}
   current_prefab: {fileID: 0}
   myPrefab: {fileID: 0}
   root: {fileID: 850569928}
   layer_number_draw: 1
-  drawFiberPinned: 1
+  drawFiberPinned: 0
   layer_number_options: 3
   detection_mode: 0
   boundMode: 0
@@ -2676,6 +2676,7 @@ MonoBehaviour:
   layer_frequence: 3
   nbInstancePerClick: 1
   radiusPerClick: 1
+  randomizeAllIngredientPos: 1
   mask_ui: 0
   delta: 0
   delta_threshold: 5
@@ -15433,7 +15434,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: https://ccsb.scripps.edu/cellpaint/documentation/
+          m_StringArgument: https://ccsb.scripps.edu/cellpaint/cellpaint2-documentation/
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &80097881
@@ -19047,7 +19048,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'cellPaint
 
-    v2.02 dev'
+    v2.03 dev'
 --- !u!222 &141651040
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -23798,7 +23799,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -92, y: 0}
+  m_AnchoredPosition: {x: -91.5, y: -0.41003418}
   m_SizeDelta: {x: 3, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &264544034
@@ -72750,7 +72751,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  m_IsOn: 1
+  m_IsOn: 0
 --- !u!1 &1337671381
 GameObject:
   m_ObjectHideFlags: 0
@@ -89610,7 +89611,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 308, y: 0}
+  m_AnchoredPosition: {x: 307.5, y: -0.29003906}
   m_SizeDelta: {x: 3, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1699473619

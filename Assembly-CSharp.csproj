@@ -241,6 +241,7 @@
      <Compile Include="Assets\cellPAINT\Scripts\QuitGame.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\RecipeUI.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\SecondCameraScript.cs" />
+     <Compile Include="Assets\cellPAINT\Scripts\ShowCollider.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\SimpleJSON.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\Triangulate.cs" />
      <Compile Include="Assets\cellPAINT\Scripts\UI_manager.cs" />

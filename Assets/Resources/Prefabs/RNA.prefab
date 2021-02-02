@@ -179,6 +179,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: RNA
+  id: 0
   common_name: RNA
   function_group: 
   compartment: 
@@ -262,6 +263,7 @@ MonoBehaviour:
   RB: {fileID: 0}
   attachments: []
   ghost_id: -1
+  debug_show_colliders: 0
 --- !u!114 &114000010433335472
 MonoBehaviour:
   m_ObjectHideFlags: 0

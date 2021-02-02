@@ -1144,18 +1144,22 @@ public class Manager : MonoBehaviour {
         var pname = instancePrefab.GetComponent<PrefabProperties>().name;
 
         //Randomize all positions?
+        Vector3 objectPosTop;
         Vector3 objectPosBottom;
         Vector3 objectPosMiddle;
         if (randomizeAllIngredientPos)
         {
             //need to get position of the mouse and find new random positions.
             Vector3 randomizedPos = UnityEngine.Random.insideUnitCircle * radiusPerClick;
+            objectPosTop = new Vector3(transform.position.x + randomizedPos.x, transform.position.y + randomizedPos.y, 0.125f);
+            randomizedPos = UnityEngine.Random.insideUnitCircle * radiusPerClick;
             objectPosMiddle = new Vector3(transform.position.x + randomizedPos.x, transform.position.y + randomizedPos.y, 0.125f);
             randomizedPos = UnityEngine.Random.insideUnitCircle * radiusPerClick;
             objectPosBottom = new Vector3(transform.position.x + randomizedPos.x, transform.position.y + randomizedPos.y, 0.250f);
         }
         else
         {
+            objectPosTop = objectPos;
             objectPosMiddle = new Vector3(objectPos.x, objectPos.y, 0.125f);
             objectPosBottom = new Vector3(objectPos.x, objectPos.y, 0.250f);
         }
@@ -1173,7 +1177,7 @@ public class Manager : MonoBehaviour {
         float Zangle = UnityEngine.Random.value * Mathf.PI * Mathf.Rad2Deg;
         Quaternion quat = Quaternion.AngleAxis(Zangle, Vector3.forward);
         
-        GameObject newObject = Instantiate(instancePrefab, objectPos, quat) as GameObject;
+        GameObject newObject = Instantiate(instancePrefab, objectPosTop, quat) as GameObject;
         newObject.GetComponent<SpriteRenderer>().sortingOrder = order;
         /* all the follwoing should be in the prefabProperties start*/
         var Props = newObject.GetComponent<PrefabProperties>();
