@@ -525,10 +525,10 @@ public class QuitGame : MonoBehaviour
         if (!use_native_browser) OpenFileBrowser();// GetImage.GetImageFromUserAsync(gameObject.name, "LoadFromString");
         else {
 #if UNITY_WEBGL && !UNITY_EDITOR
-            if (extra_ingredient!=0) {
+            //if (extra_ingredient!=0) {
                 var bytes = SaveAsZipData();
                 DownloadFile(gameObject.name, "OnFileDownload", "MySaveArchive.zip", bytes, bytes.Length);
-            }
+            //}
 #else         
             if (extra_ingredient!=0) {
                 string filePath = FileBrowser.SaveFile("Save archive", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MySaveArchive", "zip");

@@ -363,8 +363,11 @@ public class RecipeUI : MonoBehaviour {
             //SceneManager.Instance.ingredients_names.Add("DrawMembrane");
             var cid = CompartmentsNames[resultData["compartments"].GetKey(i)];
             AddRecipeIngredientMembrane(cid,null, resultData["compartments"][i]);//"Cell_Membrane"
-            AddRecipeIngredients(cid, resultData["compartments"][i]["surface"]["ingredients"], "surface" + i.ToString(),true);
-            AddRecipeIngredients(cid, resultData["compartments"][i]["interior"]["ingredients"], "interior" + i.ToString(),false);
+            //why plus i.toString???
+            //AddRecipeIngredients(cid, resultData["compartments"][i]["surface"]["ingredients"], "surface" + i.ToString(),true);
+            //AddRecipeIngredients(cid, resultData["compartments"][i]["interior"]["ingredients"], "interior" + i.ToString(),false);
+            AddRecipeIngredients(cid, resultData["compartments"][i]["surface"]["ingredients"], "surface" ,true);
+            AddRecipeIngredients(cid, resultData["compartments"][i]["interior"]["ingredients"], "interior",false);            
             nC++;
         }
         //this is comment as I manually change a lot of name of the recipe to a better reading for the NSF competition. 
@@ -450,8 +453,10 @@ public class RecipeUI : MonoBehaviour {
             //SceneManager.Instance.ingredients_names.Add("DrawMembrane");
             var cid = CompartmentsNames[resultData["compartments"].GetKey(i)];
             AddRecipeIngredientMembrane(cid,null, resultData["compartments"][i]);//"Cell_Membrane"
-            AddRecipeIngredients(cid, resultData["compartments"][i]["surface"]["ingredients"], "surface" + i.ToString(),true);
-            AddRecipeIngredients(cid, resultData["compartments"][i]["interior"]["ingredients"], "interior" + i.ToString(),false);
+            //AddRecipeIngredients(cid, resultData["compartments"][i]["surface"]["ingredients"], "surface" + i.ToString(),true);
+            //AddRecipeIngredients(cid, resultData["compartments"][i]["interior"]["ingredients"], "interior" + i.ToString(),false);
+            AddRecipeIngredients(cid, resultData["compartments"][i]["surface"]["ingredients"], "surface" ,true);
+            AddRecipeIngredients(cid, resultData["compartments"][i]["interior"]["ingredients"], "interior",false);                
             nC++;
         }
         //this is comment as I manually change a lot of name of the recipe to a better reading for the NSF competition. 
@@ -532,8 +537,10 @@ public class RecipeUI : MonoBehaviour {
             {
                 AddRecipeIngredientMembrane(nC,null,resultData["compartments"][i]);//"Cell_Membrane"
             }
-            AddRecipeIngredients(nC,resultData["compartments"][i]["surface"]["ingredients"], "surface" + i.ToString(),true);
-            AddRecipeIngredients(nC,resultData["compartments"][i]["interior"]["ingredients"], "interior" + i.ToString(),false);
+            //AddRecipeIngredients(nC,resultData["compartments"][i]["surface"]["ingredients"], "surface" + i.ToString(),true);
+            //AddRecipeIngredients(nC,resultData["compartments"][i]["interior"]["ingredients"], "interior" + i.ToString(),false);
+            AddRecipeIngredients(nC, resultData["compartments"][i]["surface"]["ingredients"], "surface" ,true);
+            AddRecipeIngredients(nC, resultData["compartments"][i]["interior"]["ingredients"], "interior",false);              
         }
         //this is comment as I manually change a lot of name of the recipe to a better reading for the NSF competition. 
         //buildHierarchy (resultData);
@@ -591,8 +598,10 @@ public class RecipeUI : MonoBehaviour {
             {
                 AddRecipeIngredientMembrane(nC,null,resultData["compartments"][i]);//"Cell_Membrane"
             }
-            AddRecipeIngredients(nC,resultData["compartments"][i]["surface"]["ingredients"], "surface" + i.ToString(),true);
-            AddRecipeIngredients(nC,resultData["compartments"][i]["interior"]["ingredients"], "interior" + i.ToString(),false);
+            //AddRecipeIngredients(nC,resultData["compartments"][i]["surface"]["ingredients"], "surface" + i.ToString(),true);
+            //AddRecipeIngredients(nC,resultData["compartments"][i]["interior"]["ingredients"], "interior" + i.ToString(),false);
+            AddRecipeIngredients(nC, resultData["compartments"][i]["surface"]["ingredients"], "surface" ,true);
+            AddRecipeIngredients(nC, resultData["compartments"][i]["interior"]["ingredients"], "interior",false);               
         }
         //this is comment as I manually change a lot of name of the recipe to a better reading for the NSF competition. 
         //buildHierarchy (resultData);
