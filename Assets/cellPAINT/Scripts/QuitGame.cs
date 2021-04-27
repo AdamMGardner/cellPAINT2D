@@ -31,6 +31,8 @@ public class QuitGame : MonoBehaviour
     //public MotionBlur mb;
     public Camera myCamera;
     public bool use_native_browser;
+    public Slider ssMultiplierSlider;
+    public int screenShotMultiplier = 1;
 
         
     private bool show_browser_save = false;
@@ -261,12 +263,12 @@ public class QuitGame : MonoBehaviour
         if (Manager.Instance.current_prefab) {
             Manager.Instance.current_prefab.SetActive(false);
         }
-        float offsetX1 = Manager.Instance.PanelLeft.GetComponent<RectTransform>().rect.width*Manager.Instance._canvas.transform.localScale.x;
-        float offsetX2 = Manager.Instance.PanelRight.GetComponent<RectTransform>().rect.width*Manager.Instance._canvas.transform.localScale.x;
+        float offsetX1 = Manager.Instance.PanelLeft.GetComponent<RectTransform>().rect.width*Manager.Instance._canvas.transform.localScale.x * screenShotMultiplier;
+        float offsetX2 = Manager.Instance.PanelRight.GetComponent<RectTransform>().rect.width*Manager.Instance._canvas.transform.localScale.x * screenShotMultiplier;
         //hide the boundaries
         //clip on the ui
-        int resWidth = Screen.width;//*2;
-        int resHeight = Screen.height;//*2;
+        int resWidth = Screen.width * screenShotMultiplier;//*2;
+        int resHeight = Screen.height * screenShotMultiplier;//*2;
 
         int resWidthN = resWidth-(int)(offsetX1+offsetX2);
         int resHeightN = resHeight;
@@ -525,10 +527,10 @@ public class QuitGame : MonoBehaviour
         if (!use_native_browser) OpenFileBrowser();// GetImage.GetImageFromUserAsync(gameObject.name, "LoadFromString");
         else {
 #if UNITY_WEBGL && !UNITY_EDITOR
-            //if (extra_ingredient!=0) {
+            if (extra_ingredient!=0) {
                 var bytes = SaveAsZipData();
                 DownloadFile(gameObject.name, "OnFileDownload", "MySaveArchive.zip", bytes, bytes.Length);
-            //}
+            }
 #else         
             if (extra_ingredient!=0) {
                 string filePath = FileBrowser.SaveFile("Save archive", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MySaveArchive", "zip");
@@ -1530,6 +1532,11 @@ public class QuitGame : MonoBehaviour
 
     public void OpenURL(string url){
         Application.OpenURL(url);
+    }
+
+    public void SetScreenshotMultiplier()
+    {
+        screenShotMultiplier = (int)ssMultiplierSlider.value;
     }
 
     public void SendLogEmail()

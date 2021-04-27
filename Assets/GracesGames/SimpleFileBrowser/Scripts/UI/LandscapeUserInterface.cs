@@ -8,15 +8,15 @@ namespace GracesGames.SimpleFileBrowser.Scripts.UI {
 
         protected override void SetupParents() {
             // Find directories parent to group directory buttons
-            DirectoriesParent = Utilities.FindGameObjectOrError("Directories");
+            DirectoriesParent = GracesGames.Common.Scripts.Utilities.FindGameObjectOrError("Directories");
             // Find files parent to group file buttons
-            FilesParent = Utilities.FindGameObjectOrError("Files");
+            FilesParent = GracesGames.Common.Scripts.Utilities.FindGameObjectOrError("Files");
             // Set the button height
             SetButtonParentHeight(DirectoriesParent, ItemButtonHeight);
             SetButtonParentHeight(FilesParent, ItemButtonHeight);
             // Set the panel color
-            Utilities.FindGameObjectOrError("DirectoryPanel").GetComponent<Image>().color = DirectoryPanelColor;
-            Utilities.FindGameObjectOrError("FilePanel").GetComponent<Image>().color = FilePanelColor;
+            GracesGames.Common.Scripts.Utilities.FindGameObjectOrError("DirectoryPanel").GetComponent<Image>().color = DirectoryPanelColor;
+            GracesGames.Common.Scripts.Utilities.FindGameObjectOrError("FilePanel").GetComponent<Image>().color = FilePanelColor;
         }
     }
 }

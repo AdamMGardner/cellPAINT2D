@@ -17,6 +17,8 @@ public class PrefabProperties : MonoBehaviour
     public string description;
     public int order=0;//0 front, 1 middle, 2 bottom
     public int layer_number = 3;
+    public bool isMultiChain;
+    public List<GameObject> chains;
     public bool isCircleCollider;
     public float circle_radius;
     public Vector3 m_ext;
@@ -1225,8 +1227,8 @@ public class PrefabProperties : MonoBehaviour
         if (spriteRenderer == null) return;
         MaterialPropertyBlock mpb = new MaterialPropertyBlock();
         spriteRenderer.GetPropertyBlock(mpb);
-        mpb.SetFloat("_Outline", is_outline ? outline_width : 0);
-        mpb.SetColor("_OutlineColor", outline_color);
+        mpb.SetFloat("_Glow", is_outline ? 1f : 0f);
+        //mpb.SetColor("_OutlineColor", outline_color);
         spriteRenderer.SetPropertyBlock(mpb);
     }
 
