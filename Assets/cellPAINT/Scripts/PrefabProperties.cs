@@ -82,7 +82,6 @@ public class PrefabProperties : MonoBehaviour
     public float area;
     public bool ispined = false;
     public bool enableCollision = false;
-    //public float timeToGo;
     public int spriteTumble_id = 0;
     public int spriteRotation_id = 0;
     int prefab_id = 0;
@@ -126,24 +125,6 @@ public class PrefabProperties : MonoBehaviour
 
     private ShowCollider showCollider;
 
-    //private Rigidbody2D rigidbody;
-    void IcosahedronRotation()
-    {
-        int[,] array2DIcosChoices = new int[12, 5] { { 1, 2, 7, 8, 9 }, { 0, 2, 7, 10, 11 }, { 0, 1, 3, 8, 11 }, { 2, 4, 5, 8, 11 }, { 3, 5, 6, 9, 10 }, { 3, 4, 6, 10, 11 }, { 4, 5, 7, 9, 10 }, { 0, 1, 6, 9, 10 }, { 0, 2, 3, 4, 9 }, { 0, 4, 6, 7, 8 }, { 1, 5, 6, 7, 11 }, { 1, 2, 3, 5, 10 } };
-        /*if (sprites_asset.Count != 12)
-        {
-            Debug.Log("Twelve sprites are needed for this to work correctly");
-            return;
-        }*/
-        if (sprite_icosahedronRotation_switch)
-        {
-            spriteRotation_id = array2DIcosChoices[spriteRotation_id, UnityEngine.Random.Range(1, 5)];
-            //Debug.Log(array2DIcosChoices);
-            spriteRenderer.sprite = sprites_asset[spriteRotation_id];
-        }
-        //timeToGo = Time.fixedTime + Random.Range(0.0f, 1.0f);
-    }
-
     void SpriteTumble()
     {
         if (sprite_tumble_switch)
@@ -170,30 +151,15 @@ public class PrefabProperties : MonoBehaviour
             {
                 spriteTumble_id = sprites_asset.Count - 1;
             }
-            //spriteTumble_id = Random.Range(0, sprites_asset.Count - 1);
             spriteRenderer.sprite = sprites_asset[spriteTumble_id];
         }
-        //timeToGo = Time.fixedTime + Random.Range(0.0f, 1.0f);
     }
-
-    /*
-    void FixedUpdate()
-    {
-        if (Time.fixedTime >= timeToGo)
-        {
-            SpriteTumble();
-            IcosahedronRotation();
-        }
-    }
-    */
     public void switchSpriteInOrder()
     {
         if (spriteOrdered_id >= sprites_asset.Count)
         {
             spriteOrdered_id = 0;
         }
-        //if (spriteOrdered_id >= sprites_asset.Count) return;
-        //Debug.Log(spriteOrdered_id);
         GetComponent<SpriteRenderer>().sprite = sprites_asset[spriteOrdered_id];
         spriteOrdered_id = spriteOrdered_id + 1;
 
@@ -212,7 +178,6 @@ public class PrefabProperties : MonoBehaviour
 
     public void updateFiberPrefab()
     {
-        //Debug.Log(gameObject.name);
         CircleCollider2D[] allc = GetComponents<CircleCollider2D>();
         if (allc.Length < 2) return;
         Vector2 pos1 = new Vector2(transform.position.x, transform.position.y) + allc[0].offset * fiber_scale;
@@ -222,50 +187,6 @@ public class PrefabProperties : MonoBehaviour
 
     void setupCollider() {
         return;
-        /*if (isCircleCollider == true)
-        {
-            CircleCollider2D Circle = gameObject.GetComponent<CircleCollider2D>();
-            if (Circle == null) Circle = gameObject.AddComponent<CircleCollider2D>();
-            if (circle_radius != 0.0f)
-            {
-                Circle.radius = circle_radius;
-            }
-            else {
-                circle_radius = Circle.radius;
-            }
-            Circle.offset = circle_offset;
-        }
-
-        else if (isCapsuleCollider == true)
-        {
-            CapsuleCollider2D Capsule = gameObject.GetComponent<CapsuleCollider2D>();
-            if (Capsule == null) Capsule = gameObject.AddComponent<CapsuleCollider2D>();
-            if (capsule_size != new Vector2(0.0f, 0.0f))
-            {
-                if (isHorizontal)
-                {
-                    Capsule.direction = CapsuleDirection2D.Horizontal;
-                }
-                else
-                {
-                    Capsule.direction = CapsuleDirection2D.Vertical;
-                }
-                Capsule.size = capsule_size;
-                Capsule.offset = capsule_offset;
-            }
-        }
-        else {
-            CircleCollider2D Circle = gameObject.GetComponent<CircleCollider2D>();
-            if (Circle == null) Circle = gameObject.AddComponent<CircleCollider2D>();
-            if (circle_radius != 0.0f)
-            {
-                Circle.radius = circle_radius;
-            }
-            else {
-                circle_radius = Circle.radius;
-            }
-            Circle.offset = circle_offset;
-        }*/
     }
 
     public void Initialized() {
@@ -302,67 +223,6 @@ public class PrefabProperties : MonoBehaviour
 
         setupCollider();
 
-        //This loop creates the other layers from the top layer
-        /*
-        if (layer_number == 2)
-        {
-            GameObject twoLayerBottom = Instantiate(newObject, objectPosBottom, quat) as GameObject;
-            twoLayerBottom.transform.name = Props.name + " (Bottom)";
-            twoLayerBottom.layer = LayerMask.NameToLayer("Bottom Layer");
-            twoLayerBottom.transform.parent = root.transform;
-
-            //Add Rigidbody2D to loop and count.
-            if (bottomRB != null)
-            {
-                bottomRB.collisionDetectionMode = CollisionDetectionMode2D.Discrete;
-            }
-            Rigidbody2D rb = twoLayerBottom.GetComponent<Rigidbody2D>();
-            rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
-            everything[rbCount] = rb;
-            rbCount++;
-            string name = instancePrefab.name;
-            UpdateCountAndLabel(name, newObject);
-            bottomRB = rb;
-        }
-        else
-        {
-            GameObject threeLayerMiddle = Instantiate(newObject, objectPosMiddle, quat) as GameObject;
-            GameObject threeLayerBottom = Instantiate(newObject, objectPosBottom, quat) as GameObject;
-
-            threeLayerMiddle.transform.name = Props.name + " (Middle)";
-            threeLayerBottom.transform.name = Props.name + " (Bottom)";
-
-            threeLayerMiddle.layer = LayerMask.NameToLayer("Middle Layer");
-            threeLayerBottom.layer = LayerMask.NameToLayer("Bottom Layer");
-
-            threeLayerMiddle.transform.parent = root.transform;
-            threeLayerBottom.transform.parent = root.transform;
-
-            //Add Rigidbody2D to loop and count.
-            Rigidbody2D rb = threeLayerMiddle.GetComponent<Rigidbody2D>();
-            if (middleRB != null)
-            {
-                middleRB.collisionDetectionMode = CollisionDetectionMode2D.Discrete;
-            }
-            rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
-            everything[rbCount] = rb;
-            rbCount++;
-            string name = instancePrefab.name;
-            UpdateCountAndLabel(name, newObject);
-            middleRB = rb;
-
-            Rigidbody2D rb2 = threeLayerBottom.GetComponent<Rigidbody2D>();
-            if (bottomRB != null)
-            {
-                bottomRB.collisionDetectionMode = CollisionDetectionMode2D.Discrete;
-            }
-            rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
-            everything[rbCount] = rb2;
-            rbCount++;
-            string name2 = instancePrefab.name;
-            UpdateCountAndLabel(name2, newObject);
-            bottomRB = rb2;
-        }*/
         initialized = true;
     }
 
@@ -450,9 +310,8 @@ public class PrefabProperties : MonoBehaviour
         if (!do_colliders) return mid;
         if (up_height > 0.1f) {
             if (Mathf.Abs(box1.x - box1.y) < 1.15f) {
-            //if (Mathf.Abs(bup2.extents.x - bup2.extents.y) < 1.15f) {
                 CircleCollider2D Circle = gameotouse.AddComponent<CircleCollider2D>();
-                Circle.radius = widthUp / 2.0f;//((Mathf.Abs(m_ext.x) + Mathf.Abs(m_ext.y)) / 2.0f) / 2.0f;
+                Circle.radius = widthUp / 2.0f;
                 Circle.offset = new Vector2(bup2.center.x, surface_offset+thickness+up_height/2.0f);
             }
             else {
@@ -463,9 +322,8 @@ public class PrefabProperties : MonoBehaviour
         }
         if (down_height > 0.1f){ 
             if (Mathf.Abs(box2.x - box2.y) < 1.15f) {
-            //if (Mathf.Abs(bdown2.extents.x - bdown2.extents.y) < 1.15f) {
                 CircleCollider2D Circle = gameotouse.AddComponent<CircleCollider2D>();
-                Circle.radius = widthDown / 2.0f;//((Mathf.Abs(m_ext.x) + Mathf.Abs(m_ext.y)) / 2.0f) / 2.0f;
+                Circle.radius = widthDown / 2.0f;
                 Circle.offset = new Vector2(bdown2.center.x, surface_offset-thickness-down_height/2.0f);
             }
             else {
@@ -481,7 +339,7 @@ public class PrefabProperties : MonoBehaviour
         {
             width = Mathf.Abs(m_ext.x)/2.0f;
         }
-        circle_radius = width;//(((Mathf.Abs(m_ext.x) + Mathf.Abs(m_ext.y)) / 2.0f) / 2.0f) * (1.0f/local_scale);//unity unit
+        circle_radius = width;
         return mid;
     }
 
@@ -506,41 +364,29 @@ public class PrefabProperties : MonoBehaviour
         Quaternion mrot = new Quaternion(pcp[2].x, pcp[2].y, pcp[2].z, pcp[2].w);
         Vector3 center = (pcp[0] + pcp[1]) * 0.5f;
         Vector3 position = mrot * center;
-       // Debug.Log((mrot * Vector3.up).ToString());
-       // Debug.Log((mrot * Vector3.up).ToString());
-        m_ext =  (pcp[0] - pcp[1]);//align to the pcpal Axis//should be absolute!
+        m_ext =  (pcp[0] - pcp[1]); //align to the pcpal Axis
         Debug.Log(m_ext.ToString());
         Debug.Log((Quaternion.Inverse(mrot) * m_ext).ToString());
         Debug.Log((mrot * m_ext).ToString());
-        /*GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube.transform.parent = transform;
-        cube.transform.localPosition = Vector3.zero;
-        cube.transform.localRotation = mrot;
-        cube.transform.localScale = m_ext;
-        DestroyImmediate(cube.GetComponent<BoxCollider>());
-        cube.AddComponent<BoxCollider2D>();
-        cube.GetComponent<MeshRenderer>().enabled = false;
-        */
-        //m_ext = Quaternion.Inverse(mrot) * m_ext;
         var sr = GetComponent<SpriteRenderer>();
         bool flip = (sr.size.x > sr.size.y);
 
         center = mrot * center;
         if (Mathf.Abs(m_ext.x - m_ext.y) < 1.15f) {
             CircleCollider2D Circle = gameObject.AddComponent<CircleCollider2D>();
-            Circle.radius = m_ext.x/ 2.0f;//((Mathf.Abs(m_ext.x) + Mathf.Abs(m_ext.y)) / 2.0f) / 2.0f;
+            Circle.radius = m_ext.x/ 2.0f;
             Circle.offset = new Vector2(center.x, center.y);
             width = Circle.radius;
         }
         else
         {
-            if (flip) m_ext = new Vector2(m_ext.y,m_ext.x);//Quaternion.Inverse(mrot) * new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
+            if (flip) m_ext = new Vector2(m_ext.y,m_ext.x);
             BoxCollider2D box = gameObject.AddComponent<BoxCollider2D>();
             box.size = new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
             box.offset = new Vector2(center.x, center.y);
             width =  box.size.x/2.0f;
         }
-        circle_radius = width;//(((Mathf.Abs(m_ext.x) + Mathf.Abs(m_ext.y)) / 2.0f) / 2.0f) * (1.0f/local_scale);//unity unit
+        circle_radius = width;
         return width;
     }
 
@@ -548,91 +394,6 @@ public class PrefabProperties : MonoBehaviour
         scale2d = new_value;
 
     }
-    
-    /*public void UpdateYOffset(float new_value){
-        var pixel_scale = (Manager.Instance.unit_scale * 10.0f) / 100.0f;
-        var unity_scale2d = 1.0f / (Manager.Instance.unit_scale * 10.0f);
-        y_offset = new_value;
-        local_scale = 1.0f/(pixel_scale * scale2d);
-        surface_offset=(y_offset/local_scale);
-        Vector3 center = (pcp[0] + pcp[1]) * 0.5f;
-        Vector3 m_ext = (pcp[0] - pcp[1]);
-        Quaternion mrot = new Quaternion(pcp[2].x, pcp[2].y, pcp[2].z, pcp[2].w);
-        if (!is_fiber && is_surface)
-        {
-            float thickness = (84.0f / 2.0f) * unity_scale2d;//42 angstrom
-            float radius = (m_ext.y + m_ext.z) / 4.0f;
-            //C0ircleCollider2D c = gameObject.AddComponent<CircleCollider2D>();
-            //c.radius = thickness;
-            //c.offset = new Vector2(center.y, center.z + surface_offset);
-            float bradius = Manager.Instance.bicycle_radius;
-            float bicycle_radius = bradius;//*1.0f/local_scale;
-            bicycleUp.transform.localPosition = new Vector3(center.y, center.z + thickness + bicycle_radius + surface_offset, 0.0f);
-            CircleUp.radius = bicycle_radius;
-            CircleUp.offset = new Vector2(bicycle_radius,0);
-            CircleUp2.radius = bicycle_radius;
-            CircleUp2.offset = new Vector2(-bicycle_radius,0);
-            hjup.anchor = new Vector2(-bicycle_radius, 0);
-            hjup.connectedAnchor = new Vector2(-bicycle_radius, center.z + thickness + bicycle_radius + surface_offset);
-            //hjup.frequency = 1.0f;
-            hjup2.anchor = new Vector2(bicycle_radius, 0);
-            hjup2.connectedAnchor = new Vector2(bicycle_radius, center.z + thickness + bicycle_radius+ surface_offset);
-            //hjup.frequency = 1.0f;
-            bicycleDown.transform.localPosition = new Vector3(center.y, center.z - thickness - bicycle_radius + surface_offset, 0.0f);
-            CircleDown.radius = bicycle_radius;
-            CircleDown.offset = new Vector2(bicycle_radius,0);
-            CircleDown2.radius = bicycle_radius;
-            CircleDown2.offset = new Vector2(-bicycle_radius,0);
-            hjdown.anchor = new Vector2(-bicycle_radius, 0);
-            hjdown.connectedAnchor = new Vector2(-bicycle_radius, center.z - thickness -bicycle_radius + surface_offset);
-            hjdown2.anchor = new Vector2(bicycle_radius, 0);
-            hjdown2.connectedAnchor = new Vector2(bicycle_radius, center.z - thickness -bicycle_radius + surface_offset);
-            //hjdown.frequency = 1.0f;
-        }
-        else if (is_fiber) {
-            //persistence length ?
-            persistence_length = 1;//nb of spring
-            persistence_strength = 5.0f;
-            fiber_scale = local_scale;
-            //setup the collider
-            center = mrot * center;
-            float radius = (Mathf.Abs(m_ext.y) / 2.0f)/2.0f;
-            //main collider first
-            if (Mathf.Abs(m_ext.x - m_ext.y) < 0.25f)
-            {
-                CircleCollider2D Circle = gameObject.AddComponent<CircleCollider2D>();
-                Circle.radius = ((Mathf.Abs(m_ext.x) + Mathf.Abs(m_ext.y)) / 2.0f) / 2.0f;
-                Circle.offset = new Vector2(center.x, center.y);
-            }
-            else
-            {
-                m_ext = Quaternion.Inverse(mrot) * new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
-                BoxCollider2D abox = gameObject.AddComponent<BoxCollider2D>();
-                abox.size = new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
-                abox.offset = new Vector2(center.x, center.y);
-            }
-            //anchor collider, on X axis.
-            CircleCollider2D CircleLeft = gameObject.AddComponent<CircleCollider2D>();
-            CircleLeft.radius = radius;
-            CircleLeft.offset = new Vector2(-Mathf.Abs(m_ext.x)/2.0f + radius/2.0f, center.y);
-            CircleCollider2D CircleRight = gameObject.AddComponent<CircleCollider2D>();
-            CircleRight.radius = radius;
-            CircleRight.offset = new Vector2(Mathf.Abs(m_ext.x) / 2.0f - radius / 2.0f, center.y);
-            gameObject.layer = 13; //DNA. should we use nucleic acid depth ?
-            if (node.HasKey("closed")) 
-            {
-                closing = bool.Parse(node["closed"].Value);
-            }
-        }
-        else
-        {
-            //TestPcpalAxis2D();
-        }
-        transform.localScale = new Vector3(local_scale, local_scale, local_scale);
-        //setuped = true;
-        surface_offset=surface_offset*local_scale;        
-    }
-    */
 
     public void SetupBicycle(){
         Vector3 center = (pcp[0] + pcp[1]) * 0.5f;
@@ -652,20 +413,17 @@ public class PrefabProperties : MonoBehaviour
         CircleUp2.radius = bicycle_radius;
         CircleUp2.offset = new Vector2(-bicycle_radius,0);
         CircleUpRb = bicycleUp.AddComponent<Rigidbody2D>();
-        //CircleUpRb.bodyType = RigidbodyType2D.Kinematic;
         //add the joint FixedJoint2D or Hinge
         hjup = bicycleUp.AddComponent<FixedJoint2D>();
         hjup.autoConfigureConnectedAnchor = false;
         hjup.connectedBody = RB;
         hjup.anchor = new Vector2(-bicycle_radius, 0);
         hjup.connectedAnchor = new Vector2(-bicycle_radius, center.z + thickness + bicycle_radius + surface_offset);
-        //hjup.frequency = 1.0f;
         hjup2 = bicycleUp.AddComponent<FixedJoint2D>();
         hjup2.autoConfigureConnectedAnchor = false;
         hjup2.connectedBody = RB;
         hjup2.anchor = new Vector2(bicycle_radius, 0);
         hjup2.connectedAnchor = new Vector2(bicycle_radius, center.z + thickness + bicycle_radius+ surface_offset);
-        //hjup.frequency = 1.0f;
         bicycleDown = new GameObject("down");
         bicycleDown.layer = 15;
         bicycleDown.transform.parent = gameObject.transform;
@@ -677,20 +435,17 @@ public class PrefabProperties : MonoBehaviour
         CircleDown2.radius = bicycle_radius;
         CircleDown2.offset = new Vector2(-bicycle_radius,0);
         CircleDownRb = bicycleDown.AddComponent<Rigidbody2D>();
-        //CircleDownRb.bodyType = RigidbodyType2D.Kinematic;
         //add the joint
         hjdown = bicycleDown.AddComponent<FixedJoint2D>();
         hjdown.autoConfigureConnectedAnchor = false;
         hjdown.connectedBody = RB;
         hjdown.anchor = new Vector2(-bicycle_radius, 0);
         hjdown.connectedAnchor = new Vector2(-bicycle_radius, center.z - thickness -bicycle_radius + surface_offset);
-        //hjdown.frequency = 1.0f;
         hjdown2 = bicycleDown.AddComponent<FixedJoint2D>();
         hjdown2.autoConfigureConnectedAnchor = false;
         hjdown2.connectedBody = RB;
         hjdown2.anchor = new Vector2(bicycle_radius, 0);
         hjdown2.connectedAnchor = new Vector2(bicycle_radius, center.z - thickness -bicycle_radius + surface_offset);
-        //hjdown.frequency = 1.0f;
     }
 
 
@@ -708,9 +463,9 @@ public class PrefabProperties : MonoBehaviour
         bicycleUp.transform.parent = gameObject.transform;
         bicycleUp.transform.localPosition = new Vector3(0,0, 0);
         
-        Bounds mid = TestPcpalAxis2D_surface(bicycleUp,pts,true);//TestPcpalAxis2D();
+        Bounds mid = TestPcpalAxis2D_surface(bicycleUp,pts,true);
         float width = mid.extents.x/2.0f;
-        float mx = 0;//mid.center.x;
+        float mx = 0;
         float bicycle_radius = thickness;
 
         CircleUp = bicycleUp.AddComponent<CircleCollider2D>();
@@ -733,13 +488,13 @@ public class PrefabProperties : MonoBehaviour
         Vector3 center = (pcp[0] + pcp[1]) * 0.5f;
         var unity_scale2d = 1.0f / (Manager.Instance.unit_scale * 10.0f);
         //instead of 2 circle up and down, try 2 box up and down. bow width == ingredient radius
-        float thickness = (23.0f) * unity_scale2d;//(84.0f / 4.0f) * unity_scale2d;//42 angstrom
+        float thickness = (23.0f) * unity_scale2d;
         float width = TestPcpalAxis2D();
         float height = thickness;//bradius*1.0f/local_scale;
         bicycleUp = new GameObject("up");
         bicycleUp.layer = 15;
         bicycleUp.transform.parent = gameObject.transform;
-        //bicycleUp.transform.localPosition = new Vector3(center.y, center.z + thickness + height + surface_offset, 0.0f);
+
         bicycleUp.transform.localPosition = new Vector3(center.y, center.z + thickness + height + surface_offset, 0.0f);
         BoxCollider2D box_up = bicycleUp.AddComponent<BoxCollider2D>();
         box_up.size = new Vector2(width*2.0f, height*2.0f);
@@ -778,44 +533,19 @@ public class PrefabProperties : MonoBehaviour
         Vector3 center = (pcp[0] + pcp[1]) * 0.5f;
         var unity_scale2d = 1.0f / (Manager.Instance.unit_scale * 10.0f);
         //instead of 2 circle up and down, try 2 box up and down. bow width == ingredient radius
-        float thickness = (23.0f) * unity_scale2d * 1.0f/local_scale;//(84.0f / 4.0f) * unity_scale2d;//42 angstrom
+        float thickness = (23.0f) * unity_scale2d * 1.0f/local_scale;
         float width = TestPcpalAxis2D();
-        float height = thickness;//bradius*1.0f/local_scale;
+        float height = thickness;
         bicycleUp = new GameObject("up");
         bicycleUp.layer = 15;
         bicycleUp.transform.parent = gameObject.transform;
-        //bicycleUp.transform.localPosition = new Vector3(center.y, center.z + thickness + height + surface_offset, 0.0f);
         bicycleUp.transform.localPosition = new Vector3(0,0, 0);
         BoxCollider2D box_up = bicycleUp.AddComponent<BoxCollider2D>();
         box_up.size = new Vector2(width*2.0f, height*2.0f);
         box_up.offset = new Vector2(0,  thickness + height + surface_offset);
-        /*hjup = bicycleUp.AddComponent<FixedJoint2D>();
-        hjup.autoConfigureConnectedAnchor = false;
-        hjup.connectedBody = RB;
-        hjup.anchor = new Vector2(-width, 0);
-        hjup.connectedAnchor = new Vector2(-width, center.z + thickness + height + surface_offset);
-        hjup2 = bicycleUp.AddComponent<FixedJoint2D>();
-        hjup2.autoConfigureConnectedAnchor = false;
-        hjup2.connectedBody = RB;
-        hjup2.anchor = new Vector2(width, 0);
-        hjup2.connectedAnchor = new Vector2(width, center.z + thickness + height+ surface_offset);*/
-        //bicycleDown = new GameObject("down");
-        //bicycleDown.layer = 15;
-        //bicycleDown.transform.parent = gameObject.transform;
-        //bicycleDown.transform.localPosition = new Vector3(center.y, center.z - thickness - height + surface_offset, 0.0f);
         BoxCollider2D box_down = bicycleUp.AddComponent<BoxCollider2D>();
         box_down.size = new Vector2(width*2.0f, height*2.0f);
         box_down.offset = new Vector2(0,  - thickness - height + surface_offset);
-        /*hjdown = bicycleUp.AddComponent<FixedJoint2D>();
-        hjdown.autoConfigureConnectedAnchor = false;
-        hjdown.connectedBody = RB;
-        hjdown.anchor = new Vector2(-width, 0);
-        hjdown.connectedAnchor = new Vector2(-width, center.z - thickness -height + surface_offset);
-        hjdown2 = bicycleUp.AddComponent<FixedJoint2D>();
-        hjdown2.autoConfigureConnectedAnchor = false;
-        hjdown2.connectedBody = RB;
-        hjdown2.anchor = new Vector2(width, 0);
-        hjdown2.connectedAnchor = new Vector2(width, center.z - thickness -height + surface_offset);        */
     }
 
     public void SetupFromNode() {
@@ -838,17 +568,8 @@ public class PrefabProperties : MonoBehaviour
             plist.AddRange(new List<Vector2>(box.GetPath(i)));
         }
         DestroyImmediate(box);
-        pcp = Helper.BuildOBB2D(plist.ToArray(), 0.0f); //TestEigenTest(cluster);
+        pcp = Helper.BuildOBB2D(plist.ToArray(), 0.0f);
         Debug.Log("pcp"); Debug.Log(pcp);
-        //use the polygon collider to get the path and compute the simple collider
-        /*
-        Vector3 v = gameObject.GetComponent < SpriteRenderer >().bounds.size;
-        BoxCollider2D box = gameObject.GetComponent<BoxCollider2D>();
-        if (box == null) box = gameObject.AddComponent<BoxCollider2D>();
-        box.size = v;
-        */
-        //what is pixel-angstrom ratio in unity
-        //1pixel = 1.0/100.0f unit = 0.01 u = 0.35Ang * scale2d
         //any sprite to unity sprite scale is 
         var pixel_scale = (Manager.Instance.unit_scale * 10.0f) / 100.0f;
         var unity_scale2d = 1.0f / (Manager.Instance.unit_scale * 10.0f);
@@ -862,7 +583,7 @@ public class PrefabProperties : MonoBehaviour
             scale2d = float.Parse(node["sprite"]["scale2d"]);//1 angstrom in the image is scale2d pixel
             //check if its 0.0
             if (scale2d == 0.0) scale2d = 1.0f;
-            y_offset = float.Parse(node["sprite"]["offsety"]);// offset.magnitude / (Manager.Instance.unit_scale * 10.0f);
+            y_offset = float.Parse(node["sprite"]["offsety"]);
             if (node["sprite"].HasKey("lengthy")) {
                 y_length= float.Parse(node["sprite"]["lengthy"]) ;
                 if (y_length == 0.0f) y_length = -1.0f;
@@ -880,7 +601,7 @@ public class PrefabProperties : MonoBehaviour
             //use the split point BB to create the colliders
             //also need to split the collider to not overlap with the membrane.
             gameObject.layer = 12;
-            SetupBicycleNew(pts);//SetupBoxCycleNew();
+            SetupBicycleNew(pts);
         }
         else if (is_fiber) {
             //persistence length ?
@@ -890,20 +611,11 @@ public class PrefabProperties : MonoBehaviour
             //setup the collider
             center = mrot * center;
             float radius = (Mathf.Abs(m_ext.y) / 2.0f)/2.0f;
-            //main collider first
-            /*if (Mathf.Abs(m_ext.x - m_ext.y) < 0.25f)
-            {
-                CircleCollider2D Circle = gameObject.AddComponent<CircleCollider2D>();
-                Circle.radius = ((Mathf.Abs(m_ext.x) + Mathf.Abs(m_ext.y)) / 2.0f) / 2.0f;
-                Circle.offset = new Vector2(center.x, center.y);
-            }
-            else
-            {*/
             m_ext = Quaternion.Inverse(mrot) * new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
             BoxCollider2D abox = gameObject.AddComponent<BoxCollider2D>();
             abox.size = new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
             abox.offset = new Vector2(center.x, center.y);
-            //}
+            
             float lengthy = (y_length==-1.0f)?Mathf.Abs(m_ext.x):y_length* unity_scale2d/local_scale;
             if (y_length==-1.0f) y_length = Mathf.Abs(m_ext.x)/(unity_scale2d/local_scale);
             //anchor collider, on X axis.
@@ -949,7 +661,7 @@ public class PrefabProperties : MonoBehaviour
             plist.AddRange(new List<Vector2>(box.GetPath(i)));
         }
         DestroyImmediate(box);
-        pcp = Helper.BuildOBB2D(plist.ToArray(), 0.0f); //TestEigenTest(cluster);
+        pcp = Helper.BuildOBB2D(plist.ToArray(), 0.0f);
         Debug.Log("pcp"); Debug.Log(pcp);
         var pixel_scale = (Manager.Instance.unit_scale * 10.0f) / 100.0f;
         var unity_scale2d = 1.0f / (Manager.Instance.unit_scale * 10.0f);
@@ -967,7 +679,7 @@ public class PrefabProperties : MonoBehaviour
         if (!is_fiber && is_surface)
         {
             gameObject.layer = 12;
-            SetupBicycleNew(pts);//SetupBoxCycleNew();
+            SetupBicycleNew(pts);
         }
         else if (is_fiber) {
             //persistence length ?
@@ -977,22 +689,12 @@ public class PrefabProperties : MonoBehaviour
             //setup the collider
             center = mrot * center;
             float radius = (Mathf.Abs(m_ext.y) / 2.0f)/2.0f;
-            //alway use a box for fiber
-            //if (Mathf.Abs(m_ext.x - m_ext.y) < 0.25f)
-            //{
-            //    CircleCollider2D Circle = gameObject.AddComponent<CircleCollider2D>();
-            ///    Circle.radius = ((Mathf.Abs(m_ext.x) + Mathf.Abs(m_ext.y)) / 2.0f) / 2.0f;
-            //    Circle.offset = new Vector2(center.x, center.y);
-            //}
-            //else
-            //{
             m_ext = Quaternion.Inverse(mrot) * new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
             BoxCollider2D abox = gameObject.AddComponent<BoxCollider2D>();
             abox.size = new Vector2(Mathf.Abs(m_ext.x), Mathf.Abs(m_ext.y));
             abox.offset = new Vector2(center.x, center.y);
-            //}
             //anchor collider, on X axis. depends on fiber_length
-            float lengthy = y_length * unity_scale2d * 1.0f/local_scale;//Mathf.Abs(m_ext.x);
+            float lengthy = y_length * unity_scale2d * 1.0f/local_scale;
             CircleCollider2D CircleLeft = gameObject.AddComponent<CircleCollider2D>();
             CircleLeft.radius = radius;
             CircleLeft.offset = new Vector2(-lengthy/2.0f, center.y);
@@ -1058,19 +760,15 @@ public class PrefabProperties : MonoBehaviour
         if (is_bound)
         {
             Collider2D[] coll = GetComponents<Collider2D>();
-            //entry = (coll[3].offset - coll[1].offset).normalized;
-            //exit = (coll[0].offset - coll[2].offset).normalized;
         }
         if (is_fiber)
         {
-            //Debug.Log("OnEnable " + gameObject.name);
             updateFiberPrefab();
         }
     }
 
     void OnEnable()
     {
-        //Setup();
     }
 
     void OnDisable()
@@ -1081,13 +779,11 @@ public class PrefabProperties : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        //colliders_debug = new List<LineRenderer>();
+
         int[,] array2DIcosChoices = new int[12, 5] { { 1, 2, 7, 8, 9 }, { 0, 2, 7, 10, 11 }, { 0, 1, 3, 8, 11 }, { 2, 4, 5, 8, 11 }, { 3, 5, 6, 9, 10 }, { 3, 4, 6, 10, 11 }, { 4, 5, 7, 9, 10 }, { 0, 1, 6, 9, 10 }, { 0, 2, 3, 4, 9 }, { 0, 4, 6, 7, 8 }, { 1, 5, 6, 7, 11 }, { 1, 2, 3, 5, 10 } };
-        //timeToGo = Time.fixedTime + Random.Range(0.0f, 1.0f);
         area = getArea();
         if (is_fiber)
         {
-            //Debug.Log("Start " + gameObject.name);
             updateFiberPrefab();
         }
         Setup();
@@ -1104,7 +800,6 @@ public class PrefabProperties : MonoBehaviour
 
     public void checkFiberConnection() {
         //should be done on undo not creation
-        // Debug.Log("checkFiberConnection " + _checked.ToString());
         if (_checked) return;
         //reconect to preivous child if not
         if (is_fiber)
@@ -1150,7 +845,6 @@ public class PrefabProperties : MonoBehaviour
             }
             
             SpringJoint2D[] sjts = transform.GetComponents<SpringJoint2D>();//only one ?
-            //foreach (var aj in sjts) Destroy(aj);
             for (int j = 1; j <= sjts.Length; j++)
             {
                 Transform ch;
@@ -1166,27 +860,13 @@ public class PrefabProperties : MonoBehaviour
                 else {
                     ch = transform.parent.GetChild(ipos + j);
                 }
-                /*
-                if ((ipos - j) < 0)
-                {
-                    if (transform.parent.name.Contains("_Closed"))
-                    {
-                        if ((n - j) < 0) continue;
-                        ch = transform.parent.GetChild(n - j);
-                    }
-                    else continue;
-                }
-                else {
-                    ch = transform.parent.GetChild(ipos - j);
-                }
-                */
-                SpringJoint2D spring = sjts[j - 1];// ch.gameObject.AddComponent<SpringJoint2D>();
+                SpringJoint2D spring = sjts[j - 1];
                 spring.connectedBody = ch.GetComponent<Rigidbody2D>();
                 spring.enableCollision = enableCollision;
                 spring.autoConfigureDistance = false;
-                spring.distance = fiber_length * (j);// + UnityEngine.Random.Range(0.0f, fiber_length / 10.0f);
-                spring.anchor = Vector2.zero;// allc[1].offset;
-                spring.connectedAnchor = Vector2.zero;//allc[0].offset;
+                spring.distance = fiber_length * (j);
+                spring.anchor = Vector2.zero;
+                spring.connectedAnchor = Vector2.zero;
                 spring.frequency = (persistence_strength != -1.0f)? persistence_strength :  10.0f / ((j + 2) / 2.0f);
             spring.dampingRatio = 0.5f;
             }
@@ -1228,13 +908,11 @@ public class PrefabProperties : MonoBehaviour
         MaterialPropertyBlock mpb = new MaterialPropertyBlock();
         spriteRenderer.GetPropertyBlock(mpb);
         mpb.SetFloat("_Glow", is_outline ? 1f : 0f);
-        //mpb.SetColor("_OutlineColor", outline_color);
         spriteRenderer.SetPropertyBlock(mpb);
     }
 
     public void UpdateOutlinePin(bool toggle)
     {
-        //Debug.Log("UpdateOutlinePin");
         ispined = toggle;
         if (spriteRenderer == null) return;
         MaterialPropertyBlock mpb = new MaterialPropertyBlock();
@@ -1249,16 +927,12 @@ public class PrefabProperties : MonoBehaviour
         Vector3 entry_to_align = transform.TransformDirection(entry);
         Vector3 exit_to_align = transform.TransformDirection(exit);
         //start align to entry
-        //Vector3 other_orientation = start.transform.TransformDirection(Vector3.right);
 
         Quaternion q = Quaternion.FromToRotation(Vector3.right, entry_to_align);
         start.GetComponent<Rigidbody2D>().rotation = q.eulerAngles.z;
-        //start.transform.rotation = q;
         //end align to exit
-        //her_orientation = end.transform.TransformDirection(Vector3.right);
         Quaternion q1 = Quaternion.FromToRotation(Vector3.right, exit_to_align);
         end.GetComponent<Rigidbody2D>().rotation = -q.eulerAngles.z;
-        //end.transform.rotation = q1; 
     }
 
     private void fixPersistenseOnRemove(int elemRemoved, GameObject chain_parent, int persistence_length)
@@ -1277,12 +951,6 @@ public class PrefabProperties : MonoBehaviour
                 }
             }
         }
-        /*GameObject start = chain_parent.transform.GetChild(elemRemoved - 1).gameObject;
-        GameObject end = chain_parent.transform.GetChild(elemRemoved + 1).gameObject;
-        foreach (var jts in start.GetComponentsInChildren<SpringJoint2D>())
-        {
-            Destroy(jts);
-        }*/
     }
 
     public void AttachToPartnerFiber(GameObject partner)
@@ -1306,17 +974,13 @@ public class PrefabProperties : MonoBehaviour
             GameObject test = chain_parent.transform.GetChild(chain_index - 1).gameObject;
             Rigidbody2D testRigidbody = test.GetComponent<HingeJoint2D>().connectedBody;
             string testName = testRigidbody.transform.name;
-            //Debug.Log(testName);
 
             if (testName == "HIV_NC_1f6u(Clone)")
             {
                 searchScope = searchScope + gap_between_bound;
-                //Debug.Log(searchScope);
                 IterateSingleAttachment(chain_index, chain_parent, searchScope);
             }
         }
-
-        
     }
 
     public void ConnectToPartnerFiber(GameObject partner)
@@ -1345,17 +1009,7 @@ public class PrefabProperties : MonoBehaviour
         //Use properties of the start object (color value, order in layer, and z Depth) to align and color bound object correctly.
         Vector3 ChainZ = start.transform.position;
         int startLayerOrder = start.GetComponent<SpriteRenderer>().sortingOrder;
-        //Color prefabRGB = start.GetComponent<SpriteRenderer>().color;
-        //float hue, S, V;
-        //Color.RGBToHSV(prefabRGB, out hue, out S, out V);
 
-        //Set Properties of bound object.
-       // Color boundRGB = GetComponent<SpriteRenderer>().color;
-        //float hue2, S2, V2;
-        //Color.RGBToHSV(boundRGB, out hue2, out S2, out V2);
-        //Color newBoundColor = Color.HSVToRGB(hue2, S2, V);
-
-        //GetComponent<SpriteRenderer>().color = newBoundColor;
         GetComponent<SpriteRenderer>().sortingOrder = startLayerOrder + 1;
         transform.position = new Vector3(transform.position.x, transform.position.y, start.transform.position.z);
         float zLevel = start.transform.position.z;
@@ -1383,9 +1037,6 @@ public class PrefabProperties : MonoBehaviour
 
         Destroy(partner);
 
-        //reorient start and end to aligne to the binder
-        //alignFiber(start, end);
-
         HingeJoint2D jt = start.GetComponent<HingeJoint2D>();
         if (!jt)
         {
@@ -1404,34 +1055,22 @@ public class PrefabProperties : MonoBehaviour
         jtmotor.motorSpeed = -1000.0f;
         jtmotor.maxMotorTorque = 1000.0f;
         jt.motor = jtmotor;
-        //jt.useMotor = false;
 
         HingeJoint2D jt1 = gameObject.AddComponent<HingeJoint2D>();
         jt1.autoConfigureConnectedAnchor = false;
         jt1.connectedBody = end.GetComponent<Rigidbody2D>();
         jt1.anchor = coll[0].offset * fiber_scale;
         jt1.connectedAnchor = coll_fiber[0].offset * fiber_scale;
-        /*
-        JointAngleLimits2D limits1 = jt.limits;
-        limits1.min = -5.0f-150.0f;
-        limits1.max = 5.0f-90.0f;
-        jt1.limits = limits1;
-        jtmotor.motorSpeed = -1000.0f;
-        jt1.motor = jtmotor;
-        //jt1.useMotor = false;
-        */
+
 
         Vector2 pos = ((coll[0].offset + (coll[2].offset - coll[0].offset))*fiber_scale) / 2.0f;
         for (int i = 0; i < props.persistence_length; i++)
         {
-            //attach elem+i to obj
             GameObject elem = chain_parent.transform.GetChild(chain_index + i).gameObject;
             SpringJoint2D spring1 = elem.AddComponent<SpringJoint2D>();
             spring1.enableCollision = false;
             spring1.autoConfigureDistance = false;
             spring1.distance = fiber_length * (i + 1) - 1;
-            //spring1.distance = spring1.distance * fiber_scale;
-            //spring1.anchor = coll[1].offset;
             spring1.connectedAnchor = pos;
             spring1.connectedBody = rb;
             spring1.frequency = (persistence_strength != -1.0f) ? persistence_strength : 10.0f / ((i + 2) / 2.0f); ;
@@ -1490,8 +1129,8 @@ public class PrefabProperties : MonoBehaviour
     }
 
     void ShowAttachmentsGL(){
-        if (attachments.Count == 0){
-             //if (bound_lines != null) bound_lines.enabled = false;
+        if (attachments.Count == 0)
+        {
              if (gLDebug!= null) {gLDebug.Clear();gLDebug.displayLines = false;}
              return;
         }
@@ -1511,25 +1150,10 @@ public class PrefabProperties : MonoBehaviour
                                      false
                                     );
                 }
-                /*
-                if (bound_lines == null){
-                        bound_lines = gameObject.AddComponent<LineRenderer>();
-                        bound_lines.sharedMaterial = Manager.Instance.lineMat;
-                        bound_lines.sortingOrder = spriteRenderer.sortingOrder+1;
-                        bound_lines.widthMultiplier = 0.3f;
-                        bound_lines.numCapVertices = 5;
-                        //bound_lines.startColor = spriteRenderer.sharedMaterial.color;
-                        //bound_lines.endColor = jt.connectedBody.GetComponent<SpriteRenderer>().sharedMaterial.color;
-                }
-                bound_lines.enabled = true;
-                for(int i=0;i< attachments.Count; i++){
-                    var jt = attachments[i];
-                    bound_lines.SetPosition(i*2, transform.TransformPoint(jt.anchor));
-                    bound_lines.SetPosition(i*2+1, jt.connectedBody.transform.TransformPoint(jt.connectedAnchor));                   
-                }*/
+
             }
-            else {
-                //if (bound_lines != null) bound_lines.enabled = false;
+            else 
+            {
                 if (gLDebug!= null) {gLDebug.Clear();gLDebug.displayLines = false;}
             }
         }
@@ -1550,8 +1174,6 @@ public class PrefabProperties : MonoBehaviour
                         bound_lines.numCapVertices = 5;
                         bound_lines.startColor = spriteRenderer.sharedMaterial.color;
                         bound_lines.endColor =spriteRenderer.sharedMaterial.color;
-                        //bound_lines.startColor = spriteRenderer.sharedMaterial.color;
-                        //bound_lines.endColor = jt.connectedBody.GetComponent<SpriteRenderer>().sharedMaterial.color;
                 }
                 bound_lines.enabled = true;
                 bound_lines.positionCount = attachments.Count*2;
@@ -1559,16 +1181,12 @@ public class PrefabProperties : MonoBehaviour
                 gradient.mode = GradientMode.Fixed;
                 GradientColorKey[] colorKey=new GradientColorKey[bound_lines.positionCount];
                 GradientAlphaKey[] alphaKey=new GradientAlphaKey[bound_lines.positionCount*2];
-                //AnimationCurve curve = new AnimationCurve();
-                //curve.AddKey(0.0f, 0.3f);
                 for(int i=0;i< attachments.Count; i++){
                     var jt = attachments[i];
                     bound_lines.SetPosition(i*2, transform.TransformPoint(jt.anchor));
                     bound_lines.SetPosition(i*2+1, jt.connectedBody.transform.TransformPoint(jt.connectedAnchor));
                     float id0=((float)(i*2)/(float)bound_lines.positionCount)-0.01f;
                     if (i>0) {
-                        //colorKey[i*4].color = Color.white; 
-                        //colorKey[i*4].time = id0; 
                         alphaKey[i*4].alpha = 0.0f; 
                         alphaKey[i*4].time = id0;
                         float id1=(float)(i*2)/(float)bound_lines.positionCount;
@@ -1590,8 +1208,6 @@ public class PrefabProperties : MonoBehaviour
                     alphaKey[i*4+2].time = id2;
                     float id3=((float)(i*2+1)/(float)bound_lines.positionCount)+0.01f;
                     if (i<attachments.Count-1){
-                        //colorKey[i*4+3].color = Color.white; 
-                        //colorKey[i*4+3].time = id3; 
                         alphaKey[i*4+3].alpha = 0.0f; 
                         alphaKey[i*4+3].time = id3;
                     }
@@ -1599,66 +1215,19 @@ public class PrefabProperties : MonoBehaviour
                         alphaKey[i*4+3].alpha = 1.0f; 
                         alphaKey[i*4+3].time = 1.0f;
                     }
-                    //betwee 2-3, 4-5 etc...
-                   // if (i>0)curve.AddKey(((float)(i*2)/(float)bound_lines.positionCount)-0.01f, 0.0f);
-                   // curve.AddKey((float)(i*2)/(float)bound_lines.positionCount, 0.3f);                
-                   // curve.AddKey((float)(i*2+1)/(float)bound_lines.positionCount, 0.3f);
-                   // if (i<attachments.Count-1) curve.AddKey(((float)(i*2+1)/(float)bound_lines.positionCount)+0.01f, 0.0f);
                 }
                 gradient.SetKeys(colorKey, alphaKey);
                 bound_lines.colorGradient = gradient;
-                //curve.AddKey(1.0f, 0.3f);
-                //Debug.Log(curve);
-               //bound_lines.widthCurve = curve;
             }
             else {
                 if (bound_lines != null) bound_lines.enabled = false;
-                //if (gLDebug!= null) {gLDebug.Clear();gLDebug.displayLines = false;}
             }
         }
     }
 
-    void Update() {
+    void Update() 
+    {
         checkFiberConnection();
-        /*if (debug_show_colliders) {
-            if (showCollider == null) showCollider = gameObject.AddComponent<ShowCollider>();
-            showCollider.enabled = true;
-        }*/
-        //ShowAttachmentsLineRenderer();
-        /*SpringJoint2D jt = gameObject.GetComponent<SpringJoint2D>();
-        if( !is_fiber )
-        {
-            if (jt!= null){
-                if (bound_lines == null){
-                        bound_lines = gameObject.AddComponent<LineRenderer>();
-                        bound_lines.sharedMaterial = Manager.Instance.lineMat;
-                        bound_lines.sortingOrder = spriteRenderer.sortingOrder+1;
-                        bound_lines.widthMultiplier = 0.3f;
-                        bound_lines.numCapVertices = 5;
-                        bound_lines.startColor = spriteRenderer.sharedMaterial.color;
-                        bound_lines.endColor = jt.connectedBody.GetComponent<SpriteRenderer>().sharedMaterial.color;
-                }
-            }
-            if (Manager.Instance.bindMode || Manager.Instance.dragMode){        
-                if (jt!= null){
-                    bound_lines.enabled = true;
-                    bound_lines.SetPosition(0, transform.TransformPoint(jt.anchor));
-                    bound_lines.SetPosition(1, jt.connectedBody.transform.TransformPoint(jt.connectedAnchor));
-                }
-            }
-            else {
-                if (jt!= null) bound_lines.enabled = false;
-            }
-        }
-        */
-        /*
-        zangle = transform.rotation.eulerAngles.z;
-        Debug.Log(transform.rotation.eulerAngles.ToString());
-        Debug.Log(gameObject.GetComponent<Rigidbody2D>().rotation.ToString());
-        Vector3 axis;
-        gameObject.transform.rotation.ToAngleAxis(out zangle, out axis);
-        Debug.Log(zangle);
-        */
     }
 }
 

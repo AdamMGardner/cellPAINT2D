@@ -139,7 +139,7 @@ public class Ghost : MonoBehaviour
 
     public void SetupFromSelection(List<GameObject> selection){
         Setup();
-        locked_item = new List<GameObject>();//selection);
+        locked_item = new List<GameObject>();
         //filter out already locked object
         foreach (var o in selection)
         {
@@ -156,7 +156,6 @@ public class Ghost : MonoBehaviour
                 if (p == null && pg == null)
                 {
                     p = o.transform.parent.GetComponent<PrefabProperties>();
-                    //o = o.transform.parent.gameObject;
                     pg = o.transform.parent.gameObject.GetComponentInParent<PrefabGroup>();
                 }
                 if (pg != null) {
@@ -216,7 +215,6 @@ public class Ghost : MonoBehaviour
                 if (p == null && pg == null)
                 {
                     p = o.transform.parent.GetComponent<PrefabProperties>();
-                    //o = o.transform.parent.gameObject;
                     pg = o.transform.parent.gameObject.GetComponentInParent<PrefabGroup>();
                 }
                 if (pg != null) {
@@ -271,14 +269,7 @@ public class Ghost : MonoBehaviour
                 clid++;
             }
             polygon.pathCount = clid;
-            //box.offset = new Vector2(b.center.x,b.center.y);
-            /*
-            if we want a mesh
-            var mesh = box.CreateMesh(false,false);
-            mf.sharedMesh = mesh;
-            */
         }
-        //ghostArea.transform.localScale = new Vector3(1.1f,1.1f,1.1f);
     }
 
     public void ToggleHighlight(bool toggle){
@@ -302,7 +293,6 @@ public class Ghost : MonoBehaviour
             line.positionCount = path.Length;
             lineRenderers.Add(line);
             line.sharedMaterial = Manager.Instance.lineMat;
-            //line.sortingOrder = jt.gameObject.GetComponent<SpriteRenderer>().sortingOrder+1;
             line.widthMultiplier = 0.3f;
             line.numCapVertices = 5;
             line.startColor = Color.yellow;

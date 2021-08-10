@@ -5,18 +5,6 @@ using UnityEngine.UI;
 
 public class ChangeText : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void DeleteSelf(){
         var path = GetComponent<Text>().text;
         if (PdbLoader.DataDirectories.Contains(path)) {

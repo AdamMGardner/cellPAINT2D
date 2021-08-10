@@ -16,10 +16,6 @@ public class BackgroundImage
 
 public class BackgroundImageManager : MonoBehaviour
 {
-    //public bool showBackgroundImage;
-    //public bool showcellPAINTScaleBar;
-    //public bool backgroundImageOnTop;
-
     public Image theSprite;
     public Toggle showBackgroundImageToggle;
     public Toggle backgroundImageOnTopToggle;
@@ -46,7 +42,6 @@ public class BackgroundImageManager : MonoBehaviour
     public int current_bg = 0;
     public List<string> bg_Images = new List<string>();
     private GameObject bg_holder;
-    //private List<GameObject> allbg;
     private List<BackgroundImage> allbg;
     private Renderer backgroundImageRenderer;
     private Vector3 start_pos;
@@ -68,7 +63,6 @@ public class BackgroundImageManager : MonoBehaviour
 
                 go = new GameObject("_GroupManager");
                 _instance = go.AddComponent<BackgroundImageManager>();
-                //_instance.hideFlags = HideFlags.HideInInspector;
             }
             return _instance;
         }
@@ -80,23 +74,6 @@ public class BackgroundImageManager : MonoBehaviour
         bg_holder = new GameObject("Backgrounds");
         bg_holder.transform.position = Vector3.zero;
         bg_Images.Clear();
-        /*if (!backgroundImageContainer)
-        {
-            backgroundImageContainer = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            backgroundImageContainer.name = "Background Image Container";
-            DestroyImmediate(backgroundImageContainer.GetComponent<MeshCollider>());
-            backgroundImageContainer.transform.rotation = Quaternion.Euler(90, 180, 0);
-            backgroundImageContainer.transform.position = new Vector3 (0, 0,0);
-
-            backgroundImageRenderer = backgroundImageContainer.GetComponent<Renderer>();
-            
-            backgroundImageRenderer.material.shader = Shader.Find("Sprites/Default");
-            backgroundImageRenderer.material.renderQueue = 1;
-            backgroundImageOnTopToggle.isOn = false;
-
-            backgroundImageContainer.SetActive(false);
-            showBackgroundImageToggle.isOn = false;
-        }*/
     }
 
     // Update is called once per frame
@@ -127,7 +104,6 @@ public class BackgroundImageManager : MonoBehaviour
             if (hit && hit.collider){
                 var bg = hit.collider.gameObject;
                 int bgid = allbg.IndexOf(allbg.Where(p => p.bg == bg).FirstOrDefault());
-                //var bgid = allbg.IndexOf(bg);
                 if (bgid != -1) {
                     ui_log.text = "over background "+bgid.ToString();
                     theSprite.sprite = allbg[bgid].bg.GetComponent<SpriteRenderer>().sprite;
@@ -137,16 +113,12 @@ public class BackgroundImageManager : MonoBehaviour
                         current_bg = bgid;
                         start_pos = Manager.Instance.transform.position;
                         offset = allbg[current_bg].bg.transform.position - start_pos;
-                        SetUItoCurrent();
-                        //attach to mouse
-                        //allbg[current_bg].transform.position = Manager.Instance.transform.position;
+                        SetUItoCurrent();           
 
                     }
                     else if (Input.GetMouseButtonUp(0)){}
-                    else if (Input.GetMouseButton(0) && Manager.Instance.delta > 0){
-                        //translate using mouse delta ?
-                        //Vector3 displacement = Manager.Instance.transform.position - start_pos;
-                        //allbg[current_bg].transform.Translate(displacement);
+                    else if (Input.GetMouseButton(0) && Manager.Instance.delta > 0)
+                    {
                         allbg[current_bg].bg.transform.position = Manager.Instance.transform.position + offset;
                     }
                 }
@@ -222,8 +194,6 @@ public class BackgroundImageManager : MonoBehaviour
     public void ScaleBackgroundImage ()
     {
         if (imageScale == 0) imageScale = 0.00001f;
-        //imageScale = 1.0f/imageScale;
-        //backgroundImageContainer.transform.localScale = new Vector3 (imageScale*(backgroundImageOriginalResoution.x/100), 0, imageScale*(backgroundImageOriginalResoution.y/100));
         if (current_bg!=-1) {
             //scale the current sprites
             var pixel_scale = (Manager.Instance.unit_scale * 10.0f) / 100.0f;
@@ -235,9 +205,6 @@ public class BackgroundImageManager : MonoBehaviour
     }
 
     public float GetScale(int bgid) {
-        //var pixel_scale = (Manager.Instance.unit_scale * 10.0f) / 100.0f;
-        //var lscale = allbg[bgid].bg.transform.localScale.x;
-        //var oriscale = 1.0f/(lscale*pixel_scale);
         return allbg[current_bg].scale;
     }
 
@@ -269,23 +236,9 @@ public class BackgroundImageManager : MonoBehaviour
         }
     }
 
-    public void BackgroundImageOnTopToggle_cb()
-    {
-        /*
-        if (backgroundImageOnTopToggle.isOn)
-        {
-            backgroundImageRenderer.material.renderQueue = 10000;
-        }
-        else
-        {
-            backgroundImageRenderer.material.renderQueue = 1;
-        }*/
-    }
-
     public void BackgroundImageOpacity()
     {
         Vector4 color = new Vector4 (1, 1, 1, imageOpacity);
-        //backgroundImageRenderer.material.SetColor("_Color", color);
         if (current_bg!=-1) {
             var spriteRenderer = allbg[current_bg].bg.gameObject.transform.GetComponent<SpriteRenderer>();
             if (spriteRenderer == null) return;
@@ -304,8 +257,6 @@ public class BackgroundImageManager : MonoBehaviour
 
     public void ToggleBackgroundImage(bool toggle)
     {
-        //allimage
-        //backgroundImageContainer.SetActive(toggle);
         bg_holder.SetActive(toggle);
     }
 
@@ -374,7 +325,6 @@ public class BackgroundImageManager : MonoBehaviour
         prefab2d.transform.position = position;
         prefab2d.transform.rotation = Quaternion.Euler(0, 0, rotation);
         prefab2d.layer = LayerMask.NameToLayer("bg_image");
-        //prefab.transform.position = cam.ScreenToWorldPoint(new Vector3(screenShot.width, Screen.height / 2.0f, 20));
         SpriteRenderer sp = prefab2d.AddComponent<SpriteRenderer>();
         Material amat = new Material(Shader.Find("Sprites/Default"));
         amat.renderQueue = 1; //0
@@ -390,7 +340,6 @@ public class BackgroundImageManager : MonoBehaviour
         var local_scale = 1.0f/(pixel_scale * scale2d);                // local scale if image is different
         prefab2d.AddComponent<BoxCollider2D>();
         prefab2d.transform.localScale = new Vector3(local_scale, local_scale, local_scale);
-        //showBackgroundImageToggle.isOn = true;   
         bg_Images.Add(path);  
     }
 
@@ -404,7 +353,6 @@ public class BackgroundImageManager : MonoBehaviour
         prefab2d.transform.position = position;
         prefab2d.transform.rotation = Quaternion.Euler(0, 0, rotation);
         prefab2d.layer = LayerMask.NameToLayer("bg_image");
-        //prefab.transform.position = cam.ScreenToWorldPoint(new Vector3(screenShot.width, Screen.height / 2.0f, 20));
         SpriteRenderer sp = prefab2d.AddComponent<SpriteRenderer>();
         Material amat = new Material(Shader.Find("Sprites/Default"));
         amat.renderQueue = 1; //0
@@ -420,16 +368,7 @@ public class BackgroundImageManager : MonoBehaviour
         var local_scale = 1.0f/(pixel_scale * scale2d);                // local scale if image is different
         prefab2d.AddComponent<BoxCollider2D>();
         prefab2d.transform.localScale = new Vector3(local_scale, local_scale, local_scale);
-        //showBackgroundImageToggle.isOn = true;   
         bg_Images.Add(path);  
-    }
-
-    public void AddBackgroundImage(Texture2D backgroundImage) {
-        /*.GetComponent<Renderer>().material.mainTexture = backgroundImage;
-        backgroundImageOriginalResoution = new Vector2 (backgroundImage.width, backgroundImage.height);
-        backgroundImageContainer.transform.localScale = new Vector3 (backgroundImage.width/100, 1,  backgroundImage.height/100);
-        backgroundImageContainer.SetActive(true);
-        showBackgroundImageToggle.isOn = true;     */   
     }
 
     public void ClearOutline(){
@@ -447,8 +386,6 @@ public class BackgroundImageManager : MonoBehaviour
         spriteRenderer.GetPropertyBlock(mpb);
         if (is_outline) mpb.SetColor("_Color", new Color(1,1,0.5f,imageOpacity));
         else mpb.SetColor("_Color",new Color(1,1,1,imageOpacity) );
-        //mpb.SetFloat("_Outline", is_outline ? Manager.Instance.current_camera.orthographicSize : 0);
-        //mpb.SetColor("_OutlineColor", Color.yellow);
         spriteRenderer.SetPropertyBlock(mpb);
     }
 }

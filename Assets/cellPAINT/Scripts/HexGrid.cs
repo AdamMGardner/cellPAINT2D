@@ -293,10 +293,7 @@ namespace HexGrid
 
     }
 
-
-
 // Tests
-
 
 struct Tests
 {

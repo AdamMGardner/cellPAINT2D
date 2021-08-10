@@ -10,7 +10,6 @@ using System.IO;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
-//using OpenQA.Selenium.Firefox;
 using System.Threading;
 using System.Threading.Tasks;
 using SimpleJSON;
@@ -100,7 +99,7 @@ public class Add_ingredient_ui : MonoBehaviour
                 var go = GameObject.Find("Add_ingredient_ui");
                 if (go != null) DestroyImmediate(go);
 
-                go = new GameObject("Add_ingredient_ui"); //{ hideFlags = HideFlags.HideInInspector };
+                go = new GameObject("Add_ingredient_ui");
                 _instance = go.AddComponent<Add_ingredient_ui>();
             }
             return _instance;
@@ -149,15 +148,14 @@ public class Add_ingredient_ui : MonoBehaviour
             var sprite = Manager.Instance.LoadNewSprite(filePath);
             theSprite.sprite = sprite;
             var ratio =(float) theSprite.sprite.texture.width/(float)theSprite.sprite.texture.height;
-            var h = 210;//w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
+            var h = 210;
             var w = h*ratio;
             theSprite.rectTransform.sizeDelta = new Vector2(w,(int)h);
             Force = false;
-            //try the getTexture
+            //try to get the texture from the URL.
             StartCoroutine(GetText(query_answer_url));
         }
         if (query_done) {
-            //StartCoroutine(GetText(query_answer_url));
             query_done = false;
         }
         if (!query_done &&(driver!=null)&&do_screen_capture){
@@ -168,7 +166,6 @@ public class Add_ingredient_ui : MonoBehaviour
             if (browser_image) {
                 browser_image.sprite = Sprite.Create(browser_texture, new Rect(0, 0, browser_texture.width, browser_texture.height), new Vector2(0.5f, 0.5f), 100.0f);
             }
-            //image.SaveAsFile("C:/temp/Screenshot.png");
         }
     }
 
@@ -232,10 +229,7 @@ public class Add_ingredient_ui : MonoBehaviour
         //membrane thickness is 130px while sprite is 149px. Ang not equal to 42.0
         var thickness = Manager.Instance.membrane_thickness*sc2d/cscale;//angstrom
         theSpriteMb.pixelsPerUnitMultiplier = 4.0f/(thickness*2.0f/60.0f);
-        //theSpriteMb.rectTransform.sizeDelta = new Vector2((int)w,42.0f);
         theSpriteMb.rectTransform.sizeDelta = new Vector2((int)pw,thickness);
-        //theSpriteMb.transform.localScale = new Vector3(1.0f,sc2d,1.0f);//1px-1a
-        //theSpriteMb.rectTransform.localPosition = new Vector3(p.x,h/2.0f-offy,p.z);
     }
 
     public void ToggleMainImage(bool toggle){
@@ -245,13 +239,11 @@ public class Add_ingredient_ui : MonoBehaviour
 
     public void setFiberLength(float number){
         fiber_length_field.text = number.ToString();
-        //theSprite.rectTransform.rotation = Quaternion.Euler(0, 0, number);
         fiber_length = number; 
         setFiberLength_cb();
     }
 
     public void setFiberLength(string number){
-        //theSprite.rectTransform.rotation = Quaternion.Euler(0, 0, float.Parse (number));
         fiber_length = float.Parse (number);
         if (fiber_length >=  fiber_length_slider.maxValue) fiber_length_slider.maxValue = fiber_length;
         fiber_length_slider.value = fiber_length;
@@ -268,9 +260,7 @@ public class Add_ingredient_ui : MonoBehaviour
         var sc2d = input_pixel_ratio*canvas_scale*cscale;//*canvas_scale;
         var pixel_length = fiber_length*sc2d;//sc2d is angstrom to pixels
         var scaling = pixel_length/154.0f;
-        //theSpriteMb.rectTransform.localPosition = new Vector3(p.x,h/2.0f-offy,p.z);
         //the line is 154pixel long in the image. scale it to accomodate the fiber length.
-        //theSpriteAxis.rectTransform.sizeDelta = new Vector2(scaling,1.0f);
         var p = theSprite.rectTransform.position;
         theSpriteAxis.transform.localScale = new Vector3(scaling,scaling,1.0f);
         //this doesnt work when rotate the parent.
@@ -304,7 +294,6 @@ public class Add_ingredient_ui : MonoBehaviour
             query+="&bychain="+color_by_chain.isOn.ToString().ToLower();
             query+="&psize=6&resize=0.0";
             //if we use the resize
-            //input_pixel_ratio_field.text = (12.0f*0.50f).ToString(); 
             Debug.Log(query);
             StartCoroutine(GetRequest(query));
         }
@@ -326,10 +315,8 @@ public class Add_ingredient_ui : MonoBehaviour
         driver = new ChromeDriver(chromeDriverService,options);
         driver.Url = query;
         
-        //Debug.Log(driver.PageSource);
         // wait for the results to appear
-        //IWebElement firstResult = driver.WaitForElement(By.Id("image_url"));
-        WebDriverWait wait = new WebDriverWait(driver, new TimeSpan(0, 0, 1, 120));//TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(0.1));
+        WebDriverWait wait = new WebDriverWait(driver, new TimeSpan(0, 0, 1, 120));
         try {
             IWebElement firstResult = wait.Until(e => {
                 return e.FindElement(By.Id("image_url"));
@@ -345,7 +332,6 @@ public class Add_ingredient_ui : MonoBehaviour
             Debug.Log(driver.PageSource);
             if (loader) loader.gameObject.SetActive(false); 
         }
-        //StartCoroutine(GetText(query_answer_url)); 
     }
 
     public async void DoAsyncIllustrate()
@@ -395,7 +381,7 @@ public class Add_ingredient_ui : MonoBehaviour
         theSpriteFiberLeft.sprite = sprite;
         theSpriteFiberRight.sprite = sprite;
         var ratio =(float) theSprite.sprite.texture.width/(float)theSprite.sprite.texture.height;
-        var h = 210;//w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
+        var h = 210;
         var w = h*ratio;
         theSprite.rectTransform.sizeDelta = new Vector2(w,(int)h);
         sprite_name = Path.GetFileName(filePath);
@@ -445,15 +431,8 @@ public class Add_ingredient_ui : MonoBehaviour
         b.Encapsulate(new Vector3(upleft.x,upleft.y,0));
         Vector2 upright = rotation*(new Vector2(oldWidth,oldHeight) - center);
         b.Encapsulate(new Vector3(upright.x,upright.y,0));
-        //Vector2 botleft = rotation*(new Vector2(0,0) - center);
-        //b.Encapsulate(new Vector3(botleft.x,botleft.y,0));
-        //Vector2 botright = rotation*(new Vector2(oldWidth,0) - center);
-        //b.Encapsulate(new Vector3(botright.x,botright.y,0));
         nWidth = Mathf.CeilToInt(b.size.x*2);
         nHeight = Mathf.CeilToInt(b.size.y*2);
-
-        //nWidth = Mathf.CeilToInt(newWidth);
-        //nHeight = Mathf.CeilToInt(newHeight);
         
         Texture2D rotatedBmp = new Texture2D(nWidth,nHeight);
         for (int i = 0; i <nWidth; i++)
@@ -467,8 +446,6 @@ public class Add_ingredient_ui : MonoBehaviour
         
         Vector2 center2 = new Vector2(nWidth/2,nHeight/2);
         Vector2 offset = new Vector2(Mathf.Abs(nWidth-oldWidth)/2,Mathf.Abs(nHeight-oldHeight)/2);
-        //pass the rotated data to the new texture ?
-        //Color[] pixels = image.GetPixels();
         //Now rotate your original image around its center but add an offset to the coordinates before putting them into the new array. 
         //The offset would be half the difference in width and height between both arrays.
         for (int i = 0; i <oldWidth; i++)
@@ -477,7 +454,7 @@ public class Add_ingredient_ui : MonoBehaviour
             {
                 Vector2 new_coord = rotation*(new Vector2(i,j) - center);
                 var pix = image.GetPixel(i, j);
-                var newi = Mathf.RoundToInt(new_coord.x+center2.x+ 0.5f);//use 0.5 ?
+                var newi = Mathf.RoundToInt(new_coord.x+center2.x+ 0.5f);
                 var newj = Mathf.RoundToInt(new_coord.y+center2.y+ 0.5f);
                 rotatedBmp.SetPixel(newi,newj,pix);
             }
@@ -584,17 +561,11 @@ public class Add_ingredient_ui : MonoBehaviour
             }
             else
             {
-                //var filePath = PdbLoader.DownloadFile(input_name, "https://mesoscope.scripps.edu/data/tmp/ILL/"+query_id.ToString()+"/",  PdbLoader.DefaultDataDirectory + "/" + "images/", ".png");
-                //Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
-                //var filePath = PdbLoader.DefaultDataDirectory + "/" + "images/" + input_name.text+".png";
-                //File.WriteAllText(filePath, webRequest.downloadHandler.text);
                 query_done = true;
                 redo_query = false;
                 query_sent = true; 
                 log_label.text = "";
                 StartCoroutine(GetText(query_answer_url));
-                //var sprite = Manager.Instance.LoadNewSprite(filePath);
-                //theSprite.sprite = sprite;
             }
         }
     }
@@ -630,8 +601,7 @@ public class Add_ingredient_ui : MonoBehaviour
                 theSpriteFiberLeft.sprite = mySprite;
                 theSpriteFiberRight.sprite = mySprite;
                 var ratio =(float) theSprite.sprite.texture.width/(float)theSprite.sprite.texture.height;
-                //var w = 150;//(snode.data.thumbnail)?snode.data.thumbnail.width:150;
-                var h = 300.0f;//w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
+                var h = 300.0f;
                 var w = h*ratio;
                 if (theSprite.sprite.texture.width > theSprite.sprite.texture.height) {
                     w = 300;
@@ -640,9 +610,7 @@ public class Add_ingredient_ui : MonoBehaviour
                 theSprite.rectTransform.sizeDelta = new Vector2((int)w,(int)h);    
                 if (loader) loader.gameObject.SetActive(false);          
                 setYoffset_cb();
-                setFiberLength_cb();        
-                //driver.Close();     
-                //driver.Quit();      
+                setFiberLength_cb();           
                 log_label.text = "";     
             }
             Load.interactable = true;
@@ -737,7 +705,6 @@ public class Add_ingredient_ui : MonoBehaviour
             }
         }
     }
-//https://data.rcsb.org/rest/v1/core/entry/2N3Q
 
     IEnumerator GetModelsNumber(string uri)
     {
@@ -823,27 +790,6 @@ public class Add_ingredient_ui : MonoBehaviour
         StartCoroutine(GetPDBRestMolecules("https://www.ebi.ac.uk/pdbe/api/pdb/entry/molecules/"+input_pdb));
         //gather list of model
         StartCoroutine(GetModelsNumber("https://data.rcsb.org/rest/v1/core/entry/"+input_pdb));
-    }
-
-    /*get some information prior to illustrate to help with the UI
-        https://www.rcsb.org/pdb/rest/describePDB?structureId=2N3Q
-        https://www.rcsb.org/pdb/rest/getEntityInfo?structureId=1hv4
-        https://www.ebi.ac.uk/pdbe/api/pdb/entry/molecules/2N3Q
-        https://www.ebi.ac.uk/pdbe/api/pdb/entry/molecules/1aon
-        https://www.ebi.ac.uk/pdbe/api/pdb/entry/summary/2N3Q
-
-        list of chain
-        and number of asasmbly
-        can we do same for nmr ?
-    */
-
-    public void OnChainSelectChange(string ch){
-        //show the toggle
-        //auth_id.gameObject.SetActive(true);
-    }
-    public void OnChainSelectEnd(string ch){
-        //show the toggle
-        //auth_id.gameObject.SetActive(false);
     }
 
     public void ToggleChainAuthors(bool atoggle) {

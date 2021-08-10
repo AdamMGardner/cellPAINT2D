@@ -21,10 +21,8 @@ public class PrefabGroup : MonoBehaviour
             var attach1 = attachements[i].gameObject;
             var attach2 = attachements[i].connectedBody.gameObject;
             if (attach1 == ingredient || attach2 == ingredient) {
-                //attachements.RemoveAt(i);
                 Destroy(jt);
             }
         }
-        //Manager.Instance.DestroyInstance(ingredient);
     }
 }

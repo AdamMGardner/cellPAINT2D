@@ -22,7 +22,6 @@ public class AddForce : MonoBehaviour {
            
             player.drag = 20.0f;
             player.angularDrag = 20.0f;
-            //player.AddForce(new Vector2(Random.Range(-timeScale, timeScale), Random.Range(-timeScale, timeScale)) * cs.value);
             player.AddTorque(Random.Range(-(timeScale), (timeScale)) * (cs.value / 2), 0);
             player.AddForce(UnityEngine.Random.insideUnitCircle * cs.value);
         }

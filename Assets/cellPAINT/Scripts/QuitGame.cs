@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Text;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-//using UnityStandardAssets.ImageEffects;
 using System.Runtime.InteropServices;
 using Crosstales.FB;
 using SimpleJSON;
@@ -28,7 +27,6 @@ public class QuitGame : MonoBehaviour
     public GUISkin skinWithListStyle;
 
     public Slider cs;
-    //public MotionBlur mb;
     public Camera myCamera;
     public bool use_native_browser;
     public Slider ssMultiplierSlider;
@@ -48,7 +46,6 @@ public class QuitGame : MonoBehaviour
     private string current_loaded_text;
     private Texture2D current_loaded_texture;
     protected string m_textPath;
-    //protected FileBrowser m_fileBrowser;
 
     private byte[] current_bytes;
     private Texture2D current_screenShot;
@@ -150,7 +147,6 @@ public class QuitGame : MonoBehaviour
         load_scene = false;
         load_image = false;
         save_image = false;
-       // SceneManager.Instance.mask_ui = false;
     }
     public void OnFileUpload(string url) {
         if (load_scene) { StartCoroutine(OutputRoutineZip(url));}
@@ -164,8 +160,6 @@ public class QuitGame : MonoBehaviour
     public void OnFileDownload() {}
 
     void Start() {
-        //path = Application.dataPath;
-        //if (!mb) mb = Camera.main.GetComponent<MotionBlur>();
         backgroundImageManager = backgroundImageManagerContainer.GetComponent<BackgroundImageManager>();
         Manager.Instance.recipeUI.use_coroutine = use_coroutine;
     }
@@ -196,18 +190,14 @@ public class QuitGame : MonoBehaviour
     }
     
     public void SaveImage_cb(string path) {
-        //if (ui != null) { ui.SetActive(false); }
         if (path == null) return;
         TakeScreenShot();
-        //if (current_bytes == null) return;
         current_bytes = current_screenShot.EncodeToPNG();
 #if UNITY_WEBGL && !UNITY_EDITOR
 #else        
         System.IO.File.WriteAllBytes(path, current_bytes);
         Debug.Log(string.Format("Screenshot saved to: {0}", path));
-        //if (ui != null) { ui.SetActive(true); }
         Application.OpenURL(path);//
-        //System.Diagnostics.Process.Start(path);
 #endif
     }
     
@@ -241,22 +231,14 @@ public class QuitGame : MonoBehaviour
         current_screenShot.ReadPixels(new Rect(0, 0, resWidthN, resHeightN), 0, 0);
         myCamera.targetTexture = null;
         RenderTexture.active = null;
-        //if (ui != null) { ui.SetActive(true); }
         screen_grab = true;
     }
 
     public void TakeScreenShot()
     {
-        //  
-        //myCamera.gameObject.SetActive(true);
-
-        //super lame sloution to f-actin bug
-        //GameObject tempObject = SceneManager.Instance.myPrefab;
 
         Debug.Log("You are in the take screenshot function");
-       // if (ui != null) { ui.SetActive(false); }
-        //var mask = myCamera.cullingMask;
-        //myCamera.cullingMask = LayerMask.NameToLayer("Everything");
+
         //hide the mouse sprite
         var boundaries = GameObject.Find("boundary");
         boundaries.SetActive(false);
@@ -273,7 +255,6 @@ public class QuitGame : MonoBehaviour
         int resWidthN = resWidth-(int)(offsetX1+offsetX2);
         int resHeightN = resHeight;
 
-        //RenderTexture rt = new RenderTexture(resWidthN, resHeightN, 24);
         RenderTexture rt = RenderTexture.GetTemporary(resWidth, resHeight, 24);
         myCamera.targetTexture = rt;
 
@@ -293,21 +274,10 @@ public class QuitGame : MonoBehaviour
         current_screenShot.ReadPixels(new Rect(offsetX1, 0, resWidthN, resHeight), 0, 0);
         RenderTexture.active = temp;
         current_bytes = current_screenShot.EncodeToPNG();
-        // RenderTexture.active = null;
-        //myCamera.cullingMask = LayerMask.NameToLayer("renderCameras");
         myCamera.targetTexture = null;
         RenderTexture.ReleaseTemporary(rt);
-        //rt = null;
-        //Debug.Log("The culling mask is: " + myCamera.cullingMask);
-        //if (ui != null) { ui.SetActive(true); }
         screen_grab = true;
-        //myCamera.gameObject.SetActive(false);
 
-        //super lame sloution to f-actin bug
-        //SceneManager.Instance.myPrefab = tempObject;
-
-        // if (ui) ui.SetActive(true);
-        // myCamera.cullingMask = mask;
         boundaries.SetActive(true);
         if (Manager.Instance.current_prefab) {
             Manager.Instance.current_prefab.SetActive(true);
@@ -366,7 +336,6 @@ public class QuitGame : MonoBehaviour
                                 //update the sprite?
                                 Debug.Log("what is the texture");
                                 Debug.Log(Manager.Instance.sprites_textures[fname]);
-                                //Manager.Instance.sprites_textures[entry.Name] = aTexture;
                                 Debug.Log("OK");
                             }
                             else {
@@ -447,7 +416,7 @@ public class QuitGame : MonoBehaviour
                                 //update the sprite?
                                 Debug.Log("what is the texture");
                                 Debug.Log(Manager.Instance.sprites_textures[fname]);
-                                //Manager.Instance.sprites_textures[entry.Name] = aTexture;
+
                                 Debug.Log("OK");
                             }
                             else {
@@ -524,7 +493,7 @@ public class QuitGame : MonoBehaviour
         save_image = false;
         load_image = false;
         save_scene = true;
-        if (!use_native_browser) OpenFileBrowser();// GetImage.GetImageFromUserAsync(gameObject.name, "LoadFromString");
+        if (!use_native_browser) OpenFileBrowser();
         else {
 #if UNITY_WEBGL && !UNITY_EDITOR
             if (extra_ingredient!=0) {
@@ -551,10 +520,9 @@ public class QuitGame : MonoBehaviour
         load_image = true;
         save_image = false;
         save_scene = false;
-        //#if UNITY_WEBGL
-        if (!use_native_browser) OpenFileBrowser();//// GetImage.GetImageFromUserAsync(gameObject.name, "LoadFromString");
-        //getFileFromBrowser(gameObject.name, "LoadFromLines");
-        //#else
+
+        if (!use_native_browser) OpenFileBrowser();
+
         else {
 #if UNITY_WEBGL && !UNITY_EDITOR
             UploadFile(gameObject.name, "OnFileUpload", ".png, .jpeg, .jpg, .tiff, .bmp", false);
@@ -571,10 +539,8 @@ public class QuitGame : MonoBehaviour
         load_image = false;
         save_image = false;
         save_scene = false;
-        //#if UNITY_WEBGL
-        if (!use_native_browser) OpenFileBrowser();//// GetImage.GetImageFromUserAsync(gameObject.name, "LoadFromString");
-        //getFileFromBrowser(gameObject.name, "LoadFromLines");
-        //#else
+
+        if (!use_native_browser) OpenFileBrowser();
         else {
 #if UNITY_WEBGL && !UNITY_EDITOR
             //should only support zip file here, so we can load txt+png or json+png
@@ -591,11 +557,9 @@ public class QuitGame : MonoBehaviour
         save_scene = false;
         load_scene = false;
         
-        //SceneManager.Instance.mask_ui = true;
         load_image = false;
         save_image = true;
-        if (!use_native_browser) OpenFileBrowser();// GetImage.GetImageFromUserAsync(gameObject.name, "LoadFromString");
-        //getFileFromBrowser(gameObject.name, "LoadFromLines");
+        if (!use_native_browser) OpenFileBrowser();
         else {
 #if UNITY_WEBGL && !UNITY_EDITOR
             SaveImage_cb("");
@@ -690,7 +654,6 @@ public class QuitGame : MonoBehaviour
             text += (player.bodyType==RigidbodyType2D.Static)? "1"+ sep : "0" + sep;//is it pinned
             //retrieve the ghost ID ?
             text += props.ghost_id.ToString();//is it ghosted 
-            //text += (player.isKinematic)? "1" : "0";//is it pinned or should we use the ispin ?
             string g = sep+"n"+ sep+"0";
             PrefabGroup pg = player.gameObject.GetComponentInParent<PrefabGroup>();
             if (pg != null){
@@ -723,17 +686,12 @@ public class QuitGame : MonoBehaviour
             towrite +="\r\n";
             //chain segments or bound object e.g. nucleocapside
             //fiberinstance order instead
-            //for (int j = 0; j < Manager.Instance.fiber_parents[i].transform.childCount; j++)
             for (int j=0;j < Manager.Instance.fibers_instances[i].Count ;j++)
             {
                 GameObject ch = Manager.Instance.fibers_instances[i][j];
-                //write down posxyz, r, bind 0/1
-                //GameObject ch = Manager.Instance.fiber_parents[i].transform.GetChild(j).gameObject;
                 Rigidbody2D player = ch.GetComponent<Rigidbody2D>();
                 towrite += player.position.x.ToString() + sep + player.position.y.ToString() +sep+ ch.transform.position.z+sep;
                 towrite += player.rotation.ToString() + sep;
-                //player.gameObject.transform.rotation.ToAngleAxis(out angle, out axis);
-                //towrite += angle.ToString() + " ";
                 var props = player.gameObject.GetComponent<PrefabProperties>();
                 if (ch.GetComponent<PrefabProperties>().is_bound)
                 {
@@ -822,10 +780,8 @@ public class QuitGame : MonoBehaviour
             Rigidbody2D player = Manager.Instance.everything[i];
             if (player == null) continue;
             PrefabProperties props = player.gameObject.GetComponent<PrefabProperties>();
-            //Debug.Log(player.position.ToString() + " " + player.rotation.ToString() + " " + player.gameObject.name);
+
             text += player.position.x.ToString()+sep+ player.position.y.ToString()+sep+ player.gameObject.transform.position.z+sep;
-            //player.gameObject.transform.rotation.ToAngleAxis(out angle, out axis);
-            //text += angle.ToString()+ " ";
             text += player.rotation.ToString() + sep;
             text += props.name + sep;
             text += props.order + sep;
@@ -854,8 +810,6 @@ public class QuitGame : MonoBehaviour
                 Rigidbody2D player = ch.GetComponent<Rigidbody2D>();
                 towrite += player.position.x.ToString() + sep + player.position.y.ToString() +sep+ ch.transform.position.z+sep;
                 towrite += player.rotation.ToString() + sep;
-                //player.gameObject.transform.rotation.ToAngleAxis(out angle, out axis);
-                //towrite += angle.ToString() + " ";
 
                 if (ch.GetComponent<PrefabProperties>().is_bound)
                 {
@@ -935,9 +889,9 @@ public class QuitGame : MonoBehaviour
             var path  = elems[0];
             var scale2d = float.Parse(elems[1]);
             var rot = float.Parse(elems[2]);
-            var x = float.Parse(elems[3]);//Debug.Log(x);
-            var y = float.Parse(elems[4]);//Debug.Log(y);
-            var z = float.Parse(elems[5]);//Debug.Log(z);          
+            var x = float.Parse(elems[3]);
+            var y = float.Parse(elems[4]);
+            var z = float.Parse(elems[5]);       
             BackgroundImageManager.Get.AddBackgroundSprites(path,new Vector3(x,y,z),scale2d,rot);
             if (as_task) UI_manager.Get.UpdatePB((float)lineCounter/(float)(lineCounter + nbg_images),"loading background images");
         }
@@ -967,7 +921,7 @@ public class QuitGame : MonoBehaviour
             var fiber_length = float.Parse(elems[4]);
             var issurf = (elems[5] == "0")? false : true;
             var isfiber = (elems[6] == "0")? false : true;
-            var comp = elems[7];//int.Parse(elems[6] );
+            var comp = elems[7];
             var prefix = (issurf)?"surface":"interior";
             var iname = comp+"."+prefix+"."+name;
             //actual name is compname+"."+prefix+"."+name
@@ -1018,13 +972,13 @@ public class QuitGame : MonoBehaviour
         {
             // 9.848226,21.78014,0.0004882813,197.4075,LDL,0,0
             elems = lines[i].Replace("\n", "").Replace("\r", "").Split(sep[0]);
-            var x = float.Parse(elems[0]);//Debug.Log(x);
-            var y = float.Parse(elems[1]);//Debug.Log(y);
-            var z = float.Parse(elems[2]);//Debug.Log(z);
-            var zangle = float.Parse(elems[3]);//Debug.Log(zangle);
-            var name = elems[4];//Debug.Log(name);
-            var order = int.Parse(elems[5]);//Debug.Log(order);
-            var kinematic = int.Parse(elems[6]);//Debug.Log(kinematic);
+            var x = float.Parse(elems[0]);
+            var y = float.Parse(elems[1]);
+            var z = float.Parse(elems[2]);
+            var zangle = float.Parse(elems[3]);
+            var name = elems[4];
+            var order = int.Parse(elems[5]);
+            var kinematic = int.Parse(elems[6]);
             var ghost = int.Parse(elems[7]); 
             var group_name = elems[8];
             var group_id = int.Parse(elems[9]);      
@@ -1089,7 +1043,7 @@ public class QuitGame : MonoBehaviour
                     }
 
                     if (kinematic == 1)
-                        Manager.Instance.pin_object(fiber, kinematic == 1); //SceneManager.Instance.pinInstance(fiber);
+                        Manager.Instance.pin_object(fiber, kinematic == 1);
                     if ( fiber.tag != "membrane" ) Manager.Instance.changeColorAndOrderFromDepth(z, fiber);
                     else fiber.GetComponent<SpriteRenderer>().sortingOrder = 0;
                 }
@@ -1097,7 +1051,7 @@ public class QuitGame : MonoBehaviour
                     attached = Manager.Instance.restoreAttachments(bounded, new Vector3(x, y, z), zangle, fiber);
                     Debug.Log("attached to fiber " + attached.name + " " + kinematic.ToString());
                     if (kinematic == 1)
-                        Manager.Instance.pin_object(attached, kinematic == 1); //SceneManager.Instance.pinInstance(attached);
+                        Manager.Instance.pin_object(attached, kinematic == 1);
                 }
                 lineCounter++;
             }
@@ -1164,8 +1118,6 @@ public class QuitGame : MonoBehaviour
             if (as_task) UI_manager.Get.UpdatePB((float)i/(float)(nLink),"loading bonds");      
             lineCounter++;
         }
-        //Manager.Instance.UpdateGhostArea();   
-        //if (current_name!="") Manager.Instance.SwitchPrefabFromName(current_name);
         //restore groups
         GroupManager.Get.RestoreGroups();
         GhostManager.Get.RestoreGhost();
@@ -1175,7 +1127,7 @@ public class QuitGame : MonoBehaviour
     IEnumerator LoadFromLines_CR(string[] lines) {
         int lcounter = 0;
         if (Manager.Instance.TogglePhysics) Manager.Instance.TogglePhysics.isOn = false;
-        Physics2D.autoSimulation = false;        
+        Physics2D.simulationMode = SimulationMode2D.Script; // This is like saying don't simulate, as long as we don't call a simulation from script.        
         UI_manager.Get.progress_bar_holder.SetActive(true);    
         UI_manager.Get.UpdatePB(0.0f,"loading");        
         string sep = ",";
@@ -1195,9 +1147,9 @@ public class QuitGame : MonoBehaviour
             var path  = elems[0];
             var scale2d = float.Parse(elems[1]);
             var rot = float.Parse(elems[2]);
-            var x = float.Parse(elems[3]);//Debug.Log(x);
-            var y = float.Parse(elems[4]);//Debug.Log(y);
-            var z = float.Parse(elems[5]);//Debug.Log(z);          
+            var x = float.Parse(elems[3]);
+            var y = float.Parse(elems[4]);
+            var z = float.Parse(elems[5]);      
             BackgroundImageManager.Get.AddBackgroundSprites(path,new Vector3(x,y,z),scale2d,rot);
             if (lcounter%frequency == 0) {
                 yield return null;
@@ -1239,10 +1191,9 @@ public class QuitGame : MonoBehaviour
             var fiber_length = float.Parse(elems[4]);
             var issurf = (elems[5] == "0")? false : true;
             var isfiber = (elems[6] == "0")? false : true;
-            var comp = elems[7];//int.Parse(elems[6] );
+            var comp = elems[7];
             var prefix = (issurf)?"surface":"interior";
             var iname = comp+"."+prefix+"."+name;
-            //actual name is compname+"."+prefix+"."+name
             if (!Manager.Instance.ingredients_names.ContainsKey(iname)) {
                 Debug.Log("AddOneIngredient "+name+" "+sprite_name+" "+comp);
                 Manager.Instance.recipeUI.AddOneIngredient(name, sprite_name, scale2d, yoffset, fiber_length, issurf, isfiber, comp);
@@ -1300,13 +1251,13 @@ public class QuitGame : MonoBehaviour
         {
             // 9.848226,21.78014,0.0004882813,197.4075,LDL,0,0
             elems = lines[i].Replace("\n", "").Replace("\r", "").Split(sep[0]);
-            var x = float.Parse(elems[0]);//Debug.Log(x);
-            var y = float.Parse(elems[1]);//Debug.Log(y);
-            var z = float.Parse(elems[2]);//Debug.Log(z);
-            var zangle = float.Parse(elems[3]);//Debug.Log(zangle);
-            var name = elems[4];//Debug.Log(name);
-            var order = int.Parse(elems[5]);//Debug.Log(order);
-            var kinematic = int.Parse(elems[6]);//Debug.Log(kinematic);
+            var x = float.Parse(elems[0]);
+            var y = float.Parse(elems[1]);
+            var z = float.Parse(elems[2]);
+            var zangle = float.Parse(elems[3]);
+            var name = elems[4];
+            var order = int.Parse(elems[5]);
+            var kinematic = int.Parse(elems[6]);
             var ghost = int.Parse(elems[7]); 
             var group_name = elems[8];
             var group_id = int.Parse(elems[9]);      
@@ -1378,7 +1329,7 @@ public class QuitGame : MonoBehaviour
                     }
 
                     if (kinematic == 1)
-                        Manager.Instance.pin_object(fiber, kinematic == 1); //SceneManager.Instance.pinInstance(fiber);
+                        Manager.Instance.pin_object(fiber, kinematic == 1);
                     if ( fiber.tag != "membrane" ) Manager.Instance.changeColorAndOrderFromDepth(z, fiber);
                     else fiber.GetComponent<SpriteRenderer>().sortingOrder = 0;
                 }
@@ -1386,7 +1337,7 @@ public class QuitGame : MonoBehaviour
                     attached = Manager.Instance.restoreAttachments(bounded, new Vector3(x, y, z), zangle, fiber);
                     Debug.Log("attached to fiber " + attached.name + " " + kinematic.ToString());
                     if (kinematic == 1)
-                        Manager.Instance.pin_object(attached, kinematic == 1); //SceneManager.Instance.pinInstance(attached);
+                        Manager.Instance.pin_object(attached, kinematic == 1);
                 }
                 if (lcounter%frequency == 0) {
                     UI_manager.Get.UpdatePB((float)j/(float)(nPoints),"loading fiber "+fp.name);
@@ -1468,13 +1419,11 @@ public class QuitGame : MonoBehaviour
             lineCounter++;
         }
         lcounter = 0;
-        //Manager.Instance.UpdateGhostArea();   
-        //if (current_name!="") Manager.Instance.SwitchPrefabFromName(current_name);
         //restore groups
         GroupManager.Get.RestoreGroups();
         GhostManager.Get.RestoreGhost();
         if (Manager.Instance.TogglePhysics) Manager.Instance.TogglePhysics.isOn = true;
-        Physics2D.autoSimulation = true;  
+        Physics2D.simulationMode = SimulationMode2D.FixedUpdate; //like saying true.
         UI_manager.Get.progress_bar_holder.SetActive(false);   
         Manager.Instance.recipeUI.SetTofirstIngredient();          
     }
@@ -1538,17 +1487,4 @@ public class QuitGame : MonoBehaviour
     {
         screenShotMultiplier = (int)ssMultiplierSlider.value;
     }
-
-    public void SendLogEmail()
-    {
-        //%USERPROFILE%\AppData\LocalLow\CompanyName\ProductName\output_log.txt
-        /*System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + @"\Unity\Editor\Editor.log";
-        string email = "autin@scripps.edu";
-        string subject = "LOGFile";
-        string body = "";//atach the log file
-        Application.OpenURL ("mailto:" + email + "?subject=" + subject + "&body=" + body);
-        //System.Net.Mail.Attachment attachment = new System.Net.Mail.Attachment(attachmentPath);
-        */
-    }  
 }
-//5oxv,6b8h, 1sm1,5jhm

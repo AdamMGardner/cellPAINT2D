@@ -184,7 +184,6 @@ public class UI_manager : MonoBehaviour
     }
 
     public void ShowToolTipsCall(int id){
-        //Manager.Instance.mask_ui = true;
         //all_toolTips
         //tool tips show on the mouse ?
         //after 5sec ?

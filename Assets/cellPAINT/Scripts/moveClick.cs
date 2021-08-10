@@ -23,7 +23,6 @@ public class moveClick : MonoBehaviour {
     public bool pinMode = false;
     public bool continuous = false;
 
-    //public TreeViewSample ui;
     public Image tools_toggle_image;
     public GameObject current_prefab;
 
@@ -57,7 +56,6 @@ public class moveClick : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        //ui.OnSelect.AddListener(SwitchPrefab);
         dragger = cam.GetComponent<DragRigidbody2D>();
         eraser = GetComponent<ErasePrefab>();
         fiber = GetComponent<DrawPhysicsLine>();
@@ -73,11 +71,6 @@ public class moveClick : MonoBehaviour {
     {
         //this is called from the user interface, swicth to draw directly
         
-        //TreeViewSampleComponent comp = component as TreeViewSampleComponent;        
-        //var selected = ui.SelectedIndex;
-        //TreeViewSampleComponent test = ui.DataSource[selected] as TreeViewSampleComponent;
-        //currentLabel = comp.Text;
-        //string name = currentLabel.text.Split(":".ToCharArray()[0])[0];
         if (!proteins_count.ContainsKey(name)) {
             proteins_count.Add(name, 0);
             proteins_ui_labels.Add(name, currentLabel);
@@ -129,12 +122,8 @@ public class moveClick : MonoBehaviour {
         if (tools_toggle_image)
         {
             tools_toggle_image.sprite = current_prefab.GetComponent<SpriteRenderer>().sprite;
-            //tools_toggle_image.fillMethod = Image.FillMethod.Radial360;
-            //tools_toggle_image.SetNativeSize();
-            //ools_toggle_image.transform.localScale = new Vector3(props.encapsulating_radius, props.encapsulating_radius, props.encapsulating_radius)*2/10.0f;
         }
         GameObject.Find("ToggleBrush").GetComponent<Toggle>().isOn = true;
-        //ToggleContinuous(true);//toggle the ui ?
     }
 
     public void ToggleContinuous(bool toggle) {
@@ -212,20 +201,8 @@ public class moveClick : MonoBehaviour {
             if (other.gameObject.tag == "membrane")
             {
                 otherSurf = other;
-                //Debug.Log(other.name);
-                //Debug.Log(myPrefab.name);
-                //Debug.DrawLine(other.transform.position, other.transform.position + other.transform.up, Color.red);
                 current_prefab.transform.position = other.transform.position;
                 current_prefab.transform.rotation = Quaternion.FromToRotation(Vector3.up, other.transform.up);
-                /*if (mouseDown)
-                {
-                    if (!myPrefab) return;
-                    if (!other.transform) return;
-                    GameObject newObject = Instantiate(myPrefab, other.transform.position, Quaternion.FromToRotation(Vector3.up, other.transform.up)) as GameObject;
-                    newObject.transform.parent = root.transform;
-                    newObject.hideFlags = HideFlags.HideInHierarchy;
-                    mouseDown = false;
-                }*/
             }
         }
     }
@@ -235,8 +212,8 @@ public class moveClick : MonoBehaviour {
         otherSurf = null;
     }
 
-    public void OnPointerEnter(PointerEventData eventData) {
-        //Debug.Log("pointer Enter");
+    public void OnPointerEnter(PointerEventData eventData) 
+    {
 
     }
 
@@ -271,20 +248,10 @@ public class moveClick : MonoBehaviour {
         //some of top lay get drawn on top of dna.
         if ((totalNprotein % layer_frequence * 10) == 0)
             newObject.GetComponent<SpriteRenderer>().sortingOrder = 2;
-        /*foreach (Transform child in newObject.transform)
-        {
-            child.gameObject.SetActive(false);
-            if ((totalNprotein % layer_frequence) == 0)
-            {
-                child.gameObject.SetActive(true);
-            }
-        }*/
-        //Transform t = newObject.transform.GetChild(1);
-        //if (t) t.gameObject.SetActive(false);
     }
 
     public void DestroyInstance(GameObject toDestroy) {
-        string name = toDestroy.name.Split("(".ToCharArray())[0];//.Split("".ToCharArray()[0])[0];
+        string name = toDestroy.name.Split("(".ToCharArray())[0];
         if (!proteins_count.ContainsKey(name))
         {
             Destroy(toDestroy);
@@ -293,7 +260,6 @@ public class moveClick : MonoBehaviour {
         totalNprotein--;
         proteins_count[name]--;
         float area = getArea(toDestroy);
-        //Debug.Log(area.ToString());
         proteinArea -= area;
         float screenArea = cam.GetComponent<buildBoundary>().boundryArea;
         int percentFilledInt = (int)((proteinArea / screenArea) * 100);
@@ -305,31 +271,22 @@ public class moveClick : MonoBehaviour {
     
     // Update is called once per frame
     void Update () {
-        string ename = null;// = EventSystem.current.currentSelectedGameObject.name;
+        string ename = null;
         if (EventSystem.current.currentSelectedGameObject)
         {
             ename = EventSystem.current.currentSelectedGameObject.name;
         }
-        //Debug.Log(EventSystem.current.IsPointerOverGameObject(-1));
         if (!myPrefab) return;
         mouseDown = false;
         Vector3 mousePos = Input.mousePosition;
         mousePos.z = mousePos.z + 30.0f;       // we want 2m away from the camera position
-                                  //Debug.Log(mousePos);
         Vector3 objectPos = cam.ScreenToWorldPoint(mousePos);
         transform.position = objectPos;
-        //Debug.Log(mousePos.ToString());
-        //Debug.Log(Screen.width.ToString() + " " + Screen.height.ToString());
         if (((ename != "Canvas") && (ename != null))) return;
         if (fiberMode) return;
         if (dragMode) return;
         if (pinMode) return;
         if (eraseMode) return;
-        /*if (ui.isActiveAndEnabled)
-        {
-            if (mousePos.x < Screen.width * 0.15f) return;
-            if (mousePos.y > Screen.height - Screen.height * 0.05f) return;
-        }*/
         bool input_event = false;
         if (continuous)
             input_event = Input.GetMouseButton(0);
@@ -337,11 +294,8 @@ public class moveClick : MonoBehaviour {
             input_event = Input.GetMouseButtonDown(0);
 
         if (input_event)
-        //if (Input.GetButtonDown("Fire1"))
         {
             
-            //Debug.Log(mousePos);
-            //Debug.Log(objectPos);
             if (!surfaceMode)
             {
                 for (int i = 0; i < nbInstancePerClick; i++)
@@ -351,44 +305,14 @@ public class moveClick : MonoBehaviour {
                 }
             }
         }
-        //Debug.Log(Input.mousePosition);
 
         if (Input.GetMouseButtonDown(0))
         {
             mouseDown = true;
             if (surfaceMode) {
                 if (otherSurf) {
-                    //GameObject newObject = Instantiate(myPrefab, otherSurf.transform.position, Quaternion.FromToRotation(Vector3.up, otherSurf.transform.up)) as GameObject;
-                    //Debug.Log("Within surface mode loop 2.");
                     GameObject newObject = Instantiate(myPrefab, Vector3.zero, Quaternion.identity) as GameObject;
                     totalNprotein++;
-                    /*
-                    //Get the area of the box and or circle colliders of the top layer of the prefab.
-                    Component[] circleColliders;
-                    Component[] boxColliders;
-
-                    circleColliders = newObject.GetComponentsInParent(typeof(CircleCollider2D));
-                    Debug.Log(circleColliders);
-                    boxColliders = newObject.GetComponentsInParent(typeof(BoxCollider2D));
-                    Debug.Log(boxColliders);
-
-                    if (circleColliders != null){
-                        foreach (CircleCollider2D collider2D in circleColliders)
-                            circleRadius = collider2D.radius;
-                            circleArea = Mathf.PI * (circleRadius * circleRadius);
-                            protienArea = circleArea + protienArea;
-                    }
-                    if (boxColliders != null)
-                    {
-                        foreach (BoxCollider2D collider2D in boxColliders)
-                            boxArea = (collider2D.size.x) * (collider2D.size.y);
-                            protienArea = boxArea + protienArea;
-                    }
-
-                    screenArea = cam.GetComponent<buildBoundary>().boundryArea;
-                    percentFilled = (protienArea / screenArea) * 100;
-                    int percentFilledInt = (int) percentFilled;
-                    */
                     int percentFilledInt = addToArea(newObject);
                     pb.Value = percentFilledInt;
 

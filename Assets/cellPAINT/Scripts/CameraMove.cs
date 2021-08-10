@@ -68,7 +68,6 @@ public class CameraMove : MonoBehaviour {
         if (cameraCurrentZoom != Main_Camera.orthographicSize) {
             cameraCurrentZoom = (int) Main_Camera.orthographicSize;
         }
-        //dragOrigin = new Vector3(Input.mousePosition.x, Input.mousePosition.y,-3000);
         if (Manager.Instance.mask_ui) return;
         if (Input.GetAxis("Mouse ScrollWheel")!=0 && !wheel_start) {
             wheel_start = true;
@@ -88,37 +87,26 @@ public class CameraMove : MonoBehaviour {
         }
         if (Input.GetAxis("Mouse ScrollWheel") > 0) // back
         {
-            //if (cameraCurrentZoom < cameraZoomMax)
-            //{
-
             Zoom(-zoomvalue);
             ChildTransSize();
             cameraMapping();
             ZoomMove();
-            //PositionOutOfBounds();
-            // }
         }
 
         else if (Input.GetAxis("Mouse ScrollWheel") < 0) // forward
         {
-            // if (cameraCurrentZoom > cameraZoomMin)
-            // {
             Zoom(zoomvalue);
             ChildTransSize();
             cameraMapping();
             ZoomMove();
-            //PositionOutOfBounds();
-            //  }
         }
         else if (Input.GetMouseButtonDown(2)){
-            //ZrotOrigin = Main_Camera.transform.eulerAngles.z;
             dragOrigin = new Vector3(Input.mousePosition.x, Input.mousePosition.y,0);
             Vector3 target_position = Vector3.zero;
             if (Manager.Instance.selected_instance!=null){
                 target_position = Manager.Instance.selected_instance.transform.position;
                 Main_Camera.transform.position = target_position;
-                Main_Camera.transform.position = new Vector3(Main_Camera.transform.position.x,Main_Camera.transform.position.y,-3000);
-                //Main_Camera.transform.LookAt(target_position, Vector3.up);                
+                Main_Camera.transform.position = new Vector3(Main_Camera.transform.position.x,Main_Camera.transform.position.y,-3000);            
             }
         }
         else if (Input.GetMouseButtonDown(1)) {
@@ -126,9 +114,7 @@ public class CameraMove : MonoBehaviour {
         }
         else if (Input.GetMouseButton(1))
         {
-            //cameraMapping();
             Move();
-            //PositionOutOfBounds();
         }
         else if (Input.GetMouseButton(2)){
             Vector3 target_position = Vector3.zero;
@@ -136,21 +122,14 @@ public class CameraMove : MonoBehaviour {
                 target_position = Manager.Instance.selected_instance.transform.position;
             }
             //rotate around Z by smooth increment
-            //Main_Camera.transform.eulerAngles += Vector3.forward * (rotation_speed * Time.deltaTime);
             Vector3 current_mouse = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
-            //Vector3 current_mouse_world = Main_Camera.ScreenToWorldPoint(current_mouse);
-            //Vector3 dragOrigin_world = Main_Camera.ScreenToWorldPoint(dragOrigin);
+
             Vector3 d = (current_mouse - dragOrigin);
             float sign = (d.x < 0.0f )? -1.0f : 1.0f;
             float amount  = d.magnitude*rotation_speed*sign ;
             ZrotOrigin+=amount;
-            //Main_Camera.transform.eulerAngles += Vector3.forward * (rotation_speed * ZrotOrigin) * sign;
             Main_Camera.transform.rotation = Quaternion.AngleAxis(ZrotOrigin, Vector3.forward);
             dragOrigin = current_mouse;
-            //Main_Camera.orthographicSize = cameraZoomMax;
-            //vertExtent = Main_Camera.transform.InverseTransformVector(Main_Camera.ScreenToWorldPoint(new Vector3(0.0f, Main_Camera.pixelRect.height, 0.0f))).y;
-            //horzExtent = Main_Camera.transform.InverseTransformVector(Main_Camera.ScreenToWorldPoint(new Vector3(Main_Camera.pixelRect.width, 0.0f, 0.0f))).x;
-            //Main_Camera.orthographicSize = cameraCurrentZoom;
         }
         else { }
         if (use_Viewport) {
@@ -181,12 +160,9 @@ public class CameraMove : MonoBehaviour {
         Vector3 cmouse_world = Main_Camera.ScreenToWorldPoint(current_mouse);
         Vector3 dragOrigin_world = Main_Camera.ScreenToWorldPoint(dragOrigin);
         pos = (cmouse_world - dragOrigin_world) * dragSpeed * mouseInv;
-        
-        //MoveOutOfBounds();
 
         move = new Vector3(pos.x, pos.y, 0.0f);
         Main_Camera.transform.Translate(Main_Camera.transform.InverseTransformVector(move));
-        //Main_Camera.transform.Translate(move);
         dragOrigin = new Vector3(Input.mousePosition.x, Input.mousePosition.y,-3000);
         cameraPos3D = Main_Camera.transform.position;
     }
@@ -224,14 +200,6 @@ public class CameraMove : MonoBehaviour {
     void ZoomMove()
     {
         Vector3 current_mouse = new Vector3(Input.mousePosition.x, Input.mousePosition.y, -3000);
-        //Vector3 current_mouse_world = Main_Camera.ScreenToWorldPoint(current_mouse);
-        //if (pmousePosWorld!= null && Vector3.Distance(Input.mousePosition,pmousePos) < threshold_mouse){
-        //    current_mouse_world = pmousePosWorld;
-        // }
-        // else {
-        //    pmousePosWorld = current_mouse_world;
-        //}
-        //MoveOutOfBounds();
 
         if (!zoomToMouse)
         {
@@ -245,8 +213,7 @@ public class CameraMove : MonoBehaviour {
             }
         }     
         else {
-            if (wheel_start) {
-                //current_mouse_world = Main_Camera.ScreenToWorldPoint(pmousePos);        
+            if (wheel_start) { 
             }
         }  
         move = new Vector3(current_mouse_world.x, current_mouse_world.y, -3000.0f);
@@ -255,36 +222,6 @@ public class CameraMove : MonoBehaviour {
         newPos = new Vector3 (newPos.x, newPos.y, -3000.0f);
         Main_Camera.transform.position = newPos;
         cameraPos3D = Main_Camera.transform.position;
-
-        /*
-        if (!zoomToMouse & Manager.Instance.selected_instance!=null)
-        {
-            current_mouse_world = Manager.Instance.selected_instance.transform.position;
-        }
-        else if (zoomToMouse)
-        {
-            move = new Vector3(current_mouse_world.x, current_mouse_world.y, -3000.0f);
-            float zoomDragMax = zoomDragSpeed *(cameraCurrentZoom/cameraZoomMin);
-            Vector3 newPos = Vector3.MoveTowards (cameraPos3D, move, zoomDragMax);
-            //newPos = newPos * (curren)
-            newPos = new Vector3 (newPos.x, newPos.y, -3000.0f);
-            Main_Camera.transform.position = newPos;
-            //dragOrigin = new Vector3(Input.mousePosition.x, Input.mousePosition.y,-3000);
-            cameraPos3D = Main_Camera.transform.position;
-        }
-        else
-        {
-            current_mouse_world = Vector3.zero;
-            move = new Vector3(current_mouse_world.x, current_mouse_world.y, -3000.0f);
-            float zoomDragMax = zoomDragSpeed *(cameraCurrentZoom/cameraZoomMin);
-            Vector3 newPos = Vector3.MoveTowards (cameraPos3D, move, zoomDragMax);
-            //newPos = newPos * (curren)
-            newPos = new Vector3 (newPos.x, newPos.y, -3000.0f);
-            Main_Camera.transform.position = newPos;
-            //dragOrigin = new Vector3(Input.mousePosition.x, Input.mousePosition.y,-3000);
-            cameraPos3D = Main_Camera.transform.position;
-        }
-        */
     }
 
     void PositionOutOfBounds()

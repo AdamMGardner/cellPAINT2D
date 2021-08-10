@@ -1,3 +1,51 @@
+//--------------------------------------------------------------------------------------------------------------------//
+//                      ___    ___    ____     ______   ______   __  __   ______    ___    ____                       //
+//                     /\_ \  /\_ \  /\  _`\  /\  _  \ /\__  _\ /\ \/\ \ /\__  _\ /'___`\ /\  _`\                     //
+//          ___      __\//\ \ \//\ \ \ \ \L\ \\ \ \L\ \\/_/\ \/ \ \ `\\ \\/_/\ \//\_\ /\ \\ \ \/\ \                   //
+//         /'___\  /'__`\\ \ \  \ \ \ \ \ ,__/ \ \  __ \  \ \ \  \ \ , ` \  \ \ \\/_/// /__\ \ \ \ \                  //
+//        /\ \__/ /\  __/ \_\ \_ \_\ \_\ \ \/   \ \ \/\ \  \_\ \__\ \ \`\ \  \ \ \  // /_\ \\ \ \_\ \                 //
+//        \ \____\\ \____\/\____\/\____\\ \_\    \ \_\ \_\ /\_____\\ \_\ \_\  \ \_\/\______/ \ \____/                 //
+//         \/____/ \/____/\/____/\/____/ \/_/     \/_/\/_/ \/_____/ \/_/\/_/   \/_/\/_____/   \/___/                  //
+//                                                                                                                    //
+//--------------------------------------------------------------------------------------------------------------------//
+// This work was made possible by Scripps Research and grants from the NIH.                                           //
+// The purpose of this script is to oversee the most general fuctions of the cellPAINT program.                       //
+//                                                                                                                    //
+// Copyright (c) 2021 CCSB at Scripps Research                                                                        //
+//                                                                                                                    //
+// Permission is hereby granted, free of charge, to any person obtaining a copy                                       //
+// of this software and associated documentation files (the "Software"), to deal                                      //
+// in the Software without restriction, including without limitation the rights                                       //
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell                                          //
+// copies of the Software, and to permit persons to whom the Software is                                              //
+// furnished to do so, subject to the following conditions:                                                           //
+//                                                                                                                    //
+// The above copyright notice and this permission notice shall be included in all                                     //
+// copies or substantial portions of the Software.                                                                    //
+//                                                                                                                    //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR                                         //
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,                                           //
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE                                        //
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER                                             //
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,                                      //
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE                                      //
+// SOFTWARE.                                                                                                          //
+//                                                                                                                    //
+// More about the functions and reasoning behind the decisions we made can be read about in our cellPAINT2D Papers.   //
+// If you use our code please give our papers a citation:                                                             //
+//                                                                                                                    //
+// Gardner A, Autin L, Barbaro B, Olson AJ, Goodsell DS. CellPAINT: Interactive Illustration of Dynamic Mesoscale     //
+// Cellular Environments. IEEE Comput Graph Appl. 2018;38(6):51-66. doi:10.1109/MCG.2018.2877076                      //
+//                                                                                                                    //
+// Adam, Autin Ludovic, Fuentes Daniel, Maritan Martina, Barad Benjamin A., Medina Michaela, Olson Arthur J.,         //
+// Grotjahn Danielle A., Goodsell David S. Turnkey Illustration of Molecular Cell Biology.                            //
+// Frontiers in Bioinformatics. 2021;1:1-17 doi:10.3389/fbinf.2021.660936                                             //
+//                                                                                                                    //
+// Feel free to contact one or both of us if you run into any issues                                                  //
+// Adam Gardner: agardner@scripps.edu                                                                                 //
+// Ludovic Autin, Ph. D.: autin@scripps.edu                                                                           //
+//--------------------------------------------------------------------------------------------------------------------//
+
 using System;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -7,7 +55,6 @@ using UIWidgets;
 using UIWidgetsSamples;
 using UnityEngine.EventSystems;
 using UnityStandardAssets.Utility;
-//using UnityStandardAssets.ImageEffects;
 using UnityEngine.UI;
 using SimpleJSON;
 using System.Linq;
@@ -155,7 +202,7 @@ public class Manager : MonoBehaviour
     public float percentFilled;
 
     public int totalNprotein = 0;
-    //public GameObject listHolder;
+
     public string current_name_below;
     public string last_active_current_name_below;
     public GameObject current_objectparent_below;
@@ -194,12 +241,8 @@ public class Manager : MonoBehaviour
     public float frequency = 4.0f;
     public float damping = 1.0f;
 
-    //const float k_Spring = 50.0f;
-    //const float k_Damper = 20.0f;
     const float k_Drag = 10.0f;
     const float k_AngularDrag = 5.0f;
-    //const float k_Distance = 0.2f;
-    //const bool k_AttachToCenterOfMass = false;
 
     private SpringJoint2D m_SpringJoint;
     private RigidbodyType2D bodyType;
@@ -216,14 +259,13 @@ public class Manager : MonoBehaviour
     public JSONNode AllIngredients;
     public JSONNode AllRecipes;
     public Dictionary<string, JSONNode> ingredient_node;
-    //public List<string> ingredients_names;
+
     public Dictionary<string, int> ingredients_names = new Dictionary<string, int>();
     public Dictionary<int, string> ingredients_ids = new Dictionary<int, string>();
     public List<string> additional_ingredients_names = new List<string>();
     public List<string> additional_compartments_names = new List<string>();
     public Dictionary<int, string> sprites_names = new Dictionary<int, string>();
     public Dictionary<string, Texture2D> sprites_textures = new Dictionary<string, Texture2D>();
-    //public List<GameObject> ingredients_prefab = new List<GameObject>();
 
     [HideInInspector]
     public List<Rigidbody2D> everything;
@@ -232,10 +274,10 @@ public class Manager : MonoBehaviour
     public Rigidbody2D[] bounded;
     public List<GameObject> selectedobject;
     public int rbCount = 0;
-    //public int rbSurfaceCount = 0;
+ 
     public int boundedCount = 0;
     public int MaxRigidBodies = 5000;
-    //public int Ninstance;
+
     public float scale_force = 1.0f;
     public float timeScale = 1.0f;
     public float unit_scale = 1.0f;
@@ -246,7 +288,6 @@ public class Manager : MonoBehaviour
     private bool prefab_changing_lock = false;
 
     #region materials 
-    //public Material spritedefault;
     public Material outline_material;
     public Material nucleicacid_material;
     public Material manager_prefab_material;
@@ -275,7 +316,7 @@ public class Manager : MonoBehaviour
     private int count_update = 0;
 
     public Text timescale_label;
-    //public bool show_time;
+
     public Text deltatime_labels;
     public float total_time;
     public float total_time_sec;
@@ -290,16 +331,10 @@ public class Manager : MonoBehaviour
     public float colorValue = 1.00f;
     public bool layerDirection = true;
     private float lerp_time = 0.0f;
-    //public float bicycle_radius = 1.0f;//should be equal the size of the membrane
 
     public GameObject PanelLeft;
     public GameObject PanelRight;
 
-    /*image effect*/
-    //private UnityStandardAssets.ImageEffects.Bloom bloomEffect;
-    //private UnityStandardAssets.ImageEffects.VignetteAndChromaticAberration vignetteEffect;
-    //private UnityStandardAssets.ImageEffects.BlurOptimized blurEffect;
-    //private UnityStandardAssets.ImageEffects.Grayscale grayscaleEffect;
     private static Manager _instance = null;
     public static Manager Instance
     {
@@ -313,7 +348,7 @@ public class Manager : MonoBehaviour
                 var go = GameObject.Find("manager");
                 if (go != null) DestroyImmediate(go);
 
-                go = new GameObject("manager"); //{ hideFlags = HideFlags.HideInInspector };
+                go = new GameObject("manager");
                 _instance = go.AddComponent<Manager>();
             }
             return _instance;
@@ -326,8 +361,14 @@ public class Manager : MonoBehaviour
     }
 
     public void TogglePhysicsSimulation(bool toggle)
-    {
-        Physics2D.autoSimulation = toggle;
+    {   if (toggle ==true)
+        {
+            Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
+        }
+        else 
+        {
+            Physics2D.simulationMode = SimulationMode2D.Script;
+        }
     }
 
     public string getDescription(string iname)
@@ -365,8 +406,6 @@ public class Manager : MonoBehaviour
 
     public string getDescriptionName(string iname)
     {
-        //Debug.Log("getDescriptionName "+iname);
-        //return description text given an ingredient name
         if (AllIngredients.GetAllKeys().Contains(iname))
         {
             if (AllIngredients[iname].GetAllKeys().Contains("name")) return AllIngredients[iname]["name"];
@@ -375,7 +414,7 @@ public class Manager : MonoBehaviour
         if (sname.Length > 1)
         {
             iname = iname.Split('.')[2];
-            //Debug.Log("getDescriptionName Split "+iname);
+
             if (AllIngredients.GetAllKeys().Contains(iname))
             {
                 if (AllIngredients[iname].GetAllKeys().Contains("name")) return AllIngredients[iname]["name"];
@@ -402,16 +441,6 @@ public class Manager : MonoBehaviour
                 }
             }
         }
-        /*var touse = below;
-        if (below == null) {
-            touse = last_other;
-        };
-        var props = touse.GetComponent<PrefabProperties>();
-        if (props.is_fiber && props.draw_background){
-            var parent = touse.transform.parent;
-            var dmc = parent.GetComponent<DrawMeshContour>();
-            if (dmc) dmc.ToggleDisplay(toggle);
-        }*/
     }
 
     public void changeDescription(GameObject another, SpriteRenderer otherImage)
@@ -427,7 +456,7 @@ public class Manager : MonoBehaviour
             colorChainToggle.transform.gameObject.SetActive(false);
         }
 
-        //Debug.Log("changeDescription props name "+props.name+" "+props.is_fiber.ToString());
+
         var n = props.name.Replace("_", " ");
         var sn = getDescriptionName(props.name);
         if (sn != "")
@@ -438,9 +467,9 @@ public class Manager : MonoBehaviour
         {
             n = props.common_name;
         }
-        //Debug.Log("changeDescription "+n);
+
         current_name_below = props.name;
-        //if (props.is_surface) n += " transmembranar";
+
         textCommonName.text = "<b>NAME:</b> " + n;
         textCompartment.text = "";
         textFunctionGroup.text = "";
@@ -472,7 +501,6 @@ public class Manager : MonoBehaviour
             textDescription.text = "<b>DESCRIPTION:</b> " + props.description;
         }
 
-        //Debug.Log("The iname for the prefab find is" + iname);
         if (props.is_fiber && props.draw_background)
         {
             //check if membrane
@@ -503,14 +531,11 @@ public class Manager : MonoBehaviour
                 tools_toggle_description_image2.sprite = chain2.sprite;
                 tools_toggle_description_image2.material = chain2.sharedMaterial;
             }
-            /*if (otherImage.sharedMaterial != null)
-            {
-                Description_Holder_HSV.GetComponent<ColorPicker>().Color = otherImage.sharedMaterial.color;
-            }*/
+
             var pw = tools_toggle_description_image.transform.parent.GetComponent<RectTransform>().rect.width;
             var ratio = (float)otherImage.sprite.texture.width / (float)otherImage.sprite.texture.height;
-            //var w = 150;//(snode.data.thumbnail)?snode.data.thumbnail.width:150;
-            var h = 210;//w/ratio;//(snode.data.thumbnail)?snode.data.thumbnail.height:150;
+
+            var h = 210;
             var w = h * ratio;
             //if w > max change the w
             if (w > pw)
@@ -525,8 +550,7 @@ public class Manager : MonoBehaviour
             }
             float cscale = Manager.Instance._canvas.transform.localScale.x;
             float scale2d = props.scale2d;
-            //float w = (float)tools_toggle_description_image.rectTransform.rect.width;
-            //float h = (float)tools_toggle_description_image.rectTransform.rect.height;
+
             var canvas_scale = w / tools_toggle_description_image.sprite.texture.width;
             var sc2d = scale2d * canvas_scale * cscale;
             if (props.is_surface)
@@ -538,7 +562,7 @@ public class Manager : MonoBehaviour
                 var p = tools_toggle_description_image.rectTransform.localPosition;
                 UI_manager.Get.IngredientSpriteMb.rectTransform.localPosition = new Vector3(p.x, offy, p.z);
                 var thickness = membrane_thickness * sc2d / cscale;//angstrom
-                //theSpriteMb.rectTransform.sizeDelta = new Vector2((int)w,42.0f);
+
                 //Adam's attempt to scale width of membrane image based on thickness.
                 float adjustedWidth = 620.0f * (thickness / 120); //620 x 120 is the original image size.
                 UI_manager.Get.IngredientSpriteMb.pixelsPerUnitMultiplier = 4.0f / (thickness * 2.0f / 60.0f);
@@ -562,7 +586,6 @@ public class Manager : MonoBehaviour
                 UI_manager.Get.IngredientSpriteFiberLeft.rectTransform.position = new Vector3(p.x - pixel_length / 2.0f, p.y, p.z);
                 UI_manager.Get.IngredientSpriteFiberRight.rectTransform.position = new Vector3(p.x + pixel_length / 2.0f, p.y, p.z);
                 tools_toggle_description_image.enabled = false;
-                //Debug.Log("props for "+props.name+" "+props.y_length.ToString()+" "+props.scale2d.ToString());
             }
             else
             {
@@ -575,54 +598,12 @@ public class Manager : MonoBehaviour
         {
             tools_toggle_description_image.sprite = null;
         }
-
-        //this call changeColor
-        //this should change the current name below
-
-
-        //Text name = Description_Holder.transform.GetChild(0).GetChild(0).GetChild(1).GetComponentInChildren<Text>();
-        //name.text = iname;
     }
-
-    /*public void changeDescription(GameObject other, Image otherImage)
-    {
-        Text description = textDescription;
-        var props = other.GetComponent<PrefabProperties>();
-        if (props.description == null)
-        {
-            description.text = getDescription(props.name);
-        }
-        else { description.text = props.description; }
-
-        //Debug.Log("The iname for the prefab find is" + iname);
-        //tools_toggle_description_image.sprite = other.sprite;
-        //tools_toggle_description_image.material = other.material;
-        //Description_Holder.transform.GetChild(0).GetComponent<ColorPicker>().Color = other.material.color;
-        //Text name = Description_Holder.transform.GetChild(0).GetChild(0).GetChild(1).GetComponentInChildren<Text>();
-        //name.text = iname;
-    }*/
 
     public void updateFiberPrefab(GameObject aPrefab)
     {
-        //CircleCollider2D[] allc = aPrefab.GetComponents<CircleCollider2D>();
-        //float scale_factor = aPrefab.GetComponent<PrefabProperties>().fiber_scale;
-        //Debug.Log("updateFiberPrefab " + aPrefab.name + " " + allc.Length.ToString());
-        //Vector2 pos1 = new Vector2(aPrefab.transform.position.x, aPrefab.transform.position.y) + (allc[0].offset * scale_factor);
-        //Vector2 pos2 = new Vector2(aPrefab.transform.position.x, aPrefab.transform.position.y) + (allc[allc.Length - 1].offset * scale_factor);
-        fiber_length = aPrefab.GetComponent<PrefabProperties>().fiber_length;// Vector2.Distance(pos1, pos2);
+        fiber_length = aPrefab.GetComponent<PrefabProperties>().fiber_length;
         fiber_closing_distance = fiber_length * 3.0f;
-        //myPrefab.SetActive(true);
-    }
-
-    public void SwitchPrefab(int dropItem, ListViewItem component)
-    {
-        //this is called from the user interface, swicth to draw directly
-        //TreeViewSampleComponent comp = component as TreeViewSampleComponent;
-        //var selected = ui.SelectedIndex;
-        //currentLabel = comp.Text;
-        //string name = currentLabel.text.Split(":".ToCharArray()[0])[0];
-        //SwitchPrefabFromName(name);
-
     }
 
     public void checkMaterial(GameObject toCheck, PrefabProperties props = null)
@@ -794,36 +775,6 @@ public class Manager : MonoBehaviour
 
     public Material createNewSpriteMaterial(string name)
     {
-        /*GameObject aPrefab;
-        if (!all_prefab.ContainsKey(name))
-        {
-            aPrefab = Resources.Load("Prefabs/" + name) as GameObject;
-            if (aPrefab == null)
-            {
-                Debug.Log(name + " was not found");
-                return null;
-            }
-            all_prefab.Add(name, aPrefab);
-        }
-        else
-            aPrefab =  all_prefab[name];
-       
-        //if (myPrefab.GetComponent<SpriteRenderer>().sharedMaterial != null) return myPrefab.GetComponent<SpriteRenderer>().sharedMaterial;
-        Shader shader;
-        if (aPrefab == null)
-        {
-            Debug.Log(name + " was not found");
-            return null;
-        }
-        if (aPrefab.tag == "NA")
-        {
-            shader = nucleicacid_material.shader;
-        }
-        else
-        {
-            shader = outline_material.shader;
-        }
-         */
         Shader shader;
         if (name.Contains("Draw DNA") || name.Contains("RNA"))
         {
@@ -833,22 +784,11 @@ public class Manager : MonoBehaviour
         {
             shader = outline_material.shader;
         }
-        //Shader shader = outline_material.shader;
+
         Material amat = new Material(shader);
         if (name.Contains("Draw DNA") || name.Contains("RNA"))
             amat.SetFloat("_Nucleic", 1.0f);
-        //gets the default color for the ingredient (if there is one) and applies it to the material.
-        //Debug.Log("The prefab for material creation is " + myPrefab.name);
-        //Adam Flag
-        //Color defaultColor = aPrefab.GetComponent<PrefabProperties>().Default_Sprite_Color;
-        //if (defaultColor != new Color(0, 0, 0, 0) && useDefaultColor)
-        //{
-        //    amat.color = defaultColor;
-        //}
-        //else
-        //{
-        //    amat.color = Color.white;
-        //}
+
         amat.color = Color.white;
         amat.name = name;
         if (ingredient_node.ContainsKey(name))
@@ -861,8 +801,6 @@ public class Manager : MonoBehaviour
                                         node["color"].AsArray[2].AsFloat);
             }
         }
-        //Debug.Log("The ingrediant name is " + name);
-        //Debug.Log("The material Name is " + amat.name);
         return amat;
     }
 
@@ -872,7 +810,6 @@ public class Manager : MonoBehaviour
         string aname = P.name;
         P.name = name;
         PrefabUtility.SaveAsPrefabAsset(P,path);
-        //PrefabUtility.CreatePrefab(path, P, ReplacePrefabOptions.ReplaceNameBased);
         P.name = aname;
 #endif
     }
@@ -881,11 +818,11 @@ public class Manager : MonoBehaviour
     {
         string prefab_name = aname;
         string img_name = aname;
-        int inde = ingredients_names[aname];// ingredients_names.IndexOf(aname);
+        int inde = ingredients_names[aname];
         if (sprites_names.ContainsKey(inde)) img_name = sprites_names[inde];
         var sprite = Resources.Load<Sprite>("Recipie/" + img_name);
         var prefab2d = new GameObject(prefab_name);
-        //prefab.transform.position = cam.ScreenToWorldPoint(new Vector3(screenShot.width, Screen.height / 2.0f, 20));
+
         SpriteRenderer sp = prefab2d.AddComponent<SpriteRenderer>();
         Material amat = new Material(outline_material.shader);
         sp.material = amat;
@@ -893,10 +830,8 @@ public class Manager : MonoBehaviour
         //automatic change of the properties based on type of element
         //get the properties from ingredient_node[aname];
         props.name = prefab_name;
-        //props.pdb_source = pdbid;
         sp.sprite = sprite;
         string path = "Assets/Resources/Prefabs/" + prefab_name + ".prefab";
-        //prefab2d.AddComponent<CircleCollider2D>();
         BuildPrefab(prefab2d, path, prefab_name);
         Destroy(prefab2d);
     }
@@ -981,13 +916,11 @@ public class Manager : MonoBehaviour
         Debug.Log("Build " + aname + " with sprite " + img_name);
         var sprite = GetSprite(img_name);
         var prefab2d = new GameObject(prefab_name);
-        //prefab.transform.position = cam.ScreenToWorldPoint(new Vector3(screenShot.width, Screen.height / 2.0f, 20));
         SpriteRenderer sp = prefab2d.AddComponent<SpriteRenderer>();
         Material amat = new Material(outline_material.shader);
         sp.material = amat;
         PrefabProperties props = prefab2d.AddComponent<PrefabProperties>();
         props.name = prefab_name;
-        //props.pdb_source = pdbid;
         sp.sprite = sprite;
         prefab2d.transform.position = new Vector3(10000, 10000, 10000);
         if (img_name.Contains("DNA"))
@@ -1003,7 +936,7 @@ public class Manager : MonoBehaviour
     {
         Manager.Instance.update_texture = true;
         var pref_name = name;
-        //myPrefab = Resources.Load("Prefabs/" + name) as GameObject;
+
         if (!all_prefab.ContainsKey(name))
         {
             Debug.Log("SwitchPrefabFromName " + name + " not found in all_prefab " + name.Split('.')[2]);
@@ -1025,8 +958,6 @@ public class Manager : MonoBehaviour
         {
             myPrefab = all_prefab[name];
         }
-        //myPrefab = Instantiate(Resources.Load("Prefabs/" + name, typeof(GameObject))) as GameObject;
-        //myPrefab.hideFlags = HideFlags.HideInHierarchy;
 
         if (current_prefab) GameObject.Destroy(current_prefab);
         if (!myPrefab) return;
@@ -1040,16 +971,12 @@ public class Manager : MonoBehaviour
             proteins_count.Add(name, 0);
             if (!proteins_ui_labels.ContainsKey(name)) proteins_ui_labels.Add(name, currentLabel);
         }
-        //Debug.Log("description for " + name);
         string D = getDescription(name);
-        //Debug.Log(D);
         current_name = name;
-        //myPrefab.GetComponent<Rigidbody2D>().sleepMode = RigidbodySleepMode2D.StartAsleep;
 
         current_prefab = Instantiate(myPrefab, transform.position, Quaternion.identity) as GameObject;
         current_prefab.transform.parent = transform;
         current_prefab.SetActive(true);
-        //current_prefab.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
         PrefabProperties props = current_prefab.GetComponent<PrefabProperties>();
         current_properties = props;
         fiber_persistence = props.persistence_length;
@@ -1107,7 +1034,7 @@ public class Manager : MonoBehaviour
             }
             else
             {
-                sr.sharedMaterial.color = prefab_materials[props.name].color;// props.Default_Sprite_Color;//doest his overwitte the color specified by user ?
+                sr.sharedMaterial.color = prefab_materials[props.name].color;
             }
         }
 
@@ -1117,35 +1044,22 @@ public class Manager : MonoBehaviour
                 Destroy(c);
             Destroy(current_prefab.GetComponent<BoxCollider2D>());
             updateFiberPrefab(myPrefab);
-            //activate the push away empty.
-            //pushAway.SetActive(true);
-            //pushAway.GetComponent<CircleCollider2D>().radius = props.circle_radius * 3.0f;
             drawMode = false;
             fiber_init = false;
             //enable the clockwise icon
-            clockwise.GetComponent<SpriteRenderer>().sharedMaterial.color = prefab_materials[props.name].color;// props.Default_Sprite_Color;
+            clockwise.GetComponent<SpriteRenderer>().sharedMaterial.color = prefab_materials[props.name].color;
             //clockwise is only for membrane
         }
         else
         {
-            //if (!surfaceMode && !boundMode) current_prefab.GetComponent<AddForce>().enabled = false;
             pushAway.SetActive(false);
             if (!surfaceMode && !boundMode) drawMode = true;
             else drawMode = false;
         }
-        //if (tools_toggle_image)
-        //{
-        //tools_toggle_image.sprite = current_prefab.GetComponent<SpriteRenderer>().sprite;
-        //tools_toggle_description_image.sprite = current_prefab.GetComponent<SpriteRenderer>().sprite;
-        //tools_toggle_image.fillMethod = Image.FillMethod.Radial360;
-        //tools_toggle_image.SetNativeSize();
-        //ools_toggle_image.transform.localScale = new Vector3(props.encapsulating_radius, props.encapsulating_radius, props.encapsulating_radius)*2/10.0f;
-        //}
         if (bucketMode)
             drawMode = false;
         else
         {
-            //ToggleContinuous(true);
             ToggleBrush.isOn = true;
         }
         other = null;
@@ -1155,7 +1069,6 @@ public class Manager : MonoBehaviour
         {
             myPrefab.SetActive(false);
         }
-        //ToggleContinuous(true);//toggle the ui ?
     }
 
     public void UpdateCountAndLabel(string name, GameObject newO)
@@ -1168,10 +1081,6 @@ public class Manager : MonoBehaviour
         {
             proteins_count.Add(name, 1);
         }
-        //int percentFilledInt = addToArea(newO);
-        //pb.Value = percentFilledInt;
-        //float parea = newO.GetComponent<PrefabProperties>().area;
-        //float perc = (((float)proteins_count[name] * parea) / (float)current_camera.GetComponent<buildBoundary>().boundryArea);
 
         if (currentLabel) currentLabel.text = name + ": " + " ( " + proteins_count[name].ToString() + " ) ";
     }
@@ -1179,20 +1088,16 @@ public class Manager : MonoBehaviour
     public void pin_object(GameObject newObject, bool pinn)
     {
         PrefabProperties p = newObject.GetComponent<PrefabProperties>();
-        //newObject.GetComponent<Rigidbody2D>().isKinematic = pinn;
         if (pinn) newObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
         else newObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
         p.ispined = pinn;
-        //p.UpdateOutlinePin(p.ispined);
         if (p.ispined)
         {
             pinned_object.Add(p);
-            //UndoRedo.addToUndoList(p);
         }
         else
         {
             pinned_object.Remove(p);
-            //UndoRedo.addToRedoList(p);
         }
     }
 
@@ -1246,39 +1151,20 @@ public class Manager : MonoBehaviour
         var Props = Prefab.GetComponent<PrefabProperties>();
         if (Prefab == null) return null;
         checkMaterial(Prefab);
-        //Prefab.GetComponent<Rigidbody2D>().sleepMode = RigidbodySleepMode2D.StartAsleep;
+
         Quaternion quat = Quaternion.AngleAxis(Zangle, Vector3.forward);
 
-        GameObject newObject = Instantiate(Prefab) as GameObject;//, new Vector3(pos.x, pos.y, 0.0f), quat) as GameObject;
+        GameObject newObject = Instantiate(Prefab) as GameObject;
         //extract the proper one
         PrefabProperties propsInstance = newObject.transform.GetComponent<PrefabProperties>();
 
         if (!surface)
         {
-            /*if (zorder > 0)
-            {
-                //var Object = newObject.transform.GetChild(zorder - 1).gameObject;
-                //Object.transform.parent = root.transform;
-                var allCh = newObject.GetComponentsInChildren<Transform>();
-                foreach (Transform tr in allCh)
-                {
-                    Destroy(tr.gameObject);
-                }
-                Destroy(newObject);
-                //newObject = Object;
-            }
-            else {
-                foreach (Transform childTransform in newObject.transform)
-                    Destroy(childTransform.gameObject);
-                newObject.transform.parent = root.transform;
-            }*/
-            //Add RigidBody to array for force calculation later.
 
             if (pos.z == 0.25f)
             {
                 newObject.layer = LayerMask.NameToLayer("Bottom Layer");
                 newObject.GetComponent<SpriteRenderer>().sortingOrder = -2;
-                //newObject.name = newObject.name + " (Bottom)";
                 if (propsInstance.isMultiChain)
                 {        
                     GameObject chain2Bottom = propsInstance.chains[0];
@@ -1291,7 +1177,6 @@ public class Manager : MonoBehaviour
             {
                 newObject.layer = LayerMask.NameToLayer("Middle Layer");
                 newObject.GetComponent<SpriteRenderer>().sortingOrder = -1;
-                //newObject.name = newObject.name + " (Middle)";
                 if (propsInstance.isMultiChain)
                 {        
                     GameObject chain2Middle = propsInstance.chains[0];
@@ -1307,7 +1192,6 @@ public class Manager : MonoBehaviour
                 if (propsInstance.isMultiChain)
                 {        
                     GameObject chain2Top = propsInstance.chains[0];
-                    //chain2Middle.transform.name = Props.name + " (Bottom)";
                     chain2Top.layer = LayerMask.NameToLayer("Top Layer");
                     chain2Top.GetComponent<SpriteRenderer>().sortingOrder = 0;
                 }
@@ -1386,8 +1270,6 @@ public class Manager : MonoBehaviour
             objectPosBottom = new Vector3(objectPos.x, objectPos.y, 0.250f);
         }
 
-        //Vector3 objectPosMiddle = new Vector3(objectPos.x, objectPos.y, 0.125f);
-        //Vector3 objectPosBottom = new Vector3(objectPos.x, objectPos.y, 0.250f);
         var layer = LayerMask.NameToLayer("Top Layer");
         var order = 0;
         if (layer_number_options == 1)
@@ -1402,11 +1284,10 @@ public class Manager : MonoBehaviour
         Quaternion quat = Quaternion.AngleAxis(Zangle, Vector3.forward);
 
         GameObject newObject = Instantiate(instancePrefab, objectPosTop, quat) as GameObject;
-        //if (allowUndoRedo) UndoRedo.addToUndoList(newObject);
         newObject.GetComponent<SpriteRenderer>().sortingOrder = order;
         /* all the follwoing should be in the prefabProperties start*/
         var Props = newObject.GetComponent<PrefabProperties>();
-        newObject.transform.name = Props.name;// + " (Top)";
+        newObject.transform.name = Props.name;
         newObject.transform.parent = root.transform;
         newObject.layer = layer;
         if (Props.isMultiChain)
@@ -1443,7 +1324,7 @@ public class Manager : MonoBehaviour
             toprb = newObject.AddComponent<Rigidbody2D>();
         }
         Props.RB = toprb;
-        toprb.collisionDetectionMode = detection_mode;// Continuous;
+        toprb.collisionDetectionMode = detection_mode;
         toprb.angularDrag = 20.0f;
         toprb.drag = 20.0f;
         toprb.sleepMode = RigidbodySleepMode2D.StartAsleep;
@@ -1459,11 +1340,9 @@ public class Manager : MonoBehaviour
         if (Props.layer_number == 2)
         {
             GameObject twoLayerBottom = Instantiate(newObject, objectPosBottom, quat) as GameObject;
-            //if (allowUndoRedo) UndoRedo.addToUndoList(twoLayerBottom);
             if (Props.isMultiChain);
             {
                 GameObject chain2 = twoLayerBottom.transform.GetComponent<PrefabProperties>().chains[0];
-                //chain2.transform.name = Props.name + " (Bottom)";
                 chain2.layer = LayerMask.NameToLayer("Bottom Layer");
                 chain2.GetComponent<SpriteRenderer>().sortingOrder = -2;
             }
@@ -1473,22 +1352,18 @@ public class Manager : MonoBehaviour
             twoLayerBottom.GetComponent<SpriteRenderer>().sortingOrder = -2;
             //Add Rigidbody2D to loop and count.
             Rigidbody2D rb = twoLayerBottom.GetComponent<Rigidbody2D>();
-            rb.collisionDetectionMode = detection_mode;//.Continuous;
-            //everything[rbCount] = rb;
+            rb.collisionDetectionMode = detection_mode;
             everything.Add(rb);
 
             rbCount++;
             name = instancePrefab.name;
             UpdateCountAndLabel(name, newObject);
-            //bottomRB = rb;
         }
         else
         {
             GameObject threeLayerMiddle = Instantiate(newObject, objectPosMiddle, quat) as GameObject;
-            //if (allowUndoRedo) UndoRedo.addToUndoList(threeLayerMiddle);
 
             GameObject threeLayerBottom = Instantiate(newObject, objectPosBottom, quat) as GameObject;
-            //if (allowUndoRedo) UndoRedo.addToUndoList(threeLayerBottom);
 
             threeLayerMiddle.transform.name = Props.name;// + " (Middle)";
             threeLayerBottom.transform.name = Props.name;// + " (Bottom)";
@@ -1515,24 +1390,20 @@ public class Manager : MonoBehaviour
 
             //Add Rigidbody2D to loop and count.
             Rigidbody2D rb = threeLayerMiddle.GetComponent<Rigidbody2D>();
-            rb.collisionDetectionMode = detection_mode;// Continuous;
-            //everything[rbCount] = rb;
+            rb.collisionDetectionMode = detection_mode;
             everything.Add(rb);
 
             rbCount++;
             name = instancePrefab.name;
             UpdateCountAndLabel(name, newObject);
-            //middleRB = rb;
 
             Rigidbody2D rb2 = threeLayerBottom.GetComponent<Rigidbody2D>();
-            rb.collisionDetectionMode = detection_mode;//.Continuous;
-            //everything[rbCount] = rb;
+            rb.collisionDetectionMode = detection_mode;
             everything.Add(rb2);
 
             rbCount++;
             string name2 = instancePrefab.name;
             UpdateCountAndLabel(name2, newObject);
-            //bottomRB = rb2;
         }
     }
 
@@ -1545,7 +1416,6 @@ public class Manager : MonoBehaviour
 
         //Add RigidBody to array for force calculation later.
         Rigidbody2D rb = newObject.GetComponent<Rigidbody2D>();
-        //everything[rbCount] = rb;
         everything.Add(rb);
 
         rbCount = rbCount + 1;
@@ -1553,7 +1423,7 @@ public class Manager : MonoBehaviour
         newObject.transform.parent = root.transform;
         if (HideInstance) newObject.hideFlags = HideFlags.HideInHierarchy;
         totalNprotein++;
-        string name = myPrefab.name;// currentLabel.text.Split(":".ToCharArray()[0])[0];
+        string name = myPrefab.name;
         UpdateCountAndLabel(name, newObject);
         //some of top lay get drawn on top of dna.
         if ((totalNprotein % layer_frequence * 10) == 0)
@@ -1563,7 +1433,6 @@ public class Manager : MonoBehaviour
         Transform t = newObject.transform.GetChild(0);
         t.gameObject.SetActive(false);//??
         rb = t.GetComponent<Rigidbody2D>();
-        //everything[rbCount] = rb;
         everything.Add(rb);
 
         rbCount = rbCount + 1;
@@ -1572,21 +1441,18 @@ public class Manager : MonoBehaviour
         if ((totalNprotein % layer_frequence) == 0)
         {
             t.gameObject.SetActive(true);
-            //t.gameObject.hideFlags = HideFlags.HideInHierarchy;
         }
         if (Nchild > 1)
         {
             Transform t2 = newObject.transform.GetChild(1);
             t2.gameObject.SetActive(true);
             rb = t2.GetComponent<Rigidbody2D>();
-            //everything[rbCount] = rb;
             everything.Add(rb);
 
             rbCount = rbCount + 1;
             if ((totalNprotein % layer_frequence * 2) == 0)
             {
                 t.gameObject.SetActive(true);
-                //t.gameObject.hideFlags = HideFlags.HideInHierarchy;
             }
         }
         List<Transform> trs = new List<Transform>();
@@ -1601,21 +1467,10 @@ public class Manager : MonoBehaviour
             }
         }
 
-        /*foreach (Transform child in newObject.transform)
-            {
-                child.gameObject.SetActive(false);
-                if ((totalNprotein % layer_frequence) == 0)
-                {
-                    child.gameObject.SetActive(true);
-                }
-            }*/
-        //Transform t = newObject.transform.GetChild(1);
-        //if (t) t.gameObject.SetActive(false);
     }
 
     public GameObject oneInstanceFiber(Vector3 start, Vector3 end, GameObject other = null)
     {
-        //Debug.Log(myPrefab.GetComponent<PrefabProperties>().sprite_ordered_switch);
         fiber_init = true;
         Vector3 midPoint = (start + end) / 2;
         Vector3 v2 = (end - start).normalized;
@@ -1685,7 +1540,6 @@ public class Manager : MonoBehaviour
         {
             if (fiber_parent.transform.childCount > 1)
                 other = fiber_parent.transform.GetChild(nchild - 1).gameObject;
-            //other.GetComponent<Rigidbody2D>().isKinematic= false;
         }
         else
         {
@@ -1712,14 +1566,6 @@ public class Manager : MonoBehaviour
             limits.max = props.hingeJoint_UPPERlimit;
             hinge.limits = limits;
             hinge.useLimits = props.fiber_hingeJoint_limits;
-            //st = 1;
-
-            /*
-            hinge.useMotor = true;
-            JointMotor2D mo = new JointMotor2D();
-            mo.motorSpeed = 200.0f;
-            hinge.motor = mo;
-            */
 
             //before connected the Body realign it
             fiber_quadOb.transform.rotation = other.transform.rotation;
@@ -1737,22 +1583,20 @@ public class Manager : MonoBehaviour
             spring.enableCollision = aprefab.GetComponent<PrefabProperties>().enableCollision;
             spring.autoConfigureDistance = false;
             CircleCollider2D[] allc = aprefab.GetComponents<CircleCollider2D>();
-            spring.distance = fiber_length * (i + 1);// + UnityEngine.Random.Range(0.0f, fiber_length / 10.0f);
-            spring.anchor = Vector2.zero;// allc[1].offset;
-            spring.connectedAnchor = Vector2.zero;//allc[0].offset;
+            spring.distance = fiber_length * (i + 1);
+            spring.anchor = Vector2.zero;
+            spring.connectedAnchor = Vector2.zero;
             spring.frequency = (props.persistence_strength != -1.0f) ? props.persistence_strength : 10.0f / ((i + 2) / 2.0f);
             if (i == 0) spring.frequency = 50.0f;
             spring.dampingRatio = 0.5f;
         }
         Vector3 objectPos = pos;
-        //var layer = LayerMask.NameToLayer("Top Layer");
+
         SetupLayer(fiber_quadOb);
         if (layer_number_options == 3)
         {
             fiber_quadOb.transform.position = new Vector3(objectPos.x, objectPos.y, 0.0f);
             PrefabProperties pr = fiber_quadOb.GetComponent<PrefabProperties>();
-            //if (pr.nucleic_acid_depth)
-            //{
             if (!props.draw_background)
             {
                 NucleicAcidDepthLerp(fiber_quadOb);
@@ -1771,28 +1615,13 @@ public class Manager : MonoBehaviour
         if (fiber_parent.transform.childCount <= fiber_persistence) return;
         Transform first = fiber_parent.transform.GetChild(0);
         Transform last = fiber_parent.transform.GetChild(fiber_parent.transform.childCount - 1);
-        /*
-        if ((fiber_distanceJoint) && (fiber_parent.transform.childCount > 1))
-        {
-            DistanceJoint2D joint = last.gameObject.AddComponent<DistanceJoint2D>();
-            joint.enabled = true;
-            joint.connectedBody = first.gameObject.GetComponent<Rigidbody2D>();
-            joint.autoConfigureConnectedAnchor = false;
-            joint.autoConfigureDistance = false;
-            joint.distance = fiber_distance;
-            joint.enableCollision = myPrefab.GetComponent<PrefabProperties>().enableCollision;
-            CircleCollider2D[] allc = myPrefab.GetComponents<CircleCollider2D>();
-            joint.anchor = allc[1].offset;
-            joint.connectedAnchor = allc[0].offset;
-        }
-        */
+
         if ((fiber_hingeJoint) && (fiber_parent.transform.childCount > 1))
         {
             HingeJoint2D hinge = last.gameObject.AddComponent<HingeJoint2D>();
             hinge.enabled = true;
             hinge.autoConfigureConnectedAnchor = false;
-            //hinge.autoConfigureDistance = false;
-            //hinge.distance = distance;
+
             hinge.enableCollision = myPrefab.GetComponent<PrefabProperties>().enableCollision;
             CircleCollider2D[] allc = myPrefab.GetComponents<CircleCollider2D>();
             hinge.anchor = allc[1].offset;
@@ -1807,17 +1636,7 @@ public class Manager : MonoBehaviour
             first.transform.rotation = last.transform.rotation;
             hinge.connectedBody = first.gameObject.GetComponent<Rigidbody2D>();
         }
-        /*
-        int start = 0;
-        if ((fiber_distanceJoint) && (fiber_parent.transform.childCount > 1))
-        {
-            start = 1;
-        }
-        if ((fiber_hingeJoint) && (fiber_parent.transform.childCount > 1))
-        {
-            start = 1;
-        }
-        */
+
         int nchild = fiber_parent.transform.childCount;
         int st = 0;
         int end = nchild - 1;
@@ -1825,11 +1644,9 @@ public class Manager : MonoBehaviour
         PrefabProperties prop = myPrefab.GetComponent<PrefabProperties>();
         for (int l = 0; l < fiber_persistence; l++)
         {
-            int i = 0;//i<l+1
+            int i = 0;
             for (int k = l; k >= 0; k--)
             {
-                //if (i < i + 1) continue;
-                //Debug.Log((st + i).ToString()+" attached to "+ (end - k).ToString());
                 var ch1 = fiber_parent.transform.GetChild(st + i);
                 var ch2 = fiber_parent.transform.GetChild(end - k);
                 SpringJoint2D spring = ch2.gameObject.AddComponent<SpringJoint2D>();
@@ -1839,9 +1656,9 @@ public class Manager : MonoBehaviour
                 spring.enableCollision = enableCollision;
                 spring.autoConfigureDistance = false;
                 CircleCollider2D[] allc = myPrefab.GetComponents<CircleCollider2D>();
-                spring.distance = fiber_length * (l + 1);// + UnityEngine.Random.Range(-fiber_length / 10.0f, fiber_length / 10.0f);
-                spring.anchor = Vector2.zero;// allc[1].offset;
-                spring.connectedAnchor = Vector2.zero;//allc[0].offset;
+                spring.distance = fiber_length * (l + 1);
+                spring.anchor = Vector2.zero;
+                spring.connectedAnchor = Vector2.zero;
                 spring.frequency = (prop.persistence_strength != -1.0f) ? prop.persistence_strength : 10.0f / ((l + 2) / 2.0f);
                 spring.dampingRatio = 0.5f;
                 i++;
@@ -1854,7 +1671,6 @@ public class Manager : MonoBehaviour
         if (myPrefab.GetComponent<PrefabProperties>().draw_background)
         {
             DrawMeshContour dmc = fiber_parent.AddComponent<DrawMeshContour>();
-            //dmc.matToApply = myPrefab.GetComponent<PrefabProperties>().background_mat;
             Material m = myPrefab.GetComponent<PrefabProperties>().background_mat;
             dmc.matToApply = new Material(m);
             dmc.iname = myPrefab.name;
@@ -1867,7 +1683,7 @@ public class Manager : MonoBehaviour
 
     public void DestroyInstance(GameObject toDestroy)
     {
-        string name = toDestroy.name.Split(" (".ToCharArray())[0];//.Split("".ToCharArray()[0])[0];
+        string name = toDestroy.name.Split(" (".ToCharArray())[0];
         Rigidbody2D player = toDestroy.GetComponent<Rigidbody2D>();
         if (everything.Contains(player))
         {
@@ -1939,11 +1755,11 @@ public class Manager : MonoBehaviour
         Debug.Log("Deleted protein name: " + name);
         rbCount--;
         float area = toDestroy.GetComponent<PrefabProperties>().area; ;
-        //Debug.Log(area.ToString());
+
         proteinArea -= area;
         float screenArea = current_camera.GetComponent<buildBoundary>().boundryArea;
         int percentFilledInt = (int)((proteinArea / screenArea) * 100);
-        //pb.Value = percentFilledInt;
+
         float perc = (((float)proteins_count[name] * area) / (float)current_camera.GetComponent<buildBoundary>().boundryArea);
         if (proteins_ui_labels[name]) proteins_ui_labels[name].text = name + ": " + perc.ToString("P") + " ( " + proteins_count[name].ToString() + " ) ";
         GameObject.DestroyImmediate(toDestroy);
@@ -1961,7 +1777,7 @@ public class Manager : MonoBehaviour
     void OnEnable()
     {
         proteins_ui_labels = new Dictionary<string, Text>();
-        everything = new List<Rigidbody2D>();//[MaxRigidBodies];
+        everything = new List<Rigidbody2D>();
         bounded = new Rigidbody2D[MaxRigidBodies];
         prefab_materials = new Dictionary<string, Material>();
         proteins_count = new Dictionary<string, int>();
@@ -2033,20 +1849,7 @@ public class Manager : MonoBehaviour
         System.IO.Directory.CreateDirectory(PdbLoader.DefaultDataDirectory);
         System.IO.Directory.CreateDirectory(Path.Combine(PdbLoader.DefaultDataDirectory, "proteins"));
         System.IO.Directory.CreateDirectory(Path.Combine(PdbLoader.DefaultDataDirectory, "images"));
-        /*image effect check*/
-        /*bloomEffect = current_camera.GetComponent<Bloom>();
-        if (bloomEffect == null) bloomEffect = current_camera.gameObject.AddComponent<Bloom>();
-        vignetteEffect = current_camera.GetComponent<VignetteAndChromaticAberration>();
-        if (vignetteEffect == null) vignetteEffect = current_camera.gameObject.AddComponent<VignetteAndChromaticAberration>();
-        blurEffect = current_camera.GetComponent<BlurOptimized>();
-        if (blurEffect == null) blurEffect = current_camera.gameObject.AddComponent<BlurOptimized>();
-        grayscaleEffect = current_camera.GetComponent<Grayscale>();
-        if (grayscaleEffect == null) grayscaleEffect = current_camera.gameObject.AddComponent<Grayscale>();*/
-        //apply default value
-        GlowActive();
-        VignetteActive();
-        DepthBlurActive();
-        GreyScaleActive();
+
         //check for any dataDirectories in PlayerPref
         if (PlayerPrefs.HasKey("version"))
         {
@@ -2065,25 +1868,22 @@ public class Manager : MonoBehaviour
         }
         version_label.text = "cellPAINT\n" + version;
         CheckDir();
-        //PdbLoader.DataDirectories.Add(Application.dataPath + "/../Data/images/");
         UnityEngine.Random.InitState(_Seed);
         selected_prefab = new List<string>();
         selectedobject = new List<GameObject>();
         proteins_count = new Dictionary<string, int>();
         fiberDrawPinned_Cooldown = new Dictionary<GameObject, int>();
-        //ui.OnSelect.AddListener(SwitchPrefab);
         dragger = current_camera.GetComponent<DragRigidbody2D>();
         eraser = GetComponent<ErasePrefab>();
-        //pb = GameObject.Find("Progressbar").GetComponent<Progressbar>();
+
         totalNprotein = 0;
 
         pushAway = transform.GetChild(1).gameObject;
         pushAway.SetActive(false);
         proteins_ui_labels = new Dictionary<string, Text>();
-        //everything = new Rigidbody2D[MaxRigidBodies];
+
         everything = new List<Rigidbody2D>();
         bounded = new Rigidbody2D[MaxRigidBodies];
-        //prefab_materials = new Dictionary<string, Material>();
 
         pinned_object = new List<PrefabProperties>();
         attached_object = new List<PrefabProperties>();
@@ -2091,11 +1891,9 @@ public class Manager : MonoBehaviour
         fibers_instances = new List<List<GameObject>>();
         surface_objects = new List<GameObject>();
         sprites_textures.Clear();
-        //all_prefab = new Dictionary<string, GameObject>();
         secondCamera.SetReplacementShader(secondShader, "RenderType"); ////Replace shader
 
         StartCoroutine(DiffuseRBandSurfaceRoutine());
-        //Camera.current.nearClipPlane = 5.0f;
         recipeUI.LoadRecipe();
         if (!m_SpringJoint)
         {
@@ -2104,7 +1902,6 @@ public class Manager : MonoBehaviour
             m_SpringJoint = go.AddComponent<SpringJoint2D>();
             body.bodyType = RigidbodyType2D.Static;
         }
-        //if (allowUndoRedo) UndoRedo = this.GetComponent<SimpleUndoRedo>();
     }
 
     void drawInstance()
@@ -2113,32 +1910,24 @@ public class Manager : MonoBehaviour
         //Need to factor in the radii of the brush if it has one.
         if (Input.GetMouseButton(0))
         {
-            //transform.position
             if (HitMembrane()) return;
         }
         var props = current_prefab.GetComponent<PrefabProperties>();
-        delta_threshold = props.circle_radius * props.local_scale * 2.0f;//m_ext.x/2.0f;//circle_radius;
+        delta_threshold = props.circle_radius * props.local_scale * 2.0f;
         if (props.is_Group)
         {
             delta_threshold = current_prefab.GetComponent<PrefabGroup>().getRadius();
         }
-        float delta_mouse = delta * unit_scale;// Vector3.Distance(prev_mousePos, transform.position);
+        float delta_mouse = delta * unit_scale;
         bool input_event = (Input.GetMouseButton(0) && delta_mouse > 0) || Input.GetMouseButtonDown(0);
         if (Input.GetMouseButtonDown(0)) endPos = startPos = transform.position;
-        //Debug.Log(delta_mouse);
-        /*stop = false;
-        int nb = myPrefab.GetComponent<PrefabProperties>().number_placed;
-        int max = myPrefab.GetComponent<PrefabProperties>().maxNumber;other
-        if (max != 0){ 
-            if (nb >= max)
-            stop = true;
-        } */
+
         float delta_capped = delta;
         if (delta_capped >= 100) delta_capped = 100;
         sprayModulous = Mathf.Round(1 / delta * 18);
         if (sprayModulous <= 0) sprayModulous = 0;
         if (sprayModulous >= 18) sprayModulous = 18;
-        bool test = true;//Input.GetMouseButtonDown(0) ? true : (fixedCount % sprayModulous == 0);//this is base on number of frame ?
+        bool test = true;
         var cname = props.compartment;//expected compartment
         if ((input_event) && test)
         {
@@ -2154,11 +1943,9 @@ public class Manager : MonoBehaviour
 
                     Vector3 offset = UnityEngine.Random.insideUnitCircle * radiusPerClick;
                     if (nbInstancePerClick == 1) offset = Vector3.zero;
-                    //OneInstance(transform.position + offset);
                     if (props.is_Group)
                     {
                         GroupManager.Get.CreateInstanceGroup(myPrefab, transform.position + offset, Quaternion.identity, root.transform);
-                        //if (vr_input) VR_InputManager.Get.VR_Haptic_Right(); //Adam Mac Build
                     }
                     else
                     {
@@ -2173,26 +1960,21 @@ public class Manager : MonoBehaviour
 
     void align_to_mouse(GameObject ob)
     {
-        //Vector2 cur_pos;
+
         var drag = ob.GetComponent<RectTransform>();
-        //RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvas.transform as RectTransform, Input.mousePosition, _canvas.worldCamera, out cur_pos);
-        //drag.position = _canvas.transform.TransformPoint(cur_pos);       
         CanvasScaler scaler = _canvas.GetComponentInParent<CanvasScaler>();
-        //drag.anchoredPosition = new Vector2(Input.mousePosition.x * scaler.referenceResolution.x / Screen.width, Input.mousePosition.y * scaler.referenceResolution.y / Screen.height);
         drag.position = new Vector2((mousePositionInViewPort.x) * Screen.width, mousePositionInViewPort.y * Screen.height);
-        //drag.position = mousePositionInViewPort;
     }
 
     void drawInstanceSurface()
     {
-        //float delta = Vector3.Distance(prev_mousePos, transform.position);
         var props = current_prefab.GetComponent<PrefabProperties>();
         delta_threshold = props.circle_radius * props.local_scale * 2.0f;//circle_radius;
         if (props.is_Group)
         {
             delta_threshold = current_prefab.GetComponent<PrefabGroup>().getRadius();
         }
-        float delta_mouse = delta * unit_scale;//
+        float delta_mouse = delta * unit_scale;
         bool input_event = (Input.GetMouseButton(0) && delta_mouse > delta_threshold) || Input.GetMouseButtonDown(0);
         if (Input.GetMouseButtonDown(0)) endPos = startPos = transform.position;
         float delta_capped = delta;
@@ -2227,7 +2009,6 @@ public class Manager : MonoBehaviour
                     PrefabProperties propsInstance = newObject.transform.GetComponent<PrefabProperties>();
                     totalNprotein++;
                     int percentFilledInt = addToArea(newObject);
-                    //pb.Value = percentFilledInt;
                     SpriteRenderer asr = newObject.GetComponent<SpriteRenderer>();
                     if (asr)
                     {
@@ -2242,20 +2023,17 @@ public class Manager : MonoBehaviour
                     Vector3 objectPos = current_prefab.transform.position;
                     Vector3 objectPosMiddle = new Vector3(objectPos.x, objectPos.y, 0.125f);
                     Vector3 objectPosBottom = new Vector3(objectPos.x, objectPos.y, 0.250f);
-                    //var layer = LayerMask.NameToLayer("Top Layer");
                     if (layer_number_options == 1)
                     {
                         objectPos = objectPosMiddle;
-                        //layer = LayerMask.NameToLayer("Middle Layer");
                     }
                     if (layer_number_options == 2)
                     {
                         objectPos = objectPosBottom;
-                        //layer = LayerMask.NameToLayer("Bottom Layer");
                     }
 
                     newObject.transform.rotation = current_prefab.transform.rotation;
-                    newObject.transform.position = objectPos;// new Vector3(current_prefab.transform.position.x, current_prefab.transform.position.y, 0.0f) + newpos;
+                    newObject.transform.position = objectPos;
                     newObject.transform.parent = root.transform;
                     if (HideInstance) newObject.hideFlags = HideFlags.HideInHierarchy;
 
@@ -2265,23 +2043,18 @@ public class Manager : MonoBehaviour
                     rb.collisionDetectionMode = detection_mode;
                     rb.angularDrag = 20.0f;
                     rb.drag = 20.0f;
-                    //rb.sleepMode = RigidbodySleepMode2D.StartAsleep;
                     rb.interpolation = RigidbodyInterpolation2D.Interpolate;
 
                     //cant put them in everything otherwise need to change the save/load function
-                    //everything[rbCount] = rb;
-                    //rbCount++;
 
                     UpdateCountAndLabel(props.name, newObject);
-                    //if (allowUndoRedo) UndoRedo.addToUndoList(newObject);
                     surface_objects.Add(newObject);
 
-                    if (layer_number_options == 3)//(layer_number_draw)//props.surface_secondLayer)
+                    if (layer_number_options == 3)
                     {
                         // create the same instance a layer bellow.
                         GameObject newObject2 = Instantiate(myPrefab, Vector3.zero, Quaternion.identity) as GameObject;
                         totalNprotein++;
-                        //int percentFilledInt = addToArea(newObject2);
                         newObject2.layer = 21; //transmb2
                         SpriteRenderer asr2 = newObject2.GetComponent<SpriteRenderer>();
                         if (asr2)
@@ -2290,8 +2063,6 @@ public class Manager : MonoBehaviour
                             asr2.sortingOrder = 0;
                             if (asr2.sharedMaterial == null) asr2.sharedMaterial = prefab_materials[prefabName];
                         }
-                        //newObject2.GetComponent<SpriteRenderer>().sortingOrder = 0;
-                        //newObject2.transform.GetChild(1).gameObject.layer = 15;//onlymembrane
                         newObject2.transform.rotation = current_prefab.transform.rotation;
                         newObject2.transform.position = new Vector3(current_prefab.transform.position.x, current_prefab.transform.position.y, 0.125f);
                         newObject2.transform.parent = root.transform;
@@ -2303,7 +2074,6 @@ public class Manager : MonoBehaviour
                         rb2.angularDrag = 20.0f;
                         rb2.drag = 20.0f;
                         UpdateCountAndLabel(props.name, newObject2);
-                        //if (allowUndoRedo) UndoRedo.addToUndoList(newObject2);
                         surface_objects.Add(newObject2);
                     }
                     startPos = endPos;
@@ -2379,7 +2149,6 @@ public class Manager : MonoBehaviour
                     if (HideInstance) newObject.hideFlags = HideFlags.HideInHierarchy;
                     //attach to other
                     AttachToPartner(newObject, otherSurf.gameObject);
-                    //newObject.GetComponent<PrefabProperties>().AttachToPartner(otherSurf.gameObject);
                 }
             }
         }
@@ -2393,10 +2162,6 @@ public class Manager : MonoBehaviour
         bool is_fiber = partner.GetComponent<PrefabProperties>().is_fiber;
         Debug.Log("partner fiber ?" + is_fiber.ToString());
         AttachToPartnerSimple(instance_to_attach, partner);
-        //if (is_fiber)
-        //    AttachToPartnerFiber(instance_to_attach, partner);
-        //else 
-        //    AttachToPartnerSimple(instance_to_attach, partner);
     }
 
     public void AttachToPartnerSimple(GameObject instance_to_attach, GameObject partner)
@@ -2415,12 +2180,6 @@ public class Manager : MonoBehaviour
         PrefabProperties props = instance_to_attach.GetComponent<PrefabProperties>();
         GameObject chain_parent = partner.transform.parent.gameObject;
         int chain_index = partner.transform.GetSiblingIndex();
-
-        /*if (props.iterate_bound)
-        {
-            //shouldnt get there anyway
-            return;// IterateAlongChain(instance_to_attach,partner, chain_parent, chain_index);
-        }*/
 
         //find the closet chain index number to the gap length of the prefab.
         int searchScope = chain_index + props.gap_between_bound;
@@ -2485,24 +2244,19 @@ public class Manager : MonoBehaviour
         Vector3 entry_to_align = transform.TransformDirection(props.entry);
         Vector3 exit_to_align = transform.TransformDirection(props.exit);
         //start align to entry
-        //Vector3 other_orientation = start.transform.TransformDirection(Vector3.right);
 
         if (start)
         {
             Quaternion q = Quaternion.FromToRotation(Vector3.right, entry_to_align);
             start.GetComponent<Rigidbody2D>().rotation = q.eulerAngles.z;
         }
-        //start.transform.rotation = q;
         //end align to exit
-        //her_orientation = end.transform.TransformDirection(Vector3.right);
 
         if (end)
         {
             Quaternion q1 = Quaternion.FromToRotation(Vector3.right, exit_to_align);
             end.GetComponent<Rigidbody2D>().rotation = -q1.eulerAngles.z;
         }
-
-        //end.transform.rotation = q1; 
     }
 
     private void fixPersistenseOnRemove(int elemRemoved, GameObject chain_parent, int persistence_length)
@@ -2522,18 +2276,11 @@ public class Manager : MonoBehaviour
                 }
             }
         }
-        /*GameObject start = chain_parent.transform.GetChild(elemRemoved - 1).gameObject;
-        GameObject end = chain_parent.transform.GetChild(elemRemoved + 1).gameObject;
-        foreach (var jts in start.GetComponentsInChildren<SpringJoint2D>())
-        {
-            Destroy(jts);
-        }*/
     }
 
     public GameObject AddFiberParent(string name)
     {
         Debug.Log("load ressource Prefabs/" + name);
-        //myPrefab = Resources.Load("Prefabs/" + name) as GameObject;
         if (!all_prefab.ContainsKey(name))
         {
             Debug.Log("AddFiberParent " + name + " not found in all_prefab");
@@ -2553,7 +2300,6 @@ public class Manager : MonoBehaviour
         }
         Debug.Log(name + " loaded as " + myPrefab.name);
         checkMaterial(myPrefab);
-        //myPrefab.GetComponent<Rigidbody2D>().sleepMode = RigidbodySleepMode2D.StartAsleep;
         Debug.Log(name + " checked as " + myPrefab.name);
         updateFiberPrefab(myPrefab);
         fiber_persistence = myPrefab.GetComponent<PrefabProperties>().persistence_length;
@@ -2616,7 +2362,7 @@ public class Manager : MonoBehaviour
         Vector3 ChainZ = Vector3.zero;
         int startLayerOrder = 0;
         Color prefabRGB = Color.white;
-        if (chain_index > 0)//first eleme
+        if (chain_index > 0)//first element
         {
             start = chain_parent.transform.GetChild(chain_index - 1).gameObject;
             ChainZ = start.transform.position;
@@ -2693,7 +2439,6 @@ public class Manager : MonoBehaviour
             jtmotor.motorSpeed = -1000.0f;
             jtmotor.maxMotorTorque = 1000.0f;
             jt.motor = jtmotor;
-            //jt.useMotor = false;
         }
         if (end)
         {
@@ -2704,16 +2449,6 @@ public class Manager : MonoBehaviour
             jt1.connectedAnchor = coll_fiber[0].offset;
         }
 
-        /*
-        JointAngleLimits2D limits1 = jt.limits;
-        limits1.min = -5.0f-150.0f;
-        limits1.max = 5.0f-90.0f;
-        jt1.limits = limits1;
-        jtmotor.motorSpeed = -1000.0f;
-        jt1.motor = jtmotor;
-        //jt1.useMotor = false;
-        */
-
         Vector2 pos = collStart.offset + (collEnd.offset - collStart.offset) / 2.0f;
         for (int i = 0; i < props.persistence_length; i++)
         {
@@ -2723,14 +2458,12 @@ public class Manager : MonoBehaviour
             spring1.enableCollision = false;
             spring1.autoConfigureDistance = false;
             spring1.distance = fiber_length * (i + 1) - 1;
-            //spring1.anchor = coll[1].offset;
             spring1.connectedAnchor = pos;
             spring1.connectedBody = rb;
             spring1.frequency = (props.persistence_strength != -1.0f) ? props.persistence_strength : 10.0f / ((i + 2) / 2.0f);
         }
         instance_to_attach.transform.parent = chain_parent.transform;
         instance_to_attach.transform.SetSiblingIndex(chain_index);
-        //chain_index += count_removed;
     }
 
     public GameObject restoreAttachments(string name, Vector3 pos, float Zangle,
@@ -2741,7 +2474,7 @@ public class Manager : MonoBehaviour
         checkMaterial(Prefab);
         Prefab.GetComponent<Rigidbody2D>().sleepMode = RigidbodySleepMode2D.StartAsleep;
         Quaternion quat = Quaternion.AngleAxis(Zangle, Vector3.forward);
-        GameObject instance_to_attach = Instantiate(Prefab) as GameObject;//, new Vector3(pos.x, pos.y, 0.0f), quat) as GameObject;
+        GameObject instance_to_attach = Instantiate(Prefab) as GameObject;
         instance_to_attach.transform.parent = fiber_parent.transform;
         instance_to_attach.transform.position = pos;
         instance_to_attach.transform.rotation = quat;
@@ -2809,8 +2542,7 @@ public class Manager : MonoBehaviour
         return instance_to_attach;
     }
 
-    public GameObject restoreAttachFiber(Vector3 pos, float Zangle,
-                                        GameObject instance_to_attach)
+    public GameObject restoreAttachFiber(Vector3 pos, float Zangle, GameObject instance_to_attach)
     {
         PrefabProperties props = myPrefab.GetComponent<PrefabProperties>();
         Quaternion rotation = Quaternion.AngleAxis(Zangle, Vector3.forward);
@@ -2849,8 +2581,6 @@ public class Manager : MonoBehaviour
             hinge.enabled = true;
             hinge.connectedBody = b.gameObject.GetComponent<Rigidbody2D>();
             hinge.autoConfigureConnectedAnchor = false;
-            //hinge.autoConfigureDistance = false;
-            //hinge.distance = distance;
             hinge.enableCollision = myPrefab.GetComponent<PrefabProperties>().enableCollision;
             CircleCollider2D[] allc = myPrefab.GetComponents<CircleCollider2D>();
             hinge.anchor = allc[1].offset;
@@ -2862,7 +2592,6 @@ public class Manager : MonoBehaviour
             hinge.limits = limits;
             hinge.useLimits = false;
         }
-        //closePersistence();
         b.gameObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
     }
 
@@ -2871,12 +2600,11 @@ public class Manager : MonoBehaviour
         RaycastHit2D hit = raycast();
         if (hit)
         {
-            if (//hit.collider.gameObject.layer == 13 || //DNA
+            if (
                 hit.collider.gameObject.layer == 11 || //Membrane
                 hit.collider.gameObject.layer == 20 || //compartment
                 hit.collider.gameObject.layer == 24)   //membraneBot
             {
-                //Debug.Log("skip "+hit.collider.gameObject.layer.ToString());
                 return true;
             }
             else
@@ -2884,12 +2612,12 @@ public class Manager : MonoBehaviour
                 //check for border
                 if (hit.collider.gameObject.layer == 25) return true;//do we click on boundary
                 else return false;
-                //Debug.Log("didnt skip  "+hit.collider.gameObject.layer.ToString());
+
             }
         }
         else
         {
-            //Debug.Log("no HIT");
+
             return false;
         }
     }
@@ -2900,7 +2628,6 @@ public class Manager : MonoBehaviour
         bool stop = false;
         if (Input.GetMouseButton(0))
         {
-            //transform.position
             if (HitMembrane())
             {
                 //if self pass below or above ?
@@ -2911,7 +2638,6 @@ public class Manager : MonoBehaviour
         if (fiber_init)
         {
             int nb = fiber_parent.transform.childCount;
-            //var props = myPrefab.GetComponent<PrefabProperties>();
             float L = props.fiber_length * nb;
             int max = props.maxNumber;
             float maxL = props.maxLength;
@@ -2932,7 +2658,6 @@ public class Manager : MonoBehaviour
                 //what the compartment below mouse               
                 fiber_init = true;
                 //check if close to another chain start/end 
-                //Debug.Log("attach to "+fiber_attachto.ToString());
                 if ((fiber_attachto != null) && (!fiber_attachto.gameObject.transform.parent.name.Contains(myPrefab.name))) { fiber_attachto = null; }
                 if (fiber_attachto != null)
                 {
@@ -2947,7 +2672,7 @@ public class Manager : MonoBehaviour
                 }
                 else
                 {
-                    //mousePos = cam.ScreenToWorldPoint(mousePosx);
+
                     endPos = startPos = transform.position;
                     fiber_parent = new GameObject();
                     if (props.fiber_Middle)
@@ -2974,7 +2699,7 @@ public class Manager : MonoBehaviour
                     fiber_parents.Add(fiber_parent);
                     fibers_instances.Add(new List<GameObject>());
                     count_removed = 0;
-                    //if (allowUndoRedo) UndoRedo.addToUndoList(fiber_parent);
+
                 }
             }
         }
@@ -2995,12 +2720,10 @@ public class Manager : MonoBehaviour
 
             fiber_nextNameNumber = 0; //Reset the chain number after Button up.
 
-            float D = Vector3.Distance(first.position, transform.position);// last.position);
+            float D = Vector3.Distance(first.position, transform.position);
             //fiber_current_distance = D;
             if (D < fiber_closing_distance && props.closing)
             {
-                //Debug.Log(first.name);
-                //Debug.Log(last.name);
                 closePersistence();
             }
             else
@@ -3043,7 +2766,7 @@ public class Manager : MonoBehaviour
             {
                 Vector3 cStart = startPos;
                 Vector3 cEnd = cStart + (endPos - startPos).normalized * fiber_length;
-                int n = Mathf.RoundToInt(lineLength / fiber_length);//Mathf.Min(2,Mathf.RoundToInt(lineLength / fiber_length));//Mathf.RoundToInt(lineLength / fiber_length);
+                int n = Mathf.RoundToInt(lineLength / fiber_length);
                 for (int i = 0; i < n; i++)
                 {
                     var spx = current_camera.WorldToViewportPoint(cEnd);
@@ -3062,18 +2785,18 @@ public class Manager : MonoBehaviour
     }
 
     void drawFiberToClose()
-    {// Transform current, GameObject fiber_parent) {
+    {
         //first test current fiber_parents
         //test against pther parents chains
         if (fiber_parent.transform.childCount < 3) return;
         Transform first = fiber_parent.transform.GetChild(0);
         Transform last = fiber_parent.transform.GetChild(fiber_parent.transform.childCount - 1);
         float D = Vector3.Distance(first.position, transform.position);
-        //fiber_current_distance = D;
+
         if (D < fiber_closing_distance)
-        { //show something{
+        { 
             fiber_lines.enabled = true;
-            DrawLineFiberClose(first.transform.position, last.transform.position);//
+            DrawLineFiberClose(first.transform.position, last.transform.position);
         }
         else
         {
@@ -3083,7 +2806,7 @@ public class Manager : MonoBehaviour
 
     bool checkFiberDistance(Transform first, Transform last)
     {
-        float D = Vector3.Distance(first.position, transform.position);// last.position);
+        float D = Vector3.Distance(first.position, transform.position);
         return D < fiber_closing_distance;
     }
 
@@ -3105,12 +2828,11 @@ public class Manager : MonoBehaviour
         int k, kk, pos, a;
         double[] result = new double[n * 2];
         int kstart = start;
-        //kstart = UnityEngine.Random.Range(1, 5000);
         for (k = kstart, pos = 0; k < (n + kstart); k++)
         {
             u = 0;
             ip = (float)1.0 / p1;                           // recipical of p1
-            for (p = ip, kk = k; kk != 0; p *= ip, kk /= p1) // kk = (int)(kk/p1)
+            for (p = ip, kk = k; kk != 0; p *= ip, kk /= p1)
             {
                 if ((a = kk % p1) != 0)
                 {
@@ -3119,7 +2841,7 @@ public class Manager : MonoBehaviour
             }
             v = 0;
             ip = (float)1.0 / p2;                           // recipical of p2
-            for (p = ip, kk = k; kk != 0; p *= ip, kk /= p2)  // kk = (int)(kk/p2)
+            for (p = ip, kk = k; kk != 0; p *= ip, kk /= p2) 
             {
                 if ((a = kk % p2) != 0)
                 {
@@ -3148,7 +2870,6 @@ public class Manager : MonoBehaviour
         int xLocation = Mathf.RoundToInt(x * compartment_texture.width);
         int yLocation = Mathf.RoundToInt(y * compartment_texture.height);
         Color color = compartment_texture.GetPixel(xLocation, yLocation);//compartment color
-        //Debug.Log("GetCurrentCompartmentBelow "+color.r.ToString()+" "+xLocation.ToString()+" "+yLocation.ToString());
         if (color == RenderSettings.fogColor) return "exterior";
         else if (SecondCameraScript.Get.mapping.ContainsKey(color.r))
             return SecondCameraScript.Get.mapping[color.r];
@@ -3161,7 +2882,7 @@ public class Manager : MonoBehaviour
     void fillCompartments()
     {
         float delta = Vector3.Distance(prev_mousePos, transform.position);
-        bool input_event = Input.GetMouseButtonDown(0);//(Input.GetMouseButton(0) && delta > 0.005f) || Input.GetMouseButtonDown(0);
+        bool input_event = Input.GetMouseButtonDown(0);
         if (input_event)
         {
             //get current compartment
@@ -3181,13 +2902,12 @@ public class Manager : MonoBehaviour
                     prefab = Build(name);
                 selected_pref.Add(prefab);
                 checkMaterial(prefab);
-                //prefab.GetComponent<Rigidbody2D>().sleepMode = RigidbodySleepMode2D.StartAsleep;
                 Ninstance += default_bucket_count;
                 nb_per_obejct.Add(default_bucket_count);
             }
 
             count_used = UnityEngine.Random.Range(1, 50000);
-            double[] data = haltonSequence(Ninstance, 2, 3, count_used + _Seed);// rbCount + _Seed);
+            double[] data = haltonSequence(Ninstance, 2, 3, count_used + _Seed);
 
             for (int i = 0; i < Ninstance; i++)
             {
@@ -3209,34 +2929,6 @@ public class Manager : MonoBehaviour
                     float Zangle = UnityEngine.Random.value * Mathf.PI * Mathf.Rad2Deg;
                     Quaternion quat = Quaternion.AngleAxis(Zangle, Vector3.forward);
                     InstanceAndCreatePrefab(selected_pref[obji], wPoint);
-
-                    //newObject.transform.parent = root.transform;
-                    //newObject.SetActive(true);
-
-                    //add new object and children to everything for "brownian" motion calculation.
-                    //Rigidbody2D rb = newObject.GetComponent<Rigidbody2D>();
-                    //everything[rbCount] = rb;
-                    //rbCount = rbCount + 1;
-
-                    /*int Nchild = newObject.transform.childCount;
-                    if (Nchild == 0) continue;
-
-                    Transform t = newObject.transform.GetChild(0);
-                    t.gameObject.SetActive(false);
-                    rb = t.GetComponent<Rigidbody2D>();
-                    everything[rbCount] = rb;
-                    rbCount = rbCount + 1;
-                    t.gameObject.SetActive(true);
-
-                    if (Nchild > 1)
-                    {
-                        Transform t2 = newObject.transform.GetChild(1);
-                        t2.gameObject.SetActive(true);
-                        rb = t2.GetComponent<Rigidbody2D>();
-                        everything[rbCount] = rb;
-                        rbCount = rbCount + 1;
-                    }
-                    */
 
                     nb_per_obejct[obji]--;
                     if (nb_per_obejct[obji] <= 0)
@@ -3289,7 +2981,6 @@ public class Manager : MonoBehaviour
                        select o;
         foreach (var o in family)
         {
-            //GameObject.Destroy(o.gameObject);
             DestroyInstance(o.gameObject);
         }
     }
@@ -3343,15 +3034,6 @@ public class Manager : MonoBehaviour
         {
             DestroyHierarchyFamily(name);
         }
-        /*var family =
-                       from o in Manager.Instance.root.transform.GetComponentsInChildren<PrefabProperties>()
-                       where o.name.Replace("(Clone)","") == name
-                       select o;
-        foreach (var o in family)
-        {
-            //GameObject.Destroy(o.gameObject);
-            DestroyInstance(o.gameObject);
-        }*/
     }
 
     public void highLightHierarchy(Transform parent, bool toggle)
@@ -3418,10 +3100,8 @@ public class Manager : MonoBehaviour
     public void DestroyHierarchy(Transform parent)
     {
         if (!parent) return;
-        //DestroyInstance(other);?
         foreach (Transform ch in parent.transform)
         {
-            //GameObject.Destroy(ch.gameObject);
             DestroyInstance(ch.gameObject);
         }
         if (fiber_parents.Contains(parent.gameObject))
@@ -3430,7 +3110,6 @@ public class Manager : MonoBehaviour
             fibers_instances.RemoveAt(index);
             fiber_parents.Remove(parent.gameObject);
         }
-        //GameObject.Destroy(parent.gameObject);
         GameObject.DestroyImmediate(parent.gameObject);
     }
 
@@ -3464,14 +3143,12 @@ public class Manager : MonoBehaviour
             print(hit);
             print(hit.collider);
             print("attach two objects");
-            //bool _shift_up = Input.GetKeyUp(KeyCode.LeftShift);
 
             if (other)
             {
                 CleanOutline();
                 below = null;
             }
-            //print("Found an object - distance: " + hit.distance + " " + hit.collider.gameObject.name);
             other = hit.collider.gameObject;
             Vector3 otherHitPos = hit.point;
             Rigidbody2D rb = other.GetComponent<Rigidbody2D>();
@@ -3488,7 +3165,6 @@ public class Manager : MonoBehaviour
                 p = other.transform.parent.GetComponent<PrefabProperties>();
                 other = other.transform.parent.gameObject;
             }
-            //Debug.Log("found " + other.name+" "+p.name);
             if (!Input.GetMouseButton(0))
             {
                 //mouse over event only
@@ -3523,7 +3199,7 @@ public class Manager : MonoBehaviour
                 }
                 HighLightAttached1();
             }
-            if (!Input.GetMouseButtonDown(0)) return;//!Input.GetMouseButtonDown(0)) return;
+            if (!Input.GetMouseButtonDown(0)) return;
             selected_instance = other;
             last_other = other;
             if (other == null) return;
@@ -3565,24 +3241,10 @@ public class Manager : MonoBehaviour
                     jt1.autoConfigureDistance = false;
                     jt1.distance = distance_attach;
 
-                    //if (allowUndoRedo) UndoRedo.addToUndoList(jt1);
-
                     //Do we need this list now?
                     attached.Add(attach1);
                     attached.Add(attach2);
                     attachments.Add(jt1);
-
-                    //Add objects to the highlight manager's lists.
-                    /* HighlightManager.Instance.pinned_to_bonds.Add(jt1);
-                     if (!HighlightManager.Instance.pinned_to_objects.Contains(attach1)) HighlightManager.Instance.pinned_to_objects.Add(attach1);
-                     if (!HighlightManager.Instance.pinned_to_objects.Contains(attach2)) HighlightManager.Instance.pinned_to_objects.Add(attach2);
-                     if (!HighlightManager.Instance.pinnedTo_Highlighted || !HighlightManager.Instance.pinnedTo_toHighlight)
-                     {
-                         //HighlightManager.Instance.pinnedTo_toHighlight = true;
-                         //HighlightManager.Instance.HighlightDecision();
-                     }
-                     HighlightManager.Instance.UpdatePinToBondPositions_cb();
-                     */
 
                     attach1.GetComponent<PrefabProperties>().UpdateOutline(false);
                     attach2.GetComponent<PrefabProperties>().UpdateOutline(false);
@@ -3602,22 +3264,7 @@ public class Manager : MonoBehaviour
         CleanOutline();
         if ((!hit))
         {
-            /*if (other && !GroupManager.Get.current_selections.Contains(other))
-            {
-                if (group_interact_mode) highLightHierarchy(other.transform, false);
-                else {
-                    var props = other.GetComponent<PrefabProperties>();
-                    if (props ) 
-                    {
-                        if (props.is_fiber) highLightHierarchy(other.transform.parent, false);
-                        else if (props.is_Group&& group_interact_mode) highLightHierarchy(other.transform, false);
-                        else {
-                            props.outline_width = current_camera.orthographicSize;
-                            props.UpdateOutline(true);
-                        }
-                    }
-                }
-            }*/
+
         }
         else
         {
@@ -3634,10 +3281,6 @@ public class Manager : MonoBehaviour
                         if (!GroupManager.Get.current_selections.Contains(other.transform.parent.gameObject))
                             GroupManager.Get.current_selections.Add(other.transform.parent.gameObject);
                     }
-                    //else if (pg || p.is_Group){
-                    //    if (!GroupManager.Get.current_selections.Contains(other))
-                    //            GroupManager.Get.current_selections.Add(other);                           
-                    //}
                     else
                     {
                         var family =
@@ -3727,100 +3370,12 @@ public class Manager : MonoBehaviour
                     //this is dangerous.
                     //need to build mutliple one....
                     GhostManager.Get.RemoveGhost(ob);
-                    //ghostInstance(other);//toggle off everything 
                 }
                 return;
             };
             PrefabProperties p = other.GetComponent<PrefabProperties>();
             PrefabGroup pg = other.GetComponentInParent<PrefabGroup>();
-            /*
-            PrefabGroup pgc = hit.collider.gameObject.GetComponentInParent<PrefabGroup>();
-            var collider = hit.collider.gameObject;
-            if (group_interact_mode && pgc != null){
-                collider = pgc.gameObject;
-            }
-            if (other && other != collider) {
-                if (!GroupManager.Get.current_selections.Contains(other))
-                {
-                    if (group_interact_mode) highLightHierarchy(other.transform, false);
-                    else {
-                        var props = other.GetComponent<PrefabProperties>();
-                        if (props ) {
-                            if (props.is_fiber) highLightHierarchy(other.transform.parent, false);
-                            else if (props.is_Group&& group_interact_mode) highLightHierarchy(other.transform, false);
-                            else {
-                                props.outline_width = current_camera.orthographicSize;
-                                props.UpdateOutline(true);
-                            }
-                        }
-                    }
-                }
-                if (other.name.StartsWith("ghost_")) {
-                //highlight path
-                    other.GetComponent<Ghost>().ToggleHighlight(false);
-                }
 
-            }
-            other = collider;//hit.collider.gameObject;
-            if (other.name.StartsWith("ghost_")) {
-                //highlight path
-                other.GetComponent<Ghost>().ToggleHighlight(true);
-                if (Input.GetMouseButtonDown(0)){
-                    //this is dangerous.
-                    //need to build mutliple one....
-                    GhostManager.Get.RemoveGhost(other);
-                    //ghostInstance(other);//toggle off everything 
-                }
-                return;
-            };
-            
-            PrefabProperties p = other.GetComponent<PrefabProperties>();
-            PrefabGroup pg = other.GetComponentInParent<PrefabGroup>();
-            //Debug.Log("hitting something in the update " + other.name+" "+(pb==null).ToString()+" "+(p==null).ToString());//cube ?
-            if (pg == null && p == null)
-            {
-                if (other.transform.parent)
-                {
-                    p = other.transform.parent.GetComponent<PrefabProperties>();
-                    other = other.transform.parent.gameObject;
-                    pg = other.GetComponentInParent<PrefabGroup>();
-                }
-            }
-            if (pg!=null) {
-                other = pg.gameObject;
-                p = other.GetComponent<PrefabProperties>();
-            }
-            if (p == null && pg == null) {
-                CleanOutline();
-                Debug.Log("no PrefabProperties and no PrefabGroup " + other.name);
-                return;
-            }
-            if (p)
-            {
-                p.UpdateOutline(true);
-                if (p.is_fiber) {
-                    highLightHierarchy(other.transform.parent, true);
-                }
-                if (p.is_Group && group_interact_mode) highLightHierarchy(other.transform, true);
-                if (_shift) {
-                    if (p.is_fiber)
-                    {
-                        //highlight the all chain parent
-                        highLightHierarchy(other.transform.parent,true);
-                    }
-                    else if (pg || p.is_Group){
-                        //hightlight of group of this type
-                        highLightGroupType(pg, true);
-                    }
-                    else {
-                        //find everyother object of same type
-                        highLightProteinType(p.name,true);
-                    }                    
-                }
-            }
-            if (pg && group_interact_mode ){
-                highLightHierarchy(pg.transform, true);
-            }*/
             below = other;
             if (Input.GetMouseButtonDown(0))
             {
@@ -3879,15 +3434,12 @@ public class Manager : MonoBehaviour
                 below = null;
             }
         }
-        if (_enter)//(vr_input && VR_InputManager.Get.VR_Right_TwoAxis_ClickDown())
+        if (_enter)
         {
             GhostManager.Get.AddGhost(GroupManager.Get.current_selections);
             togglePinOutline(true);
             GroupManager.Get.current_selections.Clear();
             highLightHierarchy(root.transform, false);
-            //ghostGselection();
-            //togglePinOutline(true);
-            //UpdateGhostArea();//first time doesnt work ?
         }
     }
 
@@ -3901,13 +3453,10 @@ public class Manager : MonoBehaviour
         if (touse == null) return;
         var p = touse.GetComponent<PrefabProperties>();
         if (p == null) return;
-        //current_name_below = p.name;
-        //current_objectparent_below = touse.transform.parent.gameObject;
         if (Description_Holder.activeInHierarchy)
         {
             changeDescription(touse, touse.GetComponent<SpriteRenderer>());
         }
-        //last_active_current_name_below = current_name_below;
     }
 
     void OverHighLight(GameObject object_hit, bool group_interact)
@@ -3998,19 +3547,15 @@ public class Manager : MonoBehaviour
 
     void pindragInstance()
     {
-        //if (pin_collider_mode) return;
         RaycastHit2D hit = raycast();
         //check the shift keyEvent
-        //if (Input.GetKeyUp(KeyCode.LeftShift)) CleanOutline();
         bool _shift = Input.GetKey(KeyCode.LeftShift);
         bool _ctrl = Input.GetKey(KeyCode.LeftControl);
 
         group_interact_mode = Input.GetKey(KeyCode.LeftControl);
-        //bool _shift_up = Input.GetKeyUp(KeyCode.LeftShift);
         if (!hit && Input.GetMouseButtonDown(0)) selected_instance = null;
         if (!hit && Input.GetMouseButton(0))
         {
-            //selected_instance = null;
 
         }
         else if (Input.GetMouseButtonUp(0) && dragMode && (_shift || moveWithMode))
@@ -4070,11 +3615,6 @@ public class Manager : MonoBehaviour
                 CleanOutline();
                 return;
             }
-            //if (!hit.collider.gameObject.GetComponent<Rigidbody2D>())
-            //{
-            //    CleanOutline();
-            //    return;
-            //}
             //this assigne the gameobject other
             if (m_SpringJoint.connectedBody != null) return;
             if (hit && !moveWithMode)
@@ -4111,13 +3651,10 @@ public class Manager : MonoBehaviour
                 Description_Holder.SetActive(true);
                 Description_Holder_HSV.SetActive(true);
                 Description_Holder_HSV.GetComponent<ColorPicker>().active = true;
-                //Description_Holder.transform.GetChild(0).GetComponent<ColorPicker>().active = true;
-                /**/
                 if (props == null) other = other.transform.parent.gameObject;
                 current_name_below = other.GetComponent<PrefabProperties>().name;
                 current_objectparent_below = other.transform.parent.gameObject;
 
-                //Debug.Log("The name of other in SceneManeger is " + other);
                 changeDescription(other, other.GetComponent<SpriteRenderer>());
             }
             else if (pinMode)
@@ -4174,8 +3711,6 @@ public class Manager : MonoBehaviour
                             //translate all ghost holding object
                             other.GetComponent<Ghost>().changeParent(transform);
                             other.transform.parent = transform;
-                            //current_objectparent_below = other.transform.parent.gameObject;
-                            //other.transform.parent = transform;
                         }
                         else if (_shift)
                         {
@@ -4349,20 +3884,16 @@ public class Manager : MonoBehaviour
     {
 
         if (!below) return;
-        //Debug.Log(below.name);
+        
         PrefabProperties p = below.GetComponent<PrefabProperties>();
 
         if (p.ispined == false)
         {
             p.RB.bodyType = RigidbodyType2D.Static;
-            //if (allowUndoRedo) UndoRedo.addToUndoList(p);
-            //Debug.Log(below + " is pinned");
         }
         else
         {
             p.RB.bodyType = RigidbodyType2D.Dynamic;
-            //if (allowUndoRedo) UndoRedo.addToRedoList(p);
-            //Debug.Log(below + " is unpinned");
         }
 
 
@@ -4487,88 +4018,6 @@ public class Manager : MonoBehaviour
         }
     }
 
-    /*public void UpdateGhostArea(){
-        return;
-        //we can grow our canvas and make this region collider.
-        //circle or box or polygon ?
-        if (ghostArea == null) {
-            ghostArea = new GameObject("ghostArea");
-        }
-        ghostArea.transform.localScale = new Vector3(1,1,1);
-        //if we want a mesh 
-        Rigidbody2D rb = ghostArea.GetComponent<Rigidbody2D>();
-        if (rb == null) rb = ghostArea.AddComponent<Rigidbody2D>();
-        rb.bodyType = RigidbodyType2D.Static;
-        //update the collider
-        //ghostArea.GetComponents<Collider2D>();
-        PolygonCollider2D box = ghostArea.GetComponent<PolygonCollider2D>();
-        if (box) DestroyImmediate(box);
-        box = ghostArea.AddComponent<PolygonCollider2D>();
-        //gather list of points
-        Bounds b = new Bounds(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
-        //gather the points
-        //List<IntPoint> pts = new List<IntPoint>();
-        List<Vector2> pts = new List<Vector2>();
-        for (int i = 0; i < everything.Count; i++)
-        {
-            Rigidbody2D player = everything[i];
-            if (player == null) continue;
-            if (!player.simulated) {
-                //pts.Add(new IntPoint(Mathf.CeilToInt(player.position.x),Mathf.CeilToInt(player.position.y)));
-                pts.Add(new Vector2(Mathf.CeilToInt(player.position.x),Mathf.CeilToInt(player.position.y)));
-                b.Encapsulate(player.position);
-            }
-        }
-        for (int i = 0; i < surface_objects.Count; i++)
-        {
-            Rigidbody2D player = surface_objects[i].GetComponent<Rigidbody2D>();
-            if (player == null) continue;
-            if (!player.simulated) {
-                //pts.Add(new IntPoint(Mathf.CeilToInt(player.position.x),Mathf.CeilToInt(player.position.y)));
-                pts.Add(new Vector2(Mathf.CeilToInt(player.position.x),Mathf.CeilToInt(player.position.y)));
-                b.Encapsulate(player.position);
-            }
-        }
-        for (int i=0;i< fibers_instances.Count;i++ ){
-            for (int j=0;j<fibers_instances[i].Count;j++ ){
-                Rigidbody2D player = fibers_instances[i][j].GetComponent<Rigidbody2D>();
-                if (player == null) continue;
-                if (!player.simulated) {
-                    //pts.Add(new IntPoint(Mathf.CeilToInt(player.position.x),Mathf.CeilToInt(player.position.y)));
-                    pts.Add(new Vector2(Mathf.CeilToInt(player.position.x),Mathf.CeilToInt(player.position.y)));
-                    b.Encapsulate(player.position);
-                }
-            }
-        }
-        ghostArea.transform.position = b.center;
-        if (pts.Count == 0) {
-            Debug.Log("didnt found any point");
-            box.pathCount = 0;
-        }
-        else {
-            //cluster
-            List<int> labels = new List<int>();
-            int cluster_count = Helper.ComputeCluster(pts,cluster_radius, ref labels);
-            Debug.Log(labels);
-            Debug.Log(cluster_count);
-            List<List<IntPoint>> cl_points = new List<List<IntPoint>>();
-            for (var i=0;i < cluster_count;i++){
-                cl_points.Add(new List<IntPoint>());
-            }
-            for (var i=0;i < labels.Count;i++){
-                var l = labels[i];
-                cl_points[l].Add(new IntPoint(Mathf.CeilToInt(pts[i].x),Mathf.CeilToInt((pts[i].y))));
-            }
-            box.pathCount = cluster_count;
-            for (var i=0;i < cluster_count;i++){
-                List<Vector2> hull = Helper.ComputeConvexHull(cl_points[i],b.center,false);
-                box.SetPath(i,hull);
-            }
-            //box.offset = new Vector2(b.center.x,b.center.y);
-        }
-        //ghostArea.transform.localScale = new Vector3(1.1f,1.1f,1.1f);
-    }*/
-
     private void DrawLine(Vector3 start, Vector3 end)
     {
         lines.SetPosition(0, new Vector3(start.x, start.y, -10));
@@ -4588,18 +4037,6 @@ public class Manager : MonoBehaviour
 
         fiber_lines.SetPosition(0, new Vector3(start.x, start.y, -10));
         fiber_lines.SetPosition(1, new Vector3(end.x, end.y, -10));
-        /*
-        float alpha = 1.0f;
-        Gradient gradient = new Gradient();
-        gradient.mode = GradientMode.Fixed;
-        
-        gradient.SetKeys(
-            new GradientColorKey[] { new GradientColorKey(Color.cyan, 0.25f), new GradientColorKey(Color.blue, 0.5f), new GradientColorKey(Color.cyan, 0.75f), new GradientColorKey(Color.blue, 1.0f)},
-            new GradientAlphaKey[] { new GradientAlphaKey(alpha, 1.0f), new GradientAlphaKey(alpha, 1.0f) }
-            );
-        fiber_lines.colorGradient = gradient;
-        //lines.sharedMaterial.color = color;
-        */
     }
 
     void drawFiberToCloseOther(GameObject fiber_element)
@@ -4659,7 +4096,6 @@ public class Manager : MonoBehaviour
         bool fmode = (fiber_parent != null);
         bool closed = false;
         bool closing = current_properties.closing;
-        //Debug.Log(m_SpringJoint.connectedBody);
         var oldDrag = m_SpringJoint.connectedBody.drag;
         var oldAngularDrag = m_SpringJoint.connectedBody.angularDrag;
         m_SpringJoint.connectedBody.drag = k_Drag;
@@ -4672,13 +4108,10 @@ public class Manager : MonoBehaviour
 
         while (Input.GetMouseButton(0))
         {
-            //var ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            //Input.mousePosition
             Vector3 mousePos = Input.mousePosition;
             mousePos.z = 10.0f;       // we want 2m away from the camera position
-                                      //Debug.Log(mousePos);
-            m_SpringJoint.transform.position = mainCamera.ScreenToWorldPoint(mousePos);// ray.GetPoint(distance);
-            //Debug.DrawLine(m_SpringJoint.connectedBody.transform.position,m_SpringJoint.transform.position, Color.yellow);
+            m_SpringJoint.transform.position = mainCamera.ScreenToWorldPoint(mousePos);
+
             DrawLine(m_SpringJoint.connectedBody.gameObject.transform.TransformPoint(m_SpringJoint.connectedAnchor), m_SpringJoint.transform.position);//,0.25f,20.0f,1,false);
             //if fiber should check for closing
             if (fmode && closing)
@@ -4712,21 +4145,17 @@ public class Manager : MonoBehaviour
             m_SpringJoint = go.AddComponent<SpringJoint2D>();
             body.bodyType = RigidbodyType2D.Static;
         }
-        //Debug.Log(m_SpringJoint);
-        //m_SpringJoint.transform.position = point;
+
         m_SpringJoint.autoConfigureDistance = false;
         m_SpringJoint.anchor = Vector3.zero;
         m_SpringJoint.connectedAnchor = other.transform.InverseTransformPoint(point);
 
-        //m_SpringJoint.spring = k_Spring;
-        //m_SpringJoint.damper = k_Damper;
-        //m_SpringJoint.maxDistance = k_Distance;
         m_SpringJoint.connectedBody = other.GetComponent<Rigidbody2D>();
         fiber_parent = null;
         if (other.GetComponent<PrefabProperties>() != null)
         {
             current_properties = other.GetComponent<PrefabProperties>();
-            // other.GetComponent<PrefabProperties>().UpdateOutline(true);
+
             if (current_properties.is_fiber)
             {
                 fiber_parent = other.transform.parent.gameObject;
@@ -4736,16 +4165,9 @@ public class Manager : MonoBehaviour
                 m_SpringJoint.connectedAnchor = Vector3.zero;
             }
         }
-        /*  else {
-              //check if the parent has the outline
-              if (other.transform.parent.GetComponent<PrefabProperties>() != null) {
-                  other.transform.parent.GetComponent<PrefabProperties>().UpdateOutline(true);
-              }
-          }
-        */
         bodyType = m_SpringJoint.connectedBody.bodyType;
         m_SpringJoint.connectedBody.bodyType = RigidbodyType2D.Dynamic;
-        //Debug.Log(m_SpringJoint.connectedBody);
+
         m_SpringJoint.distance = 0.0f;
         StartCoroutine("DragObject");
     }
@@ -4778,8 +4200,6 @@ public class Manager : MonoBehaviour
                 {
                     bound_lines_holder = new GameObject("lines_holder");
                     bound_lines = new List<LineRenderer>();
-                    //bound_lines.startColor = spriteRenderer.sharedMaterial.color;
-                    //bound_lines.endColor = jt.connectedBody.GetComponent<SpriteRenderer>().sharedMaterial.color;
                 }
                 bound_lines_holder.SetActive(true);
                 int nLines = bound_lines.Count;
@@ -4790,7 +4210,6 @@ public class Manager : MonoBehaviour
                 for (int i = 0; i < attachments.Count; i++)
                 {
                     var jt = attachments[i];
-                    //if (jt.gameObject.GetComponent<PrefabProperties>().is_fiber) continue;
                     LineRenderer line;
                     if (i < nLines)
                     {
@@ -4859,7 +4278,7 @@ public class Manager : MonoBehaviour
             if (safety_frame > 2)
             {
                 if (TogglePhysics) TogglePhysics.isOn = false;
-                Physics2D.autoSimulation = false;
+                Physics2D.simulationMode = SimulationMode2D.Script; //like saying false, but has an overide.
                 //pop up warning
                 if (message_panel)
                 {
@@ -4876,28 +4295,23 @@ public class Manager : MonoBehaviour
         {
             safety_frame = 0;
         }
-        //JitterEverything();
-        //DiffuseEverything();
-        //DiffuseRBandSurface();
         ShowAttachmentsLineRenderer();
         if (!myPrefab) return;
         mouseDown = false;
         Vector3 mousePos = Input.mousePosition;
-        mousePos.z = mousePos.z + (-current_camera.transform.position.z);// + zLevel;       // place the object at 0.00z position + whatever zLevel it wants to be at.
+        mousePos.z = mousePos.z + (-current_camera.transform.position.z);     // place the object at 0.00z position + whatever zLevel it wants to be at.
         Vector3 objectPos = current_camera.ScreenToWorldPoint(mousePos);
         mousePositionInViewPort = current_camera.ScreenToViewportPoint(mousePos); ////mouse location in view port
         transform.position = objectPos;
         clockwise.SetActive(fiberMode);
         //if mouse over ui return
         //this doesnt work with the Canvas Scaler in the build.
-        //if (uiHolder.rect.Contains(Input.mousePosition) && sideBarExpanded) return;
         Vector2 lp;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(uiHolder, Input.mousePosition, null, out lp);
         if (uiHolder.rect.Contains(lp)) return;
         //if (mask_ui) return;//problem then it doesnt catch the buttonUp
         if (fiberMode)
         {
-            //selected_instance = null;
             drawInstanceFiber();
         }
         else if (dragMode || pinMode || infoMode || eraseMode)
@@ -4920,30 +4334,25 @@ public class Manager : MonoBehaviour
         else if (bindMode)
         {
             if (mask_ui) return;
-            //HighlightManager.Instance.TogglePinToBond(true);
-            //if (!HighlightManager.Instance.pinnedTo_Highlighted) HighlightManager.Instance.HighlightPinnedTo();
             attachTwoObjects();
             UpdateInfo();
         }
-        //else if (eraseMode) pindragInstance();// eraseInstance();
+
         else if (surfaceMode)
         {
             if (mask_ui) return;
-            //selected_instance = null;
             UdateSurfacePrefab();
             drawInstanceSurface();
         }
         else if (boundMode)
         {
             if (mask_ui) return;
-            //selected_instance = null;
             UdateBoundToPrefab();
             drawInstanceBoundToFiber();
         }
         else if (drawMode)
         {
             if (mask_ui) return;
-            //selected_instance = null;
             drawInstance();
         }
         else if (bucketMode)
@@ -4973,13 +4382,10 @@ public class Manager : MonoBehaviour
         {
             delta = 0;
         }
-
-
     }
 
     void FixedUpdate()
     {
-        //DiffuseEverything();
 
         if (fiberDrawPinned_Cooldown != null & drawFiberPinned)
         {
@@ -5004,9 +4410,7 @@ public class Manager : MonoBehaviour
             allrb[i].AddForce(UnityEngine.Random.insideUnitCircle * scale_force * reduce);
             yield return null;
         }
-        //yield return new WaitForEndOfFrame();
         StartCoroutine(jitterCoroutine());
-        //yield return null;
     }
 
     public void SetTimeScale(float value)
@@ -5014,9 +4418,6 @@ public class Manager : MonoBehaviour
         timeScale = value;
         timescale_label.text = timeScale.ToString();
     }
-
-    //public GameObject times_labels;
-    //public Text deltatime_labels;
 
     void DiffuseEverything()
     {
@@ -5037,7 +4438,6 @@ public class Manager : MonoBehaviour
         Debug.Log("dTime " + dTime.ToString());
         if (Input.GetMouseButton(0)) return;
         even = !even;
-        //even = (count_update % 2)==0;
 
         //handle the jitter through the arrary of rigid bodies.
         if (temperature == 0) return;
@@ -5064,7 +4464,7 @@ public class Manager : MonoBehaviour
             else if (p.is_surface)
             {
                 direction_random = direction_random * Mathf.Sqrt((4.0f * 8.0e-5f * dTime));//in nm
-                dtheta = 0;// dtheta * Mathf.Sqrt((2.0f * 0.184f * dTime) / (R * R * R * R));//in rad
+                dtheta = 0;
             }
             else
             {
@@ -5076,8 +4476,6 @@ public class Manager : MonoBehaviour
             //Lerp?
             allrb[i].MovePosition(allrb[i].position + direction_random * Mathf.Sqrt(temperature / 298.0f) * 1.0f / uScale);
             allrb[i].MoveRotation(allrb[i].rotation + Mathf.Rad2Deg * dtheta * Mathf.Sqrt(temperature / 298.0f));
-            //allrb[i].AddTorque(Random.Range(-(timeScale), (timeScale)) * (scale_force / 2), 0);
-            //allrb[i].AddForce(UnityEngine.Random.insideUnitCircle * scale_force * reduce);
         }
     }
 
@@ -5096,7 +4494,6 @@ public class Manager : MonoBehaviour
         count_update++;
         if (Input.GetMouseButton(0)) return;
         even = !even;
-        //even = (count_update % 2)==0;
 
         //handle the jitter through the arrary of rigid bodies.
         if (scale_force == 0) return;
@@ -5124,11 +4521,9 @@ public class Manager : MonoBehaviour
         {
             Rigidbody2D player = surface_objects[i].GetComponent<Rigidbody2D>();
             if (player == null) continue;
-            //player.bodyType = RigidbodyType2D.Dynamic;
-            //player.collisionDetectionMode = CollisionDetectionMode2D.Discrete; //this is slow, put it in the on mouse up!
             Vector2 direction_random = UnityEngine.Random.insideUnitCircle * Mathf.Sqrt((4.0f * 8.0e-5f * dTime));//in nm
             player.MovePosition(player.position + direction_random * Mathf.Sqrt(temperature / 298.0f) * 1.0f / uScale);
-            //player.MoveRotation(player.rotation + Mathf.Rad2Deg * dtheta * Mathf.Sqrt(temperature / 298.0f));
+
         }
     }
 
@@ -5150,7 +4545,6 @@ public class Manager : MonoBehaviour
         Debug.Log("dTime " + dTime.ToString());
         if (Input.GetMouseButton(0)) yield return null;
         even = !even;
-        //even = (count_update % 2)==0;
 
         //handle the jitter through the arrary of rigid bodies.
         if (temperature == 0) yield return null;
@@ -5181,20 +4575,17 @@ public class Manager : MonoBehaviour
                 Vector2 d = new Vector2(x, 0.0f);
                 d = allrb[i].transform.TransformDirection(d);
                 direction_random = d * Mathf.Sqrt((4.0f * 8.0e-5f * dTime) / R) * scaling_surface;//in nm
-                dtheta = 0;// dtheta * Mathf.Sqrt((2.0f * 0.184f * dTime) / (R * R * R * R));//in rad
+                dtheta = 0;
             }
             else
             {
                 //regular rigid body
                 direction_random = direction_random * Mathf.Sqrt((6.0f * 0.245f * dTime) / R) * scaling_soluble;//in nm
                 dtheta = dtheta * Mathf.Sqrt((2.0f * 0.184f * dTime) / (R * R * R));//in rad
-                //Debug.Log(Mathf.Sqrt((6.0f * 0.245f * dTime) / R) * 1.0f / uScale);
             }
             //Lerp?
             allrb[i].MovePosition(allrb[i].position + direction_random * Mathf.Sqrt(temperature / 298.0f) * 1.0f / uScale);
             allrb[i].MoveRotation(allrb[i].rotation + Mathf.Rad2Deg * dtheta * Mathf.Sqrt(temperature / 298.0f));
-            //allrb[i].AddTorque(Random.Range(-(timeScale), (timeScale)) * (scale_force / 2), 0);
-            //allrb[i].AddForce(UnityEngine.Random.insideUnitCircle * scale_force * reduce);
         }
         yield return new WaitForEndOfFrame();
         StartCoroutine(DiffuseEverythingRoutine());
@@ -5214,14 +4605,12 @@ public class Manager : MonoBehaviour
         count_update++;
         if (Input.GetMouseButton(0)) temperature = 0;
         even = !even;
-        //even = (count_update % 2)==0;
         if (temperature == 0)
         {
             count_update++;
             yield return null;
         }
         //handle the jitter through the arrary of rigid bodies.
-        //if (temperature == 0) yield return null; 
         if (temperature != 0)
         {
             total_time += dTime;
@@ -5259,16 +4648,11 @@ public class Manager : MonoBehaviour
             Rigidbody2D player = surface_objects[i].GetComponent<Rigidbody2D>();
             if (player == null) continue;
             if (player.bodyType == RigidbodyType2D.Static) continue;
-            //player.bodyType = RigidbodyType2D.Dynamic;
-            //player.collisionDetectionMode = CollisionDetectionMode2D.Discrete; //this is slow, put it in the on mouse up!
             float x = (UnityEngine.Random.value < 0.5f) ? -1.0f : 1.0f;
             Vector2 d = new Vector2(x, 0.0f);
             d = player.transform.TransformDirection(d);
             Vector2 direction_random = d * Mathf.Sqrt((4.0f * 8.0e-5f * dTime)) * scaling_surface;//in nm
-            //Vector2 direction_random = UnityEngine.Random.insideUnitCircle * Mathf.Sqrt((4.0f * 8.0e-5f * dTime));//in nm
             player.MovePosition(player.position + direction_random * Mathf.Sqrt(temperature / 298.0f) * 1.0f / uScale);
-            //or addForce
-            //player.MoveRotation(player.rotation + Mathf.Rad2Deg * dtheta * Mathf.Sqrt(temperature / 298.0f));
         }
         for (int i = 0; i < fibers_instances.Count; i++)
         {
@@ -5294,8 +4678,7 @@ public class Manager : MonoBehaviour
                 player.MoveRotation(player.rotation + Mathf.Rad2Deg * dtheta * Mathf.Sqrt(temperature / 298.0f));
             }
         }
-        //yield return null;
-        //yield return new WaitForEndOfFrame();
+
         yield return null;
         StartCoroutine(DiffuseRBandSurfaceRoutine());
     }
@@ -5338,7 +4721,7 @@ public class Manager : MonoBehaviour
         var f = other.GetComponent<PrefabProperties>().fiber_length;
         Vector3 v1 = current_prefab.transform.rotation * new Vector3(-f, 0, 0) + other.transform.position;
         Vector3 v2 = current_prefab.transform.rotation * new Vector3(f, 0, 0) + other.transform.position;
-        Vector3 proj = other.transform.position;//getProjectedPointOnLineFast(transform.position, v1, v2);//other.transform.position.x, other.transform.position.y
+        Vector3 proj = other.transform.position;
         Vector3 newpos = current_prefab.transform.rotation * new Vector3(0, -surfOffset, 0);
         current_prefab.transform.position = new Vector3(proj.x, proj.y, 0.0f) + newpos;
     }
@@ -5347,7 +4730,7 @@ public class Manager : MonoBehaviour
     {
         fiber_attachto = null;
         if (!other) return;
-        Debug.Log(" enter other is " + other.name);// + " " + other.transform.parent.gameObject.name);
+        Debug.Log(" enter other is " + other.name);
         if (surfaceMode)
         {
             //use bound to ?
@@ -5388,12 +4771,10 @@ public class Manager : MonoBehaviour
                     {
                         //attach
                         fiber_attachto = other.gameObject;
-                        //Debug.Log("attach to"+fiber_attachto.name);
                         return;
                     }
                 }
             }
-            //fiber_attachto = null;
         }
     }
 
@@ -5410,8 +4791,6 @@ public class Manager : MonoBehaviour
             {
                 otherSurf = other;
                 TransormToSurfacePos(other.gameObject);
-                //current_prefab.transform.position = other.transform.position;
-                //current_prefab.transform.rotation = Quaternion.FromToRotation(Vector3.up, other.transform.up);
             }
         }
         if (boundMode)
@@ -5424,33 +4803,13 @@ public class Manager : MonoBehaviour
                 current_prefab.transform.rotation = Quaternion.FromToRotation(Vector3.up, other.transform.up);
             }
         }
-        /*
-        if (fiberMode)
-        {
-            if (other.gameObject.GetComponent<PrefabProperties>().is_fiber) {
-                if (other.gameObject.transform.parent.name.Contains(myPrefab.name)) {
-                    //check if first or last of previous fiber
-                    int i = other.gameObject.transform.GetSiblingIndex();
-                    if (i == 0 || i == other.gameObject.transform.parent.childCount - 1) {
-                        //attach
-                        fiber_attachto = other.gameObject;
-                        Debug.Log("attach to "+fiber_attachto.name);
-                        return;
-                    }
-                }
-            }
-            //fiber_attachto = null;
-        }*/
     }
 
     void UdateSurfacePrefab()
     {
-        LayerMask layerMask = LayerMask.GetMask("Membrane");//LayerMask.NameToLayer("Membrane");//LayerMask.GetMask("Wall");
+        LayerMask layerMask = LayerMask.GetMask("Membrane");
         RaycastHit2D hit = Physics2D.Raycast(current_camera.ScreenPointToRay(Input.mousePosition).origin, current_camera.ScreenPointToRay(Input.mousePosition).direction, 100, layerMask);
-        //Physics2D.CircleCast(Vector2 origin, float radius, Vector2 direction, float distance = Mathf.Infinity, int layerMask = DefaultRaycastLayers, float minDepth = -Mathf.Infinity, float maxDepth = Mathf.Infinity);
-        //RaycastHit2D hit = Physics2D.CircleCast(current_camera.ScreenPointToRay(Input.mousePosition).origin,2.0f,current_camera.ScreenPointToRay(Input.mousePosition).direction,100, layerMask);
-        //Debug.Log("UdateSurfacePrefab "+layerMask.ToString());
-        //Debug.Log(hit);
+
         if (hit)
         {
             if (hit.collider)
@@ -5481,10 +4840,8 @@ public class Manager : MonoBehaviour
 
     void UdateBoundToPrefab()
     {
-        LayerMask layerMask = LayerMask.GetMask("Membrane") | LayerMask.GetMask("DNA");//LayerMask.NameToLayer("Membrane");//LayerMask.GetMask("Wall");
+        LayerMask layerMask = LayerMask.GetMask("Membrane") | LayerMask.GetMask("DNA");
         RaycastHit2D hit = Physics2D.Raycast(current_camera.ScreenPointToRay(Input.mousePosition).origin, current_camera.ScreenPointToRay(Input.mousePosition).direction, 100, layerMask);
-        //Physics2D.CircleCast(Vector2 origin, float radius, Vector2 direction, float distance = Mathf.Infinity, int layerMask = DefaultRaycastLayers, float minDepth = -Mathf.Infinity, float maxDepth = Mathf.Infinity);
-        //RaycastHit2D hit = Physics2D.CircleCast(current_camera.ScreenPointToRay(Input.mousePosition).origin,2.0f,current_camera.ScreenPointToRay(Input.mousePosition).direction,100, layerMask);
         Debug.Log("UdateBoundToPrefab " + layerMask.ToString());
         Debug.Log("current_properties.bound_to " + current_properties.bound_to);
         Debug.Log(hit);
@@ -5552,13 +4909,9 @@ public class Manager : MonoBehaviour
     {
         if (below && below != attach1)
         {
-            //if (below.name == "ghostArea") {
-            //    ghostHighlight(false);
-            //    return;
-            //}
+
             var parent = below.transform.parent;
-            //if (m_SpringJoint && m_SpringJoint.connectedBody != null)
-            //    return;
+
             if (below.GetComponent<PrefabProperties>() != null)
                 below.GetComponent<PrefabProperties>().UpdateOutline(false);
             if (below.transform.parent && below.transform.parent.GetComponent<PrefabProperties>() != null)
@@ -5869,71 +5222,6 @@ public class Manager : MonoBehaviour
         mercury.GetComponent<Image>().fillAmount = mercuryCurrent / mercuryMax;
     }
 
-    public void GlowActive()
-    {
-        /*
-        //UnityStandardAssets.ImageEffects.Bloom bloomEffect = current_camera.GetComponent<Bloom>();
-        if (bloom_active.GetComponent<Toggle>().isOn == false) bloomEffect.enabled = false;
-        if (bloom_active.GetComponent<Toggle>().isOn == true) bloomEffect.enabled = true;
-        if (bloom_active.GetComponent<Toggle>().isOn)
-        {
-            bloomEffect.bloomThreshold = bloom_threshold.GetComponent<Slider>().value;
-            bloomEffect.bloomIntensity = bloom_amount.GetComponent<Slider>().value;
-        }
-        */
-    }
-
-    public void VignetteActive()
-    {
-        /*
-        //UnityStandardAssets.ImageEffects.VignetteAndChromaticAberration vignetteEffect = current_camera.GetComponent<VignetteAndChromaticAberration>();
-        float vignetteSliderValue = vignette_slider.GetComponent<Slider>().value;
-        if (vignetteSliderValue == 0) vignetteEffect.enabled = false;
-        if (vignetteSliderValue != 0)
-        {
-            vignetteEffect.enabled = true;
-            vignetteEffect.chromaticAberration = 03.5f * vignetteSliderValue;
-            vignetteEffect.blurSpread = 0.75f * vignetteSliderValue;
-            vignetteEffect.blur = 0.325f * vignetteSliderValue;
-            vignetteEffect.intensity = 0.325f * vignetteSliderValue;
-        }
-        */
-    }
-
-    public void DepthBlurActive()
-    {
-        /*
-        if (blur_active.GetComponent<Toggle>().isOn == false) blurEffect.enabled = false;
-        if (blur_active.GetComponent<Toggle>().isOn == true) blurEffect.enabled = true;
-        foreach (Transform child in current_camera.transform)
-        {
-            if (child.GetComponent<BlurOptimized>())
-            {
-                UnityStandardAssets.ImageEffects.BlurOptimized blurEffect = child.GetComponent<BlurOptimized>();
-                if (blur_active.GetComponent<Toggle>().isOn == false) blurEffect.enabled = false;
-                if (blur_active.GetComponent<Toggle>().isOn == true) blurEffect.enabled = true;
-            }
-        }*/
-    }
-
-    public void GreyScaleActive()
-    {
-        /*
-        UnityStandardAssets.ImageEffects.Grayscale grayscaleEffect = current_camera.GetComponent<Grayscale>();
-        if (greyscale_active.GetComponent<Toggle>().isOn == false) grayscaleEffect.enabled = false;
-        if (greyscale_active.GetComponent<Toggle>().isOn == true) grayscaleEffect.enabled = true;
-        */
-    }
-
-    public void SepiaToneActive()
-    {
-
-    }
-
-    public void NoiseActive()
-    {
-
-    }
     public void ToggleMembraneMembrane_collision(bool toggle)
     {
         //11 and 24
@@ -5975,17 +5263,9 @@ public class Manager : MonoBehaviour
         foreach (Transform child in root.transform)
         {
             GameObject.Destroy(child.gameObject);
-            //GameObject.Find("Progressbar").GetComponent<Progressbar>().Value = percentFilledInt;
         }
-        //int percentFilledInt = 0;
         proteinArea = 0;
         totalNprotein = 0;
-        //clear the all the count
-        /*foreach (var keyvalue in proteins_count)
-        {
-            proteins_count[keyvalue.Key] = 0;
-            if (proteins_ui_labels.ContainsKey(keyvalue.Key)) proteins_ui_labels[keyvalue.Key].text = keyvalue.Key;
-        }*/
         fiber_init = false;
         fiber_parent = null;
         fiber_parents.Clear();
@@ -6002,7 +5282,7 @@ public class Manager : MonoBehaviour
         rbCount = 0;
         boundedCount = 0;
         count_removed = 0;
-        everything.Clear();// = new List<Rigidbody2D>();//[MaxRigidBodies];
+        everything.Clear();
         bounded = new Rigidbody2D[MaxRigidBodies];
         total_time = 0.0f;
         total_time_sec = 0.0f;
@@ -6011,36 +5291,29 @@ public class Manager : MonoBehaviour
         update_texture = true;
         //clear measure
         MeasureManager.Get.ClearLines();
-        //clear background ?
-        //if (allowUndoRedo) UndoRedo.undoList.Clear();
-        //if (allowUndoRedo) UndoRedo.redoList.Clear();
+
     }
 
     public void countProteins(ListViewItem component, GameObject addedObject)
     {
         //foreach (Rigidbody2D rb in everything);
         //closed lipids calculate circumference and subtract area from screen size
-        //
+        
         string compartment = addedObject.transform.tag;
 
         if (compartment != "BloodPlasma" || compartment != "HIV" || compartment != "Cytoplasme") return;
 
         if (compartment == "BloodPlasma")
         {
-            //TreeViewSampleData.j
             string name = addedObject.name;
-            //UIWidgetsSamples.TreeViewSampleItemCountry item = new TreeViewSampleItemCountry(name); 
-            //UIWidgetsSamples.TreeViewSampleItemContinent node = new TreeNode<item>;
         }
 
         if (compartment == "HIV")
         {
-            //ui.DataSource.Add(addedObject);
             string name = addedObject.name;
         }
         if (compartment == "Cytoplasme")
         {
-            //ui.DataSource.Add(addedObject);
             string name = addedObject.name;
         }
     }
@@ -6051,22 +5324,14 @@ public class Manager : MonoBehaviour
         var pixel_scale = (unit_scale * 10.0f) / 100.0f;
         var unity_scale2d = 1.0f / (unit_scale * 10.0f);
         //scale bar has a width of 128px
-        //var imageScale =  1.0f/300.0f;
-        //var local_scale = 1.0f/(pixel_scale * imageScale);
+
         var p1 = current_camera.ScreenToWorldPoint(Vector3.zero);
         var p2 = current_camera.ScreenToWorldPoint(new Vector3(128.0f, 0, 0));
         var Distance = Vector3.Magnitude(p2 - p1) * unit_scale; // in unity world coordinates
         scale_bar_text.text = Mathf.Round(Distance).ToString() + "nm";
         float cscale = 1.0f / _canvas.transform.localScale.x;
         scale_bar_text.transform.parent.localScale = new Vector3(cscale, cscale, cscale);// 1.0/canvas_scale ?
-        /*
-        float cameraScale = current_camera.orthographicSize;
-        int children = current_camera.transform.childCount;       
-        var screenpt = current_camera.ScreenToViewportPoint(Vector3.zero);
-        var screenpt1 = current_camera.ScreenToViewportPoint(new Vector3(1,0,0));//unity scale
-        var DistanceOnScreen = Vector3.Magnitude(screenpt1-screenpt)/unity_scale2d;       
-        float documentScale = Mathf.Round((cameraScale/1.5f));
-        scale_bar_text.text =  documentScale.ToString() + "nm";*/
+
     }
 
     public void changeColorAndOrderFromDepth(float zLevel, GameObject aprefab = null)
@@ -6075,16 +5340,10 @@ public class Manager : MonoBehaviour
         SpriteRenderer prefabSR = aprefab.GetComponent<SpriteRenderer>();
         float hue, S, V;
         Color.RGBToHSV(prefabSR.color, out hue, out S, out V);
-        //ADAM : given a Z value can you find the colorValue ?
-        //0.0083Z = 0.16fV
-        //1Z = 0.16/
-        //V = Z*0.0083/0.016
-        //colorValue = (zLevel <= 0.0215f)? (colorValue - 0.016f): (colorValue + 0.016f);
-        //V = 1.0f-(zLevel / 0.0083f )* 0.016f;
-        //prefabSR.color = Color.HSVToRGB(hue, S, V);
+
         if (zLevel == 0.0004882813f)//need a way to detect the membrane and put it a sortingOrder 0
         {
-            prefabSR.sortingOrder = 0; //
+            prefabSR.sortingOrder = 0; 
         }
         else if (zLevel <= 0.0215f)
         {
@@ -6107,17 +5366,10 @@ public class Manager : MonoBehaviour
     public void NucleicAcidDepth(GameObject toapplyto = null)
     {
         if (!fiberMode) return;
-        //Debug.Log("Nucleic Acid Depth Active");
 
         //layerDirection decides if the next fiber prefab is going towards or away from 
         //the camera or staying at the same level.
         var layerDirectionf = UnityEngine.Random.Range(0, 3);
-
-        //This portion of the code gets the color value of the prefab in 
-        //HSV color space (We only modify the "V" or value in the following code).
-        //prefabRGB = myPrefab.GetComponent<SpriteRenderer>().color;
-        //float hue, S, V;
-        //Color.RGBToHSV(prefabRGB, out hue, out S, out V);
 
         //Depending on the integer layerDirection provides this if loop changes the properties of the prefab to reflect the correct color value and layer properties (assuming 30 steps from top layer to bottom layer). 
         if (layerDirectionf == 0)
@@ -6126,10 +5378,6 @@ public class Manager : MonoBehaviour
             {
                 zLevel = (zLevel + 0.0083f);
             }
-            /*if (colorValue >= 0.5f)
-            {
-                colorValue = (colorValue - 0.016f);
-            }*/
         }
 
         else if (layerDirectionf == 2)
@@ -6138,10 +5386,6 @@ public class Manager : MonoBehaviour
             {
                 zLevel = (zLevel - 0.0083f);
             }
-            /*if (colorValue <= 1.0f)
-            {
-                colorValue = (colorValue + 0.016f);
-            }*/
         }
 
         else
@@ -6151,18 +5395,8 @@ public class Manager : MonoBehaviour
 
         //Sets the color of the prefab. We need to go back from the HSV color space to the RGB color space.
         //Adam set RNA material.
-        /*string prefabName = myPrefab.GetComponent<PrefabProperties>().name;
-        SpriteRenderer sr = myPrefab.GetComponent<SpriteRenderer>();
-        Debug.Log("The prefab name (For material application) is: " + prefabName);
-        Debug.Log(" The shared material name is: " + prefab_materials[prefabName]);
-        sr.sharedMaterial = prefab_materials[prefabName];*/
-
-        //V = colorValue;
-        //newRGB = Color.HSVToRGB(hue, S, V);
-        //myPrefab.GetComponent<SpriteRenderer>().color = newRGB;
 
         //Sets the the Z-Axis position based on the new position.
-        //myPrefab.transform.position= new Vector3 (transform.position.x, transform.position.y, zLevel);
         if (toapplyto)
         {
             //Sets the new order in layer based on the Z-Axis Position.
@@ -6183,27 +5417,6 @@ public class Manager : MonoBehaviour
                 toapplyto.GetComponent<SpriteRenderer>().sortingOrder = -2;
             }
         }
-        /*if (current_prefab) //use to be myPrefab
-        {
-            current_prefab.transform.position= new Vector3 (transform.position.x, transform.position.y, zLevel);
-            //Sets the new order in layer based on the Z-Axis Position.
-            if (zLevel <= 0.0215f)
-            {
-                current_prefab.GetComponent<SpriteRenderer>().sortingOrder = 1;
-            }
-            else if (zLevel > 0.0215f && zLevel <= 0.083f)
-            {
-                current_prefab.GetComponent<SpriteRenderer>().sortingOrder = 0;
-            }
-            else if (zLevel >  0.083f && zLevel <= 0.16f)
-            {
-                current_prefab.GetComponent<SpriteRenderer>().sortingOrder = -1;
-            }
-            else
-            {
-                current_prefab.GetComponent<SpriteRenderer>().sortingOrder = -2;
-            }
-        }*/
     }
     public void ToggleDrawFiberPinned()
     {
@@ -6373,10 +5586,8 @@ public class Manager : MonoBehaviour
         var elems = toFind.Split('_');
         //string prefix;
         int id;
-        //GameObject ob;
         if (elems.Length == 2)
         {
-            //prefix = elems[0].Substring(0,1);
             int fiberparentid = int.Parse(elems[0].Split('F')[1]);
             id = int.Parse(elems[1]);
             if (fiberparentid < fiber_parents.Count)
@@ -6408,5 +5619,3 @@ public class Manager : MonoBehaviour
         return null;
     }
 }
-
-

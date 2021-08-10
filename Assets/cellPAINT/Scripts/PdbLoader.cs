@@ -16,13 +16,7 @@ public static class PdbLoader
     public static string DefaultPdbDirectory = Application.dataPath + "/../Data/proteins/";
 
     public static string DefaultDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"cellPAINT_data");
-/*
-#if UNITY_STANDALONE_OSX
-    public static string DefaultDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"cellPAINT";//Application.dataPath + "/../Data/";
-#else
-    public static string DefaultDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);//Application.dataPath + "/../Data/";
-#endif  
-*/
+
     public static List<string> DataDirectories = new List<string>();
 
     public static List<Atom> LoadAtomSet(string fileName)
@@ -113,7 +107,6 @@ public static class PdbLoader
 
         url = url + WWW.EscapeURL(fileName + extension);
 
-		//Debug.Log("Downloading pdb file "+url);
 		var www = new WWW(url);
 
 
@@ -129,7 +122,6 @@ public static class PdbLoader
 
         if (!string.IsNullOrEmpty(www.error))
         {
-            //Debug.Log(www.error);
             return null;
         }
 
@@ -148,7 +140,6 @@ public static class PdbLoader
 
         url = url + WWW.EscapeURL(fileName + extension);
 
-        //Debug.Log("Downloading pdb file "+url);
         var www = new WWW(url);
 
 
@@ -164,7 +155,6 @@ public static class PdbLoader
 
         if (!string.IsNullOrEmpty(www.error))
         {
-            //Debug.Log(www.error);
             return null;
         }
 
@@ -182,7 +172,7 @@ public static class PdbLoader
 
         foreach (var line in File.ReadAllLines(path))
         {
-            if (line.StartsWith("ATOM"))// || line.StartsWith("HETATM"))
+            if (line.StartsWith("ATOM"))
             {
                 var x = float.Parse(line.Substring(30, 8));
                 var y = float.Parse(line.Substring(38, 8));
@@ -190,7 +180,7 @@ public static class PdbLoader
 
                 var name = line.Substring(12, 4).Trim();
                 var chainId = line.Substring(23, 3)[0];
-				var residueId = line.Substring(23, 3);//int.Parse(line.Substring(23, 3));
+				var residueId = line.Substring(23, 3);
 
                 // Remove numbers from the name
                 var t = Regex.Replace(name, @"[\d-]", string.Empty).Trim();
@@ -199,8 +189,6 @@ public static class PdbLoader
                 {
 					symbolId = Array.IndexOf(AtomHelper.AtomSymbols, "A");
 					name = "A";
-					//Debug.Log ("Atom symbol unknown: " + name+ " "+t+"\n"+line+"\n"+path);
-					//throw new Exception("Atom symbol unknown: " + name+ " "+t+"\n"+line+"\n"+path);
                 }
 
                 var atom = new Atom
@@ -449,7 +437,6 @@ public static class AtomHelper
 
             foreach (var sphere in atomSpheres)
             {
-                //var atomPos = Helper.QuaternionTransform(rotBiomt, sphere) + posBiomt;
                 var atomPos = transform.MultiplyVector(sphere) + posBiomt;
                 biomtSpheres.Add(new Vector4(atomPos.x, atomPos.y, atomPos.z, sphere.w));
             }
@@ -469,7 +456,7 @@ public static class AtomHelper
         {
 			var euler = Helper.euler_from_matrix(transform);
 			var rotBiomt = Helper.MayaRotationToUnity(euler);
-			var offset = Helper.QuaternionTransform(rotBiomt,center);//Helper.RotationMatrixToQuaternion(matBiomt), GetCenter());
+			var offset = Helper.QuaternionTransform(rotBiomt,center);
 			var posBiomt = new Vector3(-transform.m03, transform.m13, transform.m23);
 
             bbMin = Vector3.Min(bbMin, new Vector3(posBiomt.x, posBiomt.y, posBiomt.z));

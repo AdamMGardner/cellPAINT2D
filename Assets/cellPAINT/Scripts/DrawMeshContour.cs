@@ -36,17 +36,7 @@ public class DrawMeshContour : MonoBehaviour {
         {
             mr = gameObject.AddComponent<MeshRenderer>();
         }
-        /*
-        if (!SceneManager.Instance.prefab_materials.ContainsKey(matToApply.name))
-        {
-            matToApply.color = gameObject.transform.GetChild(0).GetComponent<PrefabProperties>().Default_Sprite_Color;
-        }
 
-        if (matToApply != null)
-        {
-            if (!SceneManager.Instance.prefab_materials.ContainsKey(matToApply.name)) SceneManager.Instance.prefab_materials.Add(matToApply.name, matToApply);
-        }
-        */
         if ( matToApply!= null) mr.sharedMaterial = matToApply;
 
         //gather the  children
@@ -55,7 +45,7 @@ public class DrawMeshContour : MonoBehaviour {
         faces = new List<int>();
         uvs = new Vector2[N];
         List<Vector3> vertices = new List<Vector3>();
-        //int i = 0;
+
         foreach (Transform child in transform) {
             pos.Add(new Vector2 (child.localPosition.x, child.localPosition.y));
             if ((matToApply!=null)&&(matToApply.name == "HIVCAhex_bg"))
@@ -67,14 +57,10 @@ public class DrawMeshContour : MonoBehaviour {
                 offset = 0.5f;
             }
             vertices.Add(new Vector3(child.localPosition.x, child.localPosition.y, child.localPosition.z+offset));
-            //uvs[i] = new Vector2(child.position.x, child.position.z);
-            //i++;
         }
         // Use the triangulator to get indices for creating triangles
-        //Triangulate tr1 = new Triangulate();
+
         indices = Triangulate.Process(pos.ToArray());
-        //Triangulator tr = new Triangulator(pos.ToArray());
-        //indices = tr.Triangulate();
 
         //finish up
         Mesh mesh = new Mesh();
@@ -93,7 +79,6 @@ public class DrawMeshContour : MonoBehaviour {
         mesh.uv = uvs;
         meshFilter.sharedMesh = mesh;
         mr.material.SetVector("_Center",bounds.center);
-        //mesh.Optimize();
     }
 
     public void ToggleDisplay(bool toggle) {
@@ -115,7 +100,7 @@ public class DrawMeshContour : MonoBehaviour {
             faces = new List<int>();
             uvs = new Vector2[N];
             List<Vector3> vertices = new List<Vector3>();
-            //int i = 0;
+
             float offset = 0.5f;
             foreach (Transform child in transform)
             {
@@ -130,11 +115,8 @@ public class DrawMeshContour : MonoBehaviour {
                 }
                 vertices.Add(new Vector3(child.localPosition.x, child.localPosition.y, child.localPosition.z + offset));
             }
-            // Use the triangulator to get indices for creating triangles
-            //Triangulate tr1 = new Triangulate();
+
             indices = Triangulate.Process(pos.ToArray());
-            //Triangulator tr = new Triangulator(pos.ToArray());
-            //indices = tr.Triangulate();
 
             //finish up
 
@@ -147,8 +129,6 @@ public class DrawMeshContour : MonoBehaviour {
             mesh.Clear();
             mesh.vertices = vertices.ToArray();
             mesh.triangles = indices;
-            //mesh.RecalculateNormals();
-            //mesh.RecalculateBounds();
             Bounds bounds = mesh.bounds;
             int i = 0;
             while (i < uvs.Length)
@@ -164,8 +144,8 @@ public class DrawMeshContour : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
-        //Setup();
+    void Update () 
+    {
         if (!running) StartCoroutine(updateBackground());
     }
 }

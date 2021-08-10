@@ -17,10 +17,6 @@ public class ErasePrefab : MonoBehaviour {
     public void ToggleMode(bool toggle) {
         eraseMode = toggle;
         eraseIcon.GetComponent<SpriteRenderer>().enabled = toggle;
-        //if (eraseMode&& collider_mode) {
-        //    gameObject.layer = 0; //default ... what about himself
-        //}
-        //else gameObject.layer = 11; //camera collider
     }
 
 	// Use this for initialization
@@ -45,7 +41,6 @@ public class ErasePrefab : MonoBehaviour {
     GameObject erase_raycast() {
         var mainCamera = FindCamera();
         // We need to actually hit an object
-        //LayerMask layerMask = ~(1 << LayerMask.NameToLayer("CameraCollider"));//ignore camera collider
         LayerMask layerMask = ~(1 << LayerMask.NameToLayer("CameraCollider") | 1 << LayerMask.NameToLayer("FiberPushAway")); // ignore both layerX and layerY
 
         RaycastHit2D hit = new RaycastHit2D();

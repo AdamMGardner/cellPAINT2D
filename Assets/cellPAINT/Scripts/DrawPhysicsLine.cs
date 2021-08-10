@@ -20,7 +20,6 @@ public class DrawPhysicsLine : MonoBehaviour
     public bool draw = false;
     public float layer_change_distance = 20.0f;
     public float total_length = 20.0f;
-    //public TreeViewSample ui;
 
     private LineRenderer line; 
     private GameObject quadOb;
@@ -49,7 +48,6 @@ public class DrawPhysicsLine : MonoBehaviour
     }
 
     public void updatePrefab(GameObject prefab) {
-        //if (FiberPrefab) GameObject.Destroy(FiberPrefab);
         FiberPrefab = prefab;
 
         if (!FiberPrefab)
@@ -71,23 +69,17 @@ public class DrawPhysicsLine : MonoBehaviour
 
     void Update()
     {
-        string ename = null;// = EventSystem.current.currentSelectedGameObject.name;
+        string ename = null;
         if (EventSystem.current.currentSelectedGameObject)
         {
             ename = EventSystem.current.currentSelectedGameObject.name;
         }
-        //Debug.Log(((ename != "Canvas") && (ename != null))); Debug.Log(ename);
         if (!FiberPrefab) return;
         if (!draw) return;
         if (((ename != "Canvas") && (ename != null))) return;
         if (((ename == "Button"))) return;
         Vector3 mousePosx = Input.mousePosition;
         mousePosx.z = 15.0f;
-        /*if (ui.isActiveAndEnabled)
-        {
-            if (mousePosx.x < Screen.width * 0.15f) return;
-            if (mousePosx.y > Screen.height - Screen.height * 0.05f) return;
-        }*/
         if (Input.GetMouseButtonDown(0))//on click
         {
             if (init == false)
@@ -130,20 +122,6 @@ public class DrawPhysicsLine : MonoBehaviour
                     joint.anchor = allc[1].offset;
                     joint.connectedAnchor = allc[0].offset;
                 }
-                /*else
-                {
-                    DistanceJoint2D joint = last.gameObject.AddComponent<DistanceJoint2D>();
-                    var RigidbodyAnchor = last.gameObject.GetComponent<Rigidbody2D>();
-                    RigidbodyAnchor.isKinematic = true;
-                    joint.enabled = true;
-                    joint.connectedBody = first.gameObject.GetComponent<Rigidbody2D>();
-                    joint.autoConfigureConnectedAnchor = false;
-                    joint.autoConfigureDistance = false;
-                    joint.distance = distance;
-                    joint.enableCollision = false;
-                    Debug.Log("You are in the non-closing loop");
-                    nextNameNumber = 0;
-                }*/
 
                 if ((hingeJoint) && (parent.transform.childCount > 1))
                 {
@@ -151,8 +129,6 @@ public class DrawPhysicsLine : MonoBehaviour
                     hinge.enabled = true;
                     hinge.connectedBody = first.gameObject.GetComponent<Rigidbody2D>();
                     hinge.autoConfigureConnectedAnchor = false;
-                    //hinge.autoConfigureDistance = false;
-                    //hinge.distance = distance;
                     hinge.enableCollision = false;
                     CircleCollider2D[] allc = FiberPrefab.GetComponents<CircleCollider2D>();
                     hinge.anchor = allc[1].offset;
@@ -163,8 +139,6 @@ public class DrawPhysicsLine : MonoBehaviour
                     limits.max = 30.0f;
                     hinge.limits = limits;
                 }
-                //Debug.Log(first.name);
-                //Debug.Log(last.name);
                 closePersistence();
                 first.gameObject.GetComponent<Rigidbody2D>().isKinematic = false;
             }
@@ -201,18 +175,6 @@ public class DrawPhysicsLine : MonoBehaviour
 
     }
   
-    /*private void createLine()
-    {
-        GameObject ob = Instantiate(FiberPrefab, Vector3.zero, Quaternion.identity) as GameObject;
-        ob.name = "ob" + nextNameNumber;
-        nextNameNumber++;
-        line = ob.GetComponent<LineRenderer>();
-        line.SetVertexCount(2);
-        line.SetWidth(0.12f, 0.12f);
-        line.SetColors(Color.green, Color.green);
-        line.useWorldSpace = true;
-    }
-    */
     private void closePersistence() {
         int start = 0;
         int nchild = parent.transform.childCount;
@@ -253,7 +215,6 @@ public class DrawPhysicsLine : MonoBehaviour
         Vector3 midPoint = (startPos + endPos) / 2;
         quadOb = Instantiate(FiberPrefab, midPoint, Quaternion.identity) as GameObject;
         quadOb.name = "ob" + nextNameNumber;
-        //int count = 0;
         nextNameNumber++;
         int nchild = parent.transform.childCount;
         quadOb.transform.parent = parent.transform;
@@ -322,7 +283,6 @@ public class DrawPhysicsLine : MonoBehaviour
         
         //check the overall length toward 
 
-
         //anchors the first instance in the chain.
         if (quadOb.name == "ob0")
         {
@@ -333,12 +293,6 @@ public class DrawPhysicsLine : MonoBehaviour
         nextNameNumber++;
         int nchild = parent.transform.childCount;
         quadOb.transform.parent = parent.transform;
-        //quadOb.GetComponent<DistanceJoint2D>().enabled = false;// distanceJoint;
-        //quadOb.GetComponent<HingeJoint2D>().enabled = false;// hingeJoint;
-
-        //Changes the texture of the membrane sprite instance randomly.
-        //membraneMode = FiberPrefab.GetComponent<PrefabProperties>().sprite_random_switch;
-        //Debug.Log("membraneMode is " + membraneMode);
 
         if ((distanceJoint) && (parent.transform.childCount > 1))
         {
@@ -353,17 +307,13 @@ public class DrawPhysicsLine : MonoBehaviour
             joint.anchor = allc[1].offset;
             joint.connectedAnchor = allc[0].offset;
         }
-        else {
-            //quadOb.GetComponent<DistanceJoint2D>().enabled = false;
-        }
+        
         if ((hingeJoint) && (parent.transform.childCount > 1))
         {
             HingeJoint2D hinge = parent.transform.GetChild(nchild - 1).gameObject.AddComponent<HingeJoint2D>();
             hinge.enabled = true;
             hinge.connectedBody = quadOb.GetComponent<Rigidbody2D>();
             hinge.autoConfigureConnectedAnchor = false;
-            //hinge.autoConfigureDistance = false;
-            //hinge.distance = distance;
             hinge.enableCollision = false;
             CircleCollider2D[] allc = FiberPrefab.GetComponents<CircleCollider2D>();
             hinge.anchor = allc[1].offset;
@@ -373,9 +323,6 @@ public class DrawPhysicsLine : MonoBehaviour
             limits.min = -10.0f;
             limits.max = 10.0f;
             hinge.limits = limits;
-        }
-        else {
-           // quadOb.GetComponent<HingeJoint2D>().enabled = false;
         }
 
         for (int i = 0; i < persistence; i++)

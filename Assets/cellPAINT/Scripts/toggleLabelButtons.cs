@@ -18,61 +18,23 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
     public Image mb_sprite;
     public GameObject delete_panel;
     private Toggle uitoggle;
-    //private GameObject uiHolder;
     public Text label_txt;
     private GameObject prefab;
 
-    /*public static void AddEventTriggerListener(EventTrigger trigger,
-                                           EventTriggerType eventType,
-                                           System.Action<BaseEventData> callback)
-    {
-        EventTrigger.Entry entry = new EventTrigger.Entry();
-        entry.eventID = eventType;
-        entry.callback = new EventTrigger.TriggerEvent();
-        entry.callback.AddListener(new UnityEngine.Events.UnityAction<BaseEventData>(callback));
-        trigger.triggers.Add(entry);
-    }
-    */
+
     void OnEnable() {
 
         if (!only_ui)
         {
-            //label = transform.GetChild(1).gameObject;
             label_txt = label.GetComponent<Text>();
         }
-        //if (!uiHolder)
-        //{
-        //    uiHolder = Manager.Instance.uiHolder;
-        //}
+
 
     }
 
     // Use this for initialization
     void Start () {
         if (!only_ui) uitoggle = GetComponent<Toggle>();
-        /*
-        EventTrigger evtrigger = gameObject.AddComponent<EventTrigger>();
-        AddEventTriggerListener(evtrigger,   
-                                    EventTriggerType.PointerEnter,
-                                    Over);
-        AddEventTriggerListener(evtrigger,
-                                    EventTriggerType.PointerExit,
-                                    Exit);
-        //if you want mouse click
-        //EventTriggerType.PointerClick
-        if (!only_ui)
-            AddEventTriggerListener(evtrigger,
-                            EventTriggerType.PointerClick,
-                            togglePrefabManager);
-        else {
-            if (GetComponent<Button>()!=null) AddEventTriggerListener(evtrigger,
-                            EventTriggerType.PointerClick,
-                            Exit);
-        }*/
-        //if (!uiHolder)
-        //{
-        //    uiHolder = GameObject.Find("uiHolder");
-        //}
         if (prefab_name == null) return;
         if (label == null) return;
         
@@ -96,9 +58,7 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
 
     public void OnPointerClick(PointerEventData data)
     {
-        //Debug.Log("OnPointerClick called.");
         if (data.button == PointerEventData.InputButton.Right){
-            //pop delete/cancel button window
             if (!Manager.Instance.additional_ingredients_names.Contains(prefab_name))
                 delete_panel.SetActive(true);
         }
@@ -108,7 +68,6 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
     }
 
      public void OnPointerDown (PointerEventData eventData) {
-        //Debug.Log("OnPointerClick called.");
         if (eventData.button == PointerEventData.InputButton.Right){
             //pop delete/cancel button window
             delete_panel.SetActive(true);
@@ -119,7 +78,6 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
      }
  
      public void OnPointerUp (PointerEventData eventData) {
-        //Debug.Log("OnPointerUp called.");
         //this should be called only whit button that close a widget, as closing may not trigger onpointerExit.
         if (gameObject.GetComponent<Button>() && gameObject.tag == "close"){
             Manager.Instance.mask_ui = false;
@@ -146,7 +104,7 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
     }
     public void OnSelect(BaseEventData data)
     {
-        //Debug.Log("OnSelect called.");
+
     }
 
     public void updateTileCount ()
@@ -154,7 +112,6 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
         if (prefab_name == null) return;
         if (label == null) return;
         var iname = prefab_name.Split('.')[2];
-        //var PC = SceneManager.Instance.proteins_count;
 
         if ((Manager.Instance.proteins_count.ContainsKey(prefab_name)))
         {
@@ -178,7 +135,7 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
             if (prefab_name != "" && Manager.Instance.all_prefab.ContainsKey(prefab_name))
             {
                 //check selected prefab properties, only add to selected_prefab list only if not surface, fiber, and bound items
-                GameObject prefab = Manager.Instance.all_prefab[prefab_name];// Resources.Load("Prefabs/" + prefab_name) as GameObject;
+                GameObject prefab = Manager.Instance.all_prefab[prefab_name];
                 PrefabProperties props = null;
                 if (prefab != null)
                     props = prefab.GetComponent<PrefabProperties>();
@@ -212,17 +169,9 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
                     Manager.Instance.selected_prefab.Add(Manager.Instance.myPrefab.name);
             }
 
-            //hide the menu
-            //if (!uiHolder)
-            //{
-            //    uiHolder = Manager.Instance.uiHolder;
-            //}
-            //uiHolder.SetActive(false);
-            //Manager.Instance.Description_Holder.SetActive(false);
             Manager.Instance.mask_ui = false;
             Manager.Instance.last_active_current_name_below = prefab_name;
             Manager.Instance.current_objectparent_below = null;
-            //GameObject.Find("ToggleRecipesPrefabs").GetComponent<Toggle>().isOn = false;
             //toggle on the brush
 
         }
@@ -238,15 +187,8 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
         {
             updateTileCount();
             label.SetActive(true);
-            //if (prefab == null) prefab = Resources.Load("Prefabs/" + prefab_name) as GameObject;
-            //if (prefab != null)
-            //{
             Debug.Log("over " + prefab_name);
             Debug.Log(prefab_name +" inside all prefab "+ Manager.Instance.all_prefab.ContainsKey(prefab_name).ToString());
-           // Debug.Log(!Manager.Instance.all_prefab.ContainsKey(prefab_name));
-           // List<string> keyList = new List<string>(Manager.Instance.all_prefab.Keys);
-           // Debug.Log("keys " + keyList.Count.ToString());
-           // foreach (var k in keyList) { Debug.Log("keys is "+k); }
             if (!Manager.Instance.all_prefab.ContainsKey(prefab_name))
             {
                 List<string> keyList = new List<string>(Manager.Instance.all_prefab.Keys);
@@ -258,25 +200,20 @@ public class toggleLabelButtons : MonoBehaviour , IPointerDownHandler, IPointerU
                 if (prefab == null)
                     prefab = Manager.Instance.Build(prefab_name);
                 if (prefab != null){
-                    //prefab = Manager.Instance.Build(prefab_name);
                     prefab.SetActive(true);
                     Manager.Instance.all_prefab.Add(prefab_name, prefab);
                 }
             }
             else
                 prefab = Manager.Instance.all_prefab[prefab_name];
-            //prefab = Resources.Load("Prefabs/" + prefab_name) as GameObject;
             
             if (prefab != null)
             {
                 var sr = prefab.GetComponent<SpriteRenderer>();
                 Debug.Log("actual name " + prefab.GetComponent<PrefabProperties>().common_name + " "+ prefab.GetComponent<PrefabProperties>().name);
-                //Debug.Log(Manager.Instance.prefab_materials[prefab_name]);
                 if ( Manager.Instance.prefab_materials.ContainsKey(prefab_name)) {
                     if (sr) sr.sharedMaterial = Manager.Instance.prefab_materials[prefab_name];
                 }
-                //Manager.Instance.Description_Holder.transform.GetChild(0).GetComponent<ColorPicker>().active = false;
-                //Manager.Instance.Description_Holder_HSV.SetActive(false);
                 Manager.Instance.current_name_below = prefab_name;
                 Manager.Instance.current_objectparent_below = null;
                 Manager.Instance.changeDescription(prefab, sr);

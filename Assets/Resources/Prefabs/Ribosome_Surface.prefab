@@ -46,6 +46,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -132,6 +133,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -246,7 +248,7 @@ MonoBehaviour:
   pin_color: {r: 1, g: 0, b: 0, a: 1}
   entry: {x: 0, y: 0, z: 0}
   exit: {x: 0, y: 0, z: 0}
-  area: 61752.52
+  area: 62547.613
   ispined: 0
   enableCollision: 0
   spriteTumble_id: 0

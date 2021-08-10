@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class GhostManager : MonoBehaviour
 {
-
-    //private List<List<int>> locked_items = new List<List<int>>();
     public List<Ghost> ghosts = new List<Ghost>();
-    
     public float cluster_radius = 8.0f;
     private int _counter = 0;
     private List<List<GameObject>> ghosts_selections= new List<List<GameObject>>();
@@ -28,7 +25,6 @@ public class GhostManager : MonoBehaviour
 
                 go = new GameObject("GhostManager");
                 _instance = go.AddComponent<GhostManager>();
-                //_instance.hideFlags = HideFlags.HideInInspector;
             }
             return _instance;
         }
@@ -124,7 +120,6 @@ public class GhostManager : MonoBehaviour
     public void Clear(){
         foreach (var o in ghosts)
         {
-            //GameObject.Destroy(o.gameObject);
             Destroy(o.gameObject);
         }
         ghosts_selections_group.Clear();
@@ -147,7 +142,6 @@ public class GhostManager : MonoBehaviour
                     g.locked_item.RemoveAt(j);
                 }
             }
-            //g.locked_item.RemoveAll(elem => (elem.name.StartsWith(ing_name)||elem == null));
             if (g.locked_item.Count == 0) RemoveGhost(g.gameObject);
         }
     }

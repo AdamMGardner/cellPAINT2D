@@ -28,7 +28,6 @@ public class MeasureManager : MonoBehaviour
 
                 go = new GameObject("MeasureManager");
                 _instance = go.AddComponent<MeasureManager>();
-                //_instance.hideFlags = HideFlags.HideInInspector;
             }
             return _instance;
         }
@@ -37,7 +36,6 @@ public class MeasureManager : MonoBehaviour
     public void ToggleLineAndLAbel(bool value){
         //should create/delete the lineRendere and see if help with the webGL
         Debug.Log("IN ToggleLineAndLAbel");
-        //measure_line.enabled = value;
         measure_line_holder.gameObject.SetActive(value);
         if (value){
             measure_line = measure_line_holder.AddComponent<LineRenderer>();
@@ -53,8 +51,6 @@ public class MeasureManager : MonoBehaviour
             Destroy(measure_line);
         }
         measure_label.gameObject.SetActive(value);
-        //measure_line.SetPosition(0, new Vector3(10000,0,0));
-        //measure_line.SetPosition(1, new Vector3(10000,0,0));
         measure_label.text = "";
         Debug.Log("KEEP ALIVe ?");
         if (keep_alive) line_holder.SetActive(true);

@@ -6,10 +6,6 @@ using UnityEngine.UI;
 public class MouseIconManager : MonoBehaviour
 {
     public Camera Camera;
-    //public Texture2D eraseMouseIcon;
-    //public Texture2D drawMouseIcon;
-    //public Texture2D pinMouseIcon;
-
     public Slider radiusSlider;
     public Slider InstanceNumberSlider;
 
@@ -149,8 +145,6 @@ public class MouseIconManager : MonoBehaviour
 
     public void ChangeCursorColor()
     {
-        //Draw = Green
-        //Erase = Red
 
     }
 

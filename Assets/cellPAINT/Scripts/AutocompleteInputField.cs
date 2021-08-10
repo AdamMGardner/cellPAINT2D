@@ -58,7 +58,6 @@ public class AutocompleteInputField : MonoBehaviour
     {
         if (no_filter) input = "";
         List<string> result = new List<string>();
-        //if (input != "") 
         result = options.FindAll( (str) => str.IndexOf( input ) >= 0 );
         return result;
     }

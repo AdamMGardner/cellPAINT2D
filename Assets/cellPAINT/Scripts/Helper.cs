@@ -34,7 +34,7 @@ public static class Helper
 
         // Load a PNG or JPG image from disk to a Texture2D, assign this texture to a new sprite and return its reference
 
-        Sprite NewSprite = null;// new Sprite();
+        Sprite NewSprite = null;
         Texture2D SpriteTexture = LoadTexture(FilePath);
         if (SpriteTexture)
             NewSprite = Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0, 0), PixelsPerUnit);
@@ -74,20 +74,15 @@ public static class Helper
     {
         float _EPS = 8.8817841970012523e-16f;
         float n = Quaternion.Dot(quat, quat);
-        //Debug.Log (n.ToString());
-        //Debug.Log (Vector4.Dot (QuanternionToVector4(quat),QuanternionToVector4(quat)).ToString ());
         Matrix4x4 m = Matrix4x4.identity;
         if (n > _EPS)
         {
             quat = new Quaternion(quat[0] * Mathf.Sqrt(2.0f / n), quat[1] * Mathf.Sqrt(2.0f / n), quat[2] * Mathf.Sqrt(2.0f / n), quat[3] * Mathf.Sqrt(2.0f / n));
-            //Debug.Log (quat.ToString());
             Matrix4x4 q = quaternion_outer(quat, quat);
-            //Debug.Log (q.ToString());
             m.SetRow(0, new Vector4(1.0f - q[2, 2] - q[3, 3], q[1, 2] - q[3, 0], q[1, 3] + q[2, 0], 0.0f));
             m.SetRow(1, new Vector4(q[1, 2] + q[3, 0], 1.0f - q[1, 1] - q[3, 3], q[2, 3] - q[1, 0], 0.0f));
             m.SetRow(2, new Vector4(q[1, 3] - q[2, 0], q[2, 3] + q[1, 0], 1.0f - q[1, 1] - q[2, 2], 0.0f));
             m.SetRow(3, new Vector4(0.0f, 0.0f, 0.0f, 1.0f));
-            //m.SetColumn(2,m.GetColumn(2)*-1.0f);
         }
         return m;
     }
@@ -102,7 +97,7 @@ public static class Helper
         // invs (inverse square length) is only required if quaternion is not already normalised
         float invs = 1 / (sqx + sqy + sqz + sqw);
         Matrix4x4 m = Matrix4x4.identity;
-        m[0, 0] = (sqx - sqy - sqz + sqw) * invs; // since sqw + sqx + sqy + sqz =1/invs*invs
+        m[0, 0] = (sqx - sqy - sqz + sqw) * invs; 
         m[1, 1] = (-sqx + sqy - sqz + sqw) * invs;
         m[2, 2] = (-sqx - sqy + sqz + sqw) * invs;
 
@@ -139,17 +134,6 @@ public static class Helper
 
     public static Vector3 euler_from_matrix(Matrix4x4 M)
     {
-        /*
-         * _AXES2TUPLE = {
-            'sxyz': (0, 0, 0, 0), 'sxyx': (0, 0, 1, 0), 'sxzy': (0, 1, 0, 0),
-            'sxzx': (0, 1, 1, 0), 'syzx': (1, 0, 0, 0), 'syzy': (1, 0, 1, 0),
-            'syxz': (1, 1, 0, 0), 'syxy': (1, 1, 1, 0), 'szxy': (2, 0, 0, 0),
-            'szxz': (2, 0, 1, 0), 'szyx': (2, 1, 0, 0), 'szyz': (2, 1, 1, 0),
-            'rzyx': (0, 0, 0, 1), 'rxyx': (0, 0, 1, 1), 'ryzx': (0, 1, 0, 1),
-            'rxzx': (0, 1, 1, 1), 'rxzy': (1, 0, 0, 1), 'ryzy': (1, 0, 1, 1),
-            'rzxy': (1, 1, 0, 1), 'ryxy': (1, 1, 1, 1), 'ryxz': (2, 0, 0, 1),
-            'rzxz': (2, 0, 1, 1), 'rxyz': (2, 1, 0, 1), 'rzyz': (2, 1, 1, 1)}
-            */
         float _EPS = 8.8817841970012523e-16f;
         Vector4 _NEXT_AXIS = new Vector4(1, 2, 0, 1);
         Vector4 _AXES2TUPLE = new Vector4(0, 0, 0, 0);//sxyz
@@ -164,7 +148,6 @@ public static class Helper
         float ax = 0.0f;
         float ay = 0.0f;
         float az = 0.0f;
-        //Matrix4x4 M = matrix;// = numpy.array(matrix, dtype=numpy.float64, copy=False)[:3, :3]
         if (repetition == 1)
         {
             float sy = Mathf.Sqrt(M[i, j] * M[i, j] + M[i, k] * M[i, k]);
@@ -208,14 +191,7 @@ public static class Helper
             ax = az;
             az = ax;
         }
-        //radians to degrees
-        //array([-124.69515353,  -54.90319877,  108.43494882])
-        //to -56.46 °110.427 °126.966 °
-        //Vector3 euler = new Vector3 (ay * Mathf.Rad2Deg, az * Mathf.Rad2Deg, -ax * Mathf.Rad2Deg);
         Vector3 euler = new Vector3(ax * Mathf.Rad2Deg, ay * Mathf.Rad2Deg, az * Mathf.Rad2Deg);
-        //if (euler.x < 0) euler.x += 360.0f;
-        //if (euler.y < 0) euler.y += 360.0f;
-        //if (euler.z < 0) euler.z += 360.0f;
         return euler;
     }
 
@@ -229,8 +205,6 @@ public static class Helper
         var qy = Quaternion.AngleAxis(flippedRotation.y, Vector3.up);
         var qz = Quaternion.AngleAxis(flippedRotation.z, Vector3.forward);
         var qq = qz * qy * qx; // this is the order
-        //Vector3 new_up = qq * Vector3.up;
-        //qy90 = Quaternion.AngleAxis(90.0f,new_up);
         return qq;
     }
     
@@ -239,7 +213,7 @@ public static class Helper
         Quaternion q = Quaternion.identity;
         float trace = a[0, 0] + a[1, 1] + a[2, 2]; // I removed + 1.0f; see discussion with Ethan
         if (trace > 0)
-        {// I changed M_EPSILON to 0
+        {
             float s = 0.5f / Mathf.Sqrt(trace + 1.0f);
             q.w = 0.25f / s;
             q.x = (a[2, 1] - a[1, 2]) * s;
@@ -320,9 +294,6 @@ public static class Helper
     //float x y z w
     public static JSONNode ParseJson(string filePath)
     {
-        //JSONNode.Parse (filestring);
-        //StreamReader inp_stm = new StreamReader(file_path);
-        //return JSONNode.LoadFromFile (filePath);
         var source = new StreamReader(filePath);
         var fileContents = source.ReadToEnd();
         var data = JSONNode.Parse(fileContents);
@@ -335,10 +306,6 @@ public static class Helper
         int b = (int)(color.b * 255.0f);
         int g = (int)(color.g * 255.0f) << 8;
         int r = (int)(color.r * 255.0f) << 16;
-
-        //Debug.Log("r: " + r + " g: " + g + " b:" + b);
-        //Debug.Log("id: " + (r + g + b));
-        //Debug.Log("color: " + color);
 
         return r + g + b;
     }
@@ -427,11 +394,6 @@ public static class Helper
     {
         var outBuffer = new ComputeBuffer(1, sizeof(int));
 
-        //ComputeShaderManager.Instance.ReadPixelCS.SetInts("_Coord", (int)coord.x, Screen.height - (int)coord.y);
-        //ComputeShaderManager.Instance.ReadPixelCS.SetTexture(0, "_IdTexture", texture);
-        //ComputeShaderManager.Instance.ReadPixelCS.SetBuffer(0, "_OutputBuffer", outBuffer);
-        //ComputeShaderManager.Instance.ReadPixelCS.Dispatch(0, 1, 1, 1);
-
         var pixelId = new[] { 0 };
         outBuffer.GetData(pixelId);
         outBuffer.Release();
@@ -479,7 +441,6 @@ public static class Helper
 			
 			if (!string.IsNullOrEmpty (www.error))
 				throw new Exception ("allIngredients.json" + www.error);
-			//var path = (string.IsNullOrEmpty (dstPath) ? DefaultPdbDirectory : dstPath) + "allIngredients.json";
 			File.WriteAllText (path, www.text);
 		}
 		var resultData = Helper.ParseJson(path);
@@ -494,7 +455,6 @@ public static class Helper
 				else 
 					resultData.ChangeKey(key,"HIV_"+key.Split('_')[1]);
 				Debug.Log ("new key is "+"HIV_"+key.Split('_')[1]+" "+key);
-				//Debug.Log (key+" "+resultData[i]["file"]+" "+resultData.GetKey(i));
 			}
 		}
 		return resultData;
@@ -505,7 +465,6 @@ public static class Helper
 		Debug.Log("Downloading all ingredients file");
 		//could use a special file for cellView
 		var www = new WWW("https://raw.githubusercontent.com/mesoscope/cellPACK_data/master/cellPACK_database_1.1.0/autopack_recipe_cellview.json");
-		//var path = PdbLoader.DefaultPdbDirectory + "autopack_recipe.json";
 		var path = Application.dataPath + "/../Data/packing_results/autopack_recipe_cellview.json";
 		if (!Directory.Exists(Application.dataPath + "/../Data/"))
 		{
@@ -528,7 +487,6 @@ public static class Helper
 			
 			if (!string.IsNullOrEmpty (www.error))
 				throw new Exception ("autopack_recipe.json" + www.error);
-			//var path = (string.IsNullOrEmpty (dstPath) ? DefaultPdbDirectory : dstPath) + "allIngredients.json";
 			File.WriteAllText (path, www.text);
 		}
 		var resultData = Helper.ParseJson(path);
@@ -539,7 +497,6 @@ public static class Helper
 		Debug.Log("Downloading results file "+url);
 		var www = new WWW(url);
 		string fname = GetFileName (url);
-		//var path = PdbLoader.DefaultPdbDirectory + fname;
 		var path = Application.dataPath + "/../Data/packing_results/"+fname;
 		if (!Directory.Exists(Application.dataPath + "/../Data/"))
 		{
@@ -563,10 +520,8 @@ public static class Helper
 
 			if (!string.IsNullOrEmpty (www.error))
 				throw new Exception (fname + www.error);
-			//var path = (string.IsNullOrEmpty (dstPath) ? DefaultPdbDirectory : dstPath) + "allIngredients.json";
 			File.WriteAllText (path, www.text);
 		}
-		//var resultData = Helper.ParseJson(path);
 		return path;
 	}
 
@@ -585,43 +540,6 @@ public static class Helper
 
 	public static void FocusCameraOnGameObject(Camera c, Vector4 center, float radius, string ingname)
     {
-        /*
-        //Bounds b = CalculateBounds(go);
-        //Vector3 max = b.size;
-        //float radius = Mathf.Max(max.x, Mathf.Max(max.y, max.z));
-
-        NavigateCamera nc = c.GetComponent<NavigateCamera> ();
-		Vector3 ce = new Vector3 (center.x, center.y, center.z) * PersistantSettings.Instance.Scale; 
-		float dist = radius / (Mathf.Sin (c.fieldOfView * Mathf.Deg2Rad / 2f));
-		Debug.Log ("Radius = " + radius * PersistantSettings.Instance.Scale + " dist = " + dist * PersistantSettings.Instance.Scale);
-        
-        //Vector3 pos = UnityEngine.Random.onUnitSphere * dist + center;
-        //c.transform.position = pos;
-        //c.transform.LookAt(center);
-        //Ray r = new Ray(center,center-c.transform.position);
-        //c.transform.position = r.GetPoint (dist);
-
-        Vector3 direction = c.transform.position - ce;
-        nc.StoredPosition = c.transform.position;
-        nc.DampTargetPosition = ce - c.transform.forward * (radius * 2.5f) * PersistantSettings.Instance.Scale;
-		nc.TargetPosition = ce;
-		//nc.Distance = (radius * 2.0f) * PersistantSettings.Instance.Scale;
-        nc.animateCameraIn = true;
-        
-        PersistantSettings.Instance.NearCullPlane =  Vector3.Distance(nc.DampTargetPosition, nc.TargetPosition);
-
-        //c.transform.position = ce - c.transform.forward * radius/2.0f;
-
-        
-         * GameObject.Find ("_Selection").transform.position = ce;//*PersistantSettings.Instance.Scale;
-		CutObject cut = GameObject.Find ("_Selection").GetComponentInChildren<CutObject> ();
-		cut.transform.localScale = Vector3.one*radius * 5.0f* PersistantSettings.Instance.Scale;
-		cut.ProteinCutFilters.Clear();
-		cut.SetCutItems (SceneManager.Instance.ProteinNames);
-		cut.toggleCutItme(ingname,false);
-		cut.setTree();
-		SceneManager.Instance.ResetCutObjects ();
-		*/
     }
 
     public static float frac(float v)
@@ -663,9 +581,8 @@ public static class Helper
 	{
 
 		float _Time = Time.realtimeSinceStartup;
-        float speedFactor = 1.0f;// PersistantSettings.Instance.SpeedFactor;// _SpeedFactor;
-		float translationScaleFactor = 5;//PersistantSettings.Instance.MoveFactor;
-		//float rotationScaleFactor = _RotateFactor;
+        float speedFactor = 1.0f;
+		float translationScaleFactor = 5;
 		
 		float randx = frac(Mathf.Sin(Vector2.Dot(new Vector2(1, input_pos.x), new Vector2(12.9898f, 78.233f))) * 43758.5453f);
 		float randy = frac(Mathf.Sin(Vector2.Dot(new Vector2(1, input_pos.y), new Vector2(12.9898f, 78.233f))) * 43758.5453f);
@@ -680,7 +597,7 @@ public static class Helper
 		Vector3 poszxy = new Vector3 (input_pos.z, input_pos.x, input_pos.y);
 
 		Vector3 pn = Vector3.zero;
-		pn.x = noise_3D(vector3Add(input_pos + ttxyz * speedFactor,randx + 100.0f ));//randx + 100.0f + input_pos + ttxyz * speedFactor);
+		pn.x = noise_3D(vector3Add(input_pos + ttxyz * speedFactor,randx + 100.0f ));
 		pn.y = noise_3D(vector3Add(posyzx + ttyzx* speedFactor,randy + 200.0f) );
 		pn.z = noise_3D(vector3Add(poszxy + ttzxy * speedFactor,randz + 300.0f ) );
 		pn =vector3Add(pn,-0.5f);
@@ -730,7 +647,6 @@ public static class Helper
             C[i, 1] = cluster[i].y;
         }
         double[,] gm = Measures.Covariance(C);
-        //double[,] gm = ComputeCovarianceMatrix2D(cluster);
         EigenvalueDecomposition E = new EigenvalueDecomposition(gm);
         var eig_vec = E.Eigenvectors;
         Debug.Log(eig_vec.Length.ToString());
@@ -744,9 +660,8 @@ public static class Helper
         r.Normalize(); u.Normalize(); 
         Matrix4x4 m_rot = Matrix4x4.identity;
         // set the rotation matrix using the eigvenvectors
-        m_rot[0, 0] = r.x; m_rot[0, 1] = u.x; //m_rot[0, 2] = f.x;
-        m_rot[1, 0] = r.y; m_rot[1, 1] = u.y; //m_rot[1, 2] = f.y;
-        //m_rot[2, 0] = r.z; m_rot[2, 1] = u.z; m_rot[2, 2] = f.z;
+        m_rot[0, 0] = r.x; m_rot[0, 1] = u.x;
+        m_rot[1, 0] = r.y; m_rot[1, 1] = u.y;
 
         // now build the bounding box extents in the rotated frame
         Vector2 minim = new Vector2(1e10f, 1e10f);
@@ -765,7 +680,6 @@ public static class Helper
         principal_vector.Add(new Vector4(maxim.x + radius, maxim.y + radius, 0, 1.0f));
         principal_vector.Add(new Vector4(minim.x - radius, minim.y - radius, 0, 1.0f));
         principal_vector.Add(new Vector4(m_rot.rotation.x, m_rot.rotation.y, m_rot.rotation.z, m_rot.rotation.w));
-        //problem with fibrinogen ?
         return principal_vector;
     }
 
@@ -778,7 +692,6 @@ public static class Helper
             C[i, 1] = cluster[i].y;
         }
         double[,] gm = Measures.Covariance(C);
-        //double[,] gm = ComputeCovarianceMatrix2D(cluster);
         EigenvalueDecomposition E = new EigenvalueDecomposition(gm);
         var eig_vec = E.Eigenvectors;
         Debug.Log(eig_vec.Length.ToString());
@@ -826,7 +739,7 @@ public static class Helper
         if (optimize) {
             hull =  opt.OptimizeShape(hull);
         }
-        //convert to Vector2
+
         List<Vector2> hull_opt2d = new List<Vector2>();
         foreach (var p in hull) {
             hull_opt2d.Add(new Vector2(p.X-center.x,p.Y-center.y));
@@ -1035,7 +948,7 @@ public static class HalfHelper
         uint value = BitConverter.ToUInt32(bytes, 0);
 
         ushort result = (ushort)(baseTable[(value >> 23) & 0x1ff] + ((value & 0x007fffff) >> shiftTable[value >> 23]));
-        return result; //Half.ToHalf(result);
+        return result; 
     }
 
     public static float SingleToSingle(float single)

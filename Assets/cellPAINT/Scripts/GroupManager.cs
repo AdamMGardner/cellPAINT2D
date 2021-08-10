@@ -42,7 +42,6 @@ public class GroupManager : MonoBehaviour
 
                 go = new GameObject("_GroupManager");
                 _instance = go.AddComponent<GroupManager>();
-                //_instance.hideFlags = HideFlags.HideInInspector;
             }
             return _instance;
         }
@@ -113,7 +112,6 @@ public class GroupManager : MonoBehaviour
                     PrefabProperties p = o.transform.GetChild(i).gameObject.GetComponent<PrefabProperties>();
                     if (p) r += p.circle_radius;
                     center += o.transform.GetChild(i).position;
-                    //global_bounds.Encapsulate(o.transform.GetChild(i).position);
                     ntotal++;
                 }
             }
@@ -122,7 +120,6 @@ public class GroupManager : MonoBehaviour
                 PrefabProperties p = o.GetComponent<PrefabProperties>();
                 if (p) r += p.circle_radius;
                 center += o.transform.position;
-                //global_bounds.Encapsulate(o.transform.position);
                 ntotal++;
             }
         }
@@ -133,26 +130,14 @@ public class GroupManager : MonoBehaviour
             if (Manager.Instance.fiber_parents.Contains(o)) {
                 for (int i = 0; i < o.transform.childCount; i++)
                 {
-                    //PrefabProperties p = o.transform.GetChild(i).gameObject.GetComponent<PrefabProperties>();
-                    //if (p) r += p.circle_radius;
-                    //center += o.transform.GetChild(i).position;
                     global_bounds.Encapsulate(o.transform.GetChild(i).position);
-                    //ntotal++;
                 }
             }
             else
             {
-                //PrefabProperties p = o.GetComponent<PrefabProperties>();
-                //if (p) r += p.circle_radius;
-                //center += o.transform.position;
                 global_bounds.Encapsulate(o.transform.position);
-                //ntotal++;
             }
         }
-        //r/= (float)ntotal;
-        //global_bounds.center = center;
-        //r=global_bounds.size.x;
-        //global_bounds = new Bounds(center, global_bounds.size);//new Vector3(r,r,r));
         return global_bounds;
     }
 
@@ -162,14 +147,9 @@ public class GroupManager : MonoBehaviour
         Quaternion quat = Quaternion.AngleAxis(Zangle, Vector3.forward);
         //scale ?
         var newGroup = Instantiate(group, new Vector3(position.x,position.y,0.0f), rotation);
-        //if (Manager.Instance.random_rotation) 
-        //newGroup.transform.rotation = UnityEngine.Random.rotation;
-        newGroup.layer = 22;//midle layer == group
+        newGroup.layer = 22;//middle layer == group
         newGroup.gameObject.SetActive(true);
         PrefabGroup p = newGroup.GetComponent<PrefabGroup>();
-        //p.name = "group_" + nGroup.ToString();
-        //do we fixthem? kinematics ?
-        //Manager.Instance.PinHierarchy(newGroup);//this is a toggle
         groupinstances[p.name]++;   
         p.instance_id = groupinstances[p.name];    
         newGroup.gameObject.name = p.name+"_"+p.instance_id.ToString();
@@ -187,7 +167,7 @@ public class GroupManager : MonoBehaviour
                 for (int j = 0; j < newObj.transform.childCount; j++)
                 {
                     var current_f = newObj.transform.GetChild(j).gameObject;
-                    int id = current_f.transform.GetSiblingIndex();//int.Parse ( current_f.name.Split(new string[] { "ob" }, StringSplitOptions.None)[1] );
+                    int id = current_f.transform.GetSiblingIndex();
                     ch[id] = current_f;//use j ? or the name ?
                 }
                 Manager.Instance.fibers_instances.Add(ch.ToList());
@@ -216,19 +196,9 @@ public class GroupManager : MonoBehaviour
             var attach1 = sjt.gameObject;
             var attach2 = sjt.connectedBody.gameObject;
             int id = attach2.transform.GetSiblingIndex();
-            /*if (Manager.Instance.fiber_parents.Contains(attach2.transform.parent.gameObject)) {
-                id = attach2.transform.parent.GetSiblingIndex();
-                int chid = attach2.transform.GetSiblingIndex();
-                attach2 = newGroup.transform.GetChild(id).GetChild(chid).gameObject;
-            }
-            else {
-                attach2 = newGroup.transform.GetChild(id).gameObject;
-            }
-            sjt.connectedBody = attach2.GetComponent<Rigidbody>();
-            */
             Manager.Instance.attached.Add(attach1);
             Manager.Instance.attached.Add(attach2);
-            Manager.Instance.attachments.Add(sjt);//HighlightManager.Instance.pinned_to_bonds.Add(sjt);
+            Manager.Instance.attachments.Add(sjt);
         }
         //parent?
         if (parent != null)
@@ -303,37 +273,11 @@ public class GroupManager : MonoBehaviour
             for (int i = 0; i < selection.transform.childCount; i++) {
                 var current_o = selection.transform.GetChild(i).gameObject;
                 CheckAttached(current_o,g);
-                /*var allspring = current_o.GetComponents<SpringJoint2D>();
-                for (int s = 0; s < allspring.Length; s++)
-                {
-                    var spr = allspring[s];
-                    if (IsAttachedToSelection(spr.connectedBody.gameObject)){
-                        //the spring need to only relate to object in the selection
-                        if (g.attachements.Contains(spr)) continue;
-                        g.attachements.Add(spr);
-                    }
-                    else {
-                        if (g.attachements_toskip.Contains(spr)) continue;
-                        g.attachements_toskip.Add(spr);
-                    }
-                }*/
             }
         }
         else
         {
             CheckAttached(selection,g);
-            /*var allspring = selection.GetComponents<SpringJoint2D>();
-            foreach (var sjt in allspring)
-            {
-                if (IsAttachedToSelection(sjt.connectedBody.gameObject)){
-                    if (g.attachements.Contains(sjt)) continue;
-                    g.attachements.Add(sjt);
-                }
-                else {
-                    if (g.attachements_toskip.Contains(sjt)) continue;
-                    g.attachements_toskip.Add(sjt);
-                }
-            }*/
         }
     }
 
@@ -341,7 +285,6 @@ public class GroupManager : MonoBehaviour
         var pg = selection.GetComponent<PrefabGroup>();
         Debug.Log("AddSelectionHierarchy "+selection.name+" pg "+(pg!=null).ToString()+" " +selection.transform.childCount.ToString());
         if (pg) {
-            //for (int i = 0; i < selection.transform.childCount; i++) 
             List<GameObject> childObjects = new List<GameObject>();
             foreach(Transform current_o in selection.transform)
             { 
@@ -349,7 +292,6 @@ public class GroupManager : MonoBehaviour
             }
             foreach(GameObject current_o in childObjects)
             {
-                //var current_o = selection.transform.GetChild(i).gameObject;
                 Debug.Log("current_o "+current_o.name);
                 AddSelection(current_o, group);
             }
@@ -379,29 +321,15 @@ public class GroupManager : MonoBehaviour
         var cname = Manager.Instance.recipeUI.GetCurrentCname();
         g.name = cname+".interior."+g.name;
         g.instance_id = 0;
-        emptyGroup.name = g.name;//"group_" + nGroup.ToString()+"_0";
+        emptyGroup.name = g.name;
         emptyGroup.layer = 22;//midle layer == group
         emptyGroup.transform.position = new Vector3(bb.center.x,bb.center.y,0.0f);
-        emptyGroup.transform.parent = Manager.Instance.root.transform;//current_selections[0].transform.parent;//root or compartment
+        emptyGroup.transform.parent = Manager.Instance.root.transform;
         var compartment = "root";
         var pro = current_selections[0].GetComponent<PrefabProperties>();
         if (pro == null) pro = current_selections[0].transform.GetChild(0).GetComponent<PrefabProperties>();
         if (pro!=null) compartment = pro.compartment;
-        //if the parent was already a group use his parent
-        /*if (current_selections[0].transform.parent.GetComponent<PrefabGroup>()!= null)
-        {
-            emptyGroup.transform.parent = current_selections[0].transform.parent.parent;
-        }
-        if (current_selections[0].GetComponent<PrefabGroup>()!= null)
-        {
-            pro = current_selections[0].transform.GetChild(0).GetComponent<PrefabProperties>();
-            if (pro == null) {
-                if (current_selections[0].transform.GetChild(0).childCount > 0)
-                    pro = current_selections[0].transform.GetChild(0).GetChild(0).GetComponent<PrefabProperties>();
-            }
-            if (pro!=null) compartment = pro.compartment;
-            if (compartment == "outside") compartment = "root";
-        }*/
+
         //use compartment of first object selected.
         var pp= emptyGroup.GetComponent<PrefabProperties>();
         pp.is_Group = true;
@@ -437,13 +365,13 @@ public class GroupManager : MonoBehaviour
         Debug.Log("group world bound "+ p.bound.ToString());
         //do we fixthem? kinematics ?
         var new_list = new List<GameObject>();
-        //for (int o = 0; o < current_selections.Count; o++) {
+
         for (int o = 0; o < newGroup.transform.childCount; o++) {
             var oc = newGroup.transform.GetChild(o);
             if (oc != null) {
                 var selo = emptyGroup.transform.GetChild(o).gameObject;
                 Vector3 newpos = selo.transform.position - new Vector3(p.bound.center.x,p.bound.center.y,0.0f);
-                oc.position = new Vector3(newpos.x,newpos.y,oc.position.z);//current_selections[o].transform.position - p.bound.center;
+                oc.position = new Vector3(newpos.x,newpos.y,oc.position.z);
             }
         }
         Manager.Instance.highLightHierarchy(newGroup.transform, false);
@@ -453,7 +381,7 @@ public class GroupManager : MonoBehaviour
         //forwhich we need a bounding box so we can center it
         Manager.Instance.recipeUI.AddOneGroup(p.name,-1,compartment);
         current_selections.Clear();
-        //HighlightManager.Instance.UpdatePinToBondPositions_cb();
+
         nGroup++;
         return p.name;
     }
@@ -511,12 +439,10 @@ public class GroupManager : MonoBehaviour
         }
         /*same for the group instance*/
         var familyg = Manager.Instance.root.transform.GetComponentsInChildren<PrefabGroup>();
-        //        from o in Manager.Instance.root.transform.GetComponentsInChildren<PrefabGroup>()
-        //        where o.name == name
-        //        select o.gameObject;
+
         foreach (var o in familyg)
         {
-            PrefabGroup pg = o;//.GetComponent<PrefabGroup>();
+            PrefabGroup pg = o;
             var childfamily =
                        from oc in o.transform.GetComponentsInChildren<Transform>()
                        where (oc!=null && oc.name.StartsWith(ing_name))
@@ -581,11 +507,7 @@ public class GroupManager : MonoBehaviour
         emptyGroup.name = group_name+"_0";
         emptyGroup.transform.position = bb.center;
         emptyGroup.transform.parent = current_selections[0].transform.parent;//root or compartment
-        //if the parent was already a group use his parent
-        //if (current_selections[0].transform.parent.GetComponent<PrefabGroup>()!= null)
-        //{
-        //    emptyGroup.transform.parent = current_selections[0].transform.parent.parent;
-        //}
+
         List<Transform> parents = new List<Transform>();
         foreach (var o in current_selections)
         {
@@ -596,36 +518,12 @@ public class GroupManager : MonoBehaviour
                 for (int i = 0; i < o.transform.childCount; i++) {
                     var current_o = o.transform.GetChild(i).gameObject;
                     CheckAttached(current_o,g);
-                    /*var allspring = current_o.GetComponents<SpringJoint2D>();
-                    for (int s = 0; s < allspring.Length; s++)
-                    {
-                        var spr = allspring[s];
-                        if (IsAttachedToSelection(spr.connectedBody.gameObject)){
-                            if (g.attachements.Contains(spr)) continue;
-                            g.attachements.Add(spr);
-                        }
-                        else {
-                            if (g.attachements_toskip.Contains(spr)) continue;
-                            g.attachements_toskip.Add(spr);
-                        }
-                    }*/
+
                 }
             }
             else
             {
                 CheckAttached(o,g);
-                /*var allspring = o.GetComponents<SpringJoint2D>();
-                foreach (var spr in allspring)
-                {
-                    if (IsAttachedToSelection(spr.connectedBody.gameObject)){
-                        if (g.attachements.Contains(spr)) continue;
-                        g.attachements.Add(spr);
-                    }
-                    else {
-                        if (g.attachements_toskip.Contains(spr)) continue;
-                        g.attachements_toskip.Add(spr);
-                    }
-                }*/
             }
         }
         var compartment = "root";

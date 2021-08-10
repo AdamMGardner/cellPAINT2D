@@ -9,9 +9,6 @@ public class CameraNavigation : MonoBehaviour
     public int cameraZoomMax = 20;
     public int cameraZoomMin = 5;
 
-
-
-
     void Start()
     {
         Camera.main.orthographicSize = cameraCurrentZoom;

@@ -21,7 +21,7 @@ public class WheelUI : MonoBehaviour {
         float Rincr = 360.0f / (float)Number_items;
         float currentR = Rincr;
         for (int i = 0; i < Number_items; i++) {
-            GameObject instance = GameObject.Instantiate(item);//, getPosOnCircle(currentR), Quaternion.AngleAxis(currentR, Vector3.right)) as GameObject;
+            GameObject instance = GameObject.Instantiate(item);
             instance.transform.parent = transform;
             instance.transform.localPosition = getPosOnCircle(Mathf.Deg2Rad*currentR);
             instance.transform.localRotation = Quaternion.AngleAxis(-currentR, Vector3.right);

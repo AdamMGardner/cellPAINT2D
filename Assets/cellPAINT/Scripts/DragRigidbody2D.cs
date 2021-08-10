@@ -56,24 +56,21 @@ namespace UnityStandardAssets.Utility
             }
             
             var mainCamera = FindCamera();
-            //Debug.Log(mainCamera);
             // We need to actually hit an object
             LayerMask layerMask = ~(1 << LayerMask.NameToLayer("CameraCollider") | 1 << LayerMask.NameToLayer("FiberPushAway")); // ignore both layerX and layerY
             RaycastHit2D hit = new RaycastHit2D();
             hit = Physics2D.Raycast(mainCamera.ScreenPointToRay(Input.mousePosition).origin,
                                  mainCamera.ScreenPointToRay(Input.mousePosition).direction, 100,
                                  layerMask);
-            //Physics2D.DefaultRaycastLayers);
+
             if (!hit)
             {
-                //Debug.Log("no hit");
                 Clean();
                 return;
             }
-            //Debug.Log(hit.collider.gameObject.name);
-            //Debug.Log(hit.collider.gameObject.GetComponent<Rigidbody2D>());
+
             // We need to hit a rigidbody that is not kinematic
-            if (!hit.collider.gameObject.GetComponent<Rigidbody2D>())//|| hit.rigidbody.isKinematic)
+            if (!hit.collider.gameObject.GetComponent<Rigidbody2D>())
             {
                 Clean();
                 return;
@@ -101,7 +98,6 @@ namespace UnityStandardAssets.Utility
             {
                 Debug.Log(below.name);
                 if (below == gameObject) return;
-                //ToggleFreezePrefab(below);
                 p = below.GetComponent<PrefabProperties>();
                 below.GetComponent<Rigidbody2D>().isKinematic = !below.GetComponent<Rigidbody2D>().isKinematic;
                 p.ispined = !p.ispined;
@@ -121,17 +117,12 @@ namespace UnityStandardAssets.Utility
                     m_SpringJoint = go.AddComponent<SpringJoint2D>();
                     body.isKinematic = true;
                 }
-                //Debug.Log(m_SpringJoint);
                 m_SpringJoint.transform.position = hit.point;
                 m_SpringJoint.anchor = Vector3.zero;
                 m_SpringJoint.autoConfigureDistance = false;
-                //m_SpringJoint.spring = k_Spring;
-                //m_SpringJoint.damper = k_Damper;
-                //m_SpringJoint.maxDistance = k_Distance;
                 m_SpringJoint.connectedBody = hit.collider.gameObject.GetComponent<Rigidbody2D>();
                 isKin = m_SpringJoint.connectedBody.isKinematic;
                 m_SpringJoint.connectedBody.isKinematic = false;
-                //Debug.Log(m_SpringJoint.connectedBody);
                 m_SpringJoint.distance = 0.0f;
                 StartCoroutine("DragObject");
             }
@@ -140,7 +131,6 @@ namespace UnityStandardAssets.Utility
 
         private IEnumerator DragObject()
         {
-            //Debug.Log(m_SpringJoint.connectedBody);
             var oldDrag = m_SpringJoint.connectedBody.drag;
             var oldAngularDrag = m_SpringJoint.connectedBody.angularDrag;
             m_SpringJoint.connectedBody.drag = k_Drag;
@@ -152,13 +142,10 @@ namespace UnityStandardAssets.Utility
             var mainCamera = FindCamera();
             while (Input.GetMouseButton(0))
             {
-                //var ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-                //Input.mousePosition
                 Vector3 mousePos = Input.mousePosition;
-                mousePos.z = 10.0f;       // we want 2m away from the camera position
-                          //Debug.Log(mousePos);
-                m_SpringJoint.transform.position = mainCamera.ScreenToWorldPoint(mousePos);// ray.GetPoint(distance);
-                //Debug.DrawLine(m_SpringJoint.connectedBody.transform.position,m_SpringJoint.transform.position, Color.yellow);
+                mousePos.z = 10.0f;       // we want the ingredient offset from the camera position
+
+                m_SpringJoint.transform.position = mainCamera.ScreenToWorldPoint(mousePos);
                 yield return null;
             }
             if (m_SpringJoint.connectedBody)

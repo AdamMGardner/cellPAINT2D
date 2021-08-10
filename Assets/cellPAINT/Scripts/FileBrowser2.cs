@@ -289,13 +289,6 @@ public class FileBrowser2
     public void OnGUI()
     {
         m_screenRect = GUILayout.Window(0, m_screenRect, DoMyWindow, m_name, GUI.skin.window);
-        //GUILayout.Window(0,
-        //GUILayout.BeginArea(
-        //     m_screenRect,
-        //     m_name,
-        //     GUI.skin.window
-        // );        
-        //GUILayout.EndArea();
 
         if (Event.current.type == EventType.Repaint)
         {
@@ -441,7 +434,7 @@ public class FileBrowser2
             {
                 if (BrowserType == FileBrowserType.File)
                 {
-                    m_callback(complete_path);// Path.Combine(m_currentDirectory,complete_path m_files[m_selectedFile]));
+                    m_callback(complete_path);
                 }
                 else {
                     if (m_selectedDirectory > -1)

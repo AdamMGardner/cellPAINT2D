@@ -56,7 +56,7 @@ public class buildBoundary : MonoBehaviour
             right = boundary.AddComponent<BoxCollider2D>();
             left = boundary.AddComponent<BoxCollider2D>();
         }
-        last_size_max = last_size = cm.cameraZoomMax; //orthographicSize;
+        last_size_max = last_size = cm.cameraZoomMax;
 
         changeBoundary();
         cam.orthographicSize = cm.cameraCurrentZoom;
@@ -108,32 +108,5 @@ public class buildBoundary : MonoBehaviour
 
         prev_W = W;
         prev_H = H;
-    }
-
-    void Update() {
-        return;
-        //check if aspect ratio change or window size changed 
-        //is that what we want ?
-        /*last_width = Screen.width;//cam.pixelRect.width;
-        last_height = Screen.height;//cam.pixelRect.height;
-        var top1 = cam.ScreenToWorldPoint(new Vector2((last_width / 2.0f), last_height + (colliderWidthScreen / 2.0f)));
-        var bottom1 = cam.ScreenToWorldPoint(new Vector2(last_width / 2.0f, (-colliderWidthScreen / 2.0f)));
-        var right1 = cam.ScreenToWorldPoint(new Vector2(last_width + (colliderWidthScreen / 2.0f), last_height / 2.0f));
-        var left1 = cam.ScreenToWorldPoint(new Vector2((-colliderWidthScreen / 2.0f)+offset_left, last_height  / 2.0f));
-        if (top1 != topc || bottom1!=bottomc || right1!= rightc || left1 != leftc){
-            //keep the biggest one
-            float W = Vector2.Distance(right1, left1) + colliderWidth;
-            float H = Vector2.Distance(top1, bottom1) + colliderWidth;
-            if ( W >= prev_W || H >= prev_H || cam.orthographicSize == cm.cameraZoomMax ){
-                changeBoundary();
-            }
-        }*/
-        /*
-        if (cam.orthographicSize - last_size_max > 0)
-            changeBoundary();
-        last_size = cam.orthographicSize;
-        if (last_size > last_size_max)
-            last_size_max = last_size;
-        */
     }
 }
