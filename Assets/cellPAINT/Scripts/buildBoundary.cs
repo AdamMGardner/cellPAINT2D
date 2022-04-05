@@ -115,14 +115,17 @@ public class buildBoundary : MonoBehaviour
 
     public void CheckNewWidthAndHeight()
     {
-        if (newW <= canvasWidth) 
+        if (Manager.Instance.rbCount != 0)
         {
-            newW = canvasWidth;
-        }
+            if (newW <= canvasWidth) 
+            {
+                newW = canvasWidth;
+            }
 
-        if (newH <= canvasHeight) 
-        {
-            newH = canvasHeight;
+            if (newH <= canvasHeight) 
+            {
+                newH = canvasHeight;
+            }
         }
 
         cm=cam.GetComponent<CameraMove>();
